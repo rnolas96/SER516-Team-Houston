@@ -1,0 +1,25 @@
+version: '3'
+services:
+  pycontainer: 
+    build: ./backend/reactApi
+    container_name: pycontainer
+                                    
+    ports:
+      - '8000:8000'
+
+  
+  react-app:
+    build: ./frontend
+    container_name: reactcontainer
+    ports:
+      - '3000:3000'
+    links:
+      - pycontainer
+    environment:
+      - proxy = "http://pycontainer:8000/api"
+
+
+
+    
+    stdin_open: true
+    tty: true
