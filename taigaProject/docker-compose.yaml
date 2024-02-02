@@ -15,11 +15,6 @@ services:
       - '3000:3000'
     links:
       - pycontainer
-    environment:
-      - proxy = "http://pycontainer:8000/api"
-
-
-
-    
+       
     stdin_open: true
     tty: true
