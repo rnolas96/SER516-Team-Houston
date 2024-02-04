@@ -1,20 +1,19 @@
 version: '3'
 services:
-  pycontainer: 
+  backend: 
     build: ./backend/reactApi
-    container_name: pycontainer
+    container_name: api-container
                                     
     ports:
       - '8000:8000'
 
   
-  react-app:
+  frontend:
     build: ./frontend
-    container_name: reactcontainer
+    container_name: gui-container
     ports:
       - '3000:3000'
     links:
-      - pycontainer
-       
+      - backend 
     stdin_open: true
     tty: true
