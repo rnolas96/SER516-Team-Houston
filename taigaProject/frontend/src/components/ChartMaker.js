@@ -10,7 +10,8 @@ export default function ChartMaker() {
     }, []);
 
     console.log("info", info);
-
+    console.log("new branch raajveer", info);
+    
     return (
         <p>{info}</p>
     );
