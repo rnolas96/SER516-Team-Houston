@@ -14,26 +14,26 @@ export default function SidebarMenu() {
       </div>
       <Sidebar className='w-[100%]'>
         <Menu className='bg-blue-950 text-white font-sans font-medium'>
-          <MenuItem className='hover:text-blue-950'>
-            <Link to="/">
+          <Link to="/">
+            <MenuItem className='hover:text-blue-950'>
               Home
-            </Link>
-          </MenuItem>
-          <MenuItem className='hover:text-blue-950'>
-            <Link to="/burndowncharts">
+            </MenuItem>
+          </Link>
+          <Link to="/burndowncharts">
+            <MenuItem className='hover:text-blue-950'>
               Burndown Charts
-            </Link>
-          </MenuItem>
-          <MenuItem className='hover:text-blue-950'>
-            <Link to="/cycletime">
+            </MenuItem>
+          </Link>
+          <Link to="/cycletime">
+            <MenuItem className='hover:text-blue-950'>
               Cycle Time
-            </Link>
-          </MenuItem>
-          <MenuItem className='hover:text-blue-950'>
-            <Link to="/leadtime">
+            </MenuItem>
+          </Link>
+          <Link to="/leadtime">
+            <MenuItem className='hover:text-blue-950'>
               Lead Time
-            </Link>
-          </MenuItem>
+            </MenuItem>
+          </Link>
         </Menu>
       </Sidebar>;
       </div>
