@@ -10,7 +10,7 @@ export default function ChartMaker() {
     }, []);
 
     console.log("info", info);
-
+    
     return (
         <p>{info}</p>
     );
