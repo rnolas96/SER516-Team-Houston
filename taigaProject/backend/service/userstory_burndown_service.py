@@ -1,7 +1,7 @@
 
 from taigaApi.userStory.getUserStory import get_user_story
 
-def get_total_storypoints_by_project_id(project_id,auth_token):
+def get_userstory_burndown_by_project_id(project_id,auth_token):
     response=[]
     
     user_stories = get_user_story(project_id, auth_token)
