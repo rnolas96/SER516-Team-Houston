@@ -7,8 +7,8 @@ import { Link } from 'react-router-dom';
 
 export default function SidebarMenu() {
   return (
-    <div>
-      <div className='absolute h-[100%] top-0 bg-blue-950'>
+    <div className="height-full">
+      <div className='top-0 bg-blue-950'>
       <div className='pt-6 pb-3 pl-5'>
         <span className='text-white bg-red hover:opacity-50 transition-opacity'><RxHamburgerMenu /></span>
       </div>
@@ -35,7 +35,7 @@ export default function SidebarMenu() {
             </Link>
           </MenuItem>
         </Menu>
-      </Sidebar>;
+      </Sidebar>
       </div>
         
     </div>
