@@ -1,6 +1,5 @@
 import logo from './logo.svg';
 import './App.css';
-import './components/ChartMaker'
 import Hero from './components/Hero.js';
 import SidebarMenu from './components/SidebarMenu.js';
 import Burndown from './components/Burndown.js';
@@ -10,18 +9,16 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
   return (
-    <>
-    <Router>
-      <SidebarMenu />
-      <Routes>
-        <Route exact path="/" element={<Hero />} />
-        <Route exact path="/burndowncharts" element={<Burndown />} />
-        <Route exact path="/cycletime" element={<CycleTime />} />
-        <Route exact path="/leadtime" element={<LeadTime />} />
-      </Routes>
-    </Router>
-    
-    </>
+    <div className="container-full">
+      <Router>
+          <Routes>
+            <Route exact path="/" element={<Hero />} />
+            <Route exact path="/burndowncharts" element={<Burndown />} />
+            <Route exact path="/cycletime" element={<CycleTime />} />
+            <Route exact path="/leadtime" element={<LeadTime />} />
+          </Routes>
+      </Router>
+    </div>
   );
 }
 
