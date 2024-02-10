@@ -8,6 +8,13 @@ import CycleTime from './components/CycleTime.js';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
+
+  // use the authtoke below to make sure that only the Hero page is
+  // accessible until the authToken is available { @rkhatta1 }
+
+  const authToken = localStorage.getItem('authToken');
+  console.log(authToken);
+
   return (
     <div className="container-full">
       <Router>
