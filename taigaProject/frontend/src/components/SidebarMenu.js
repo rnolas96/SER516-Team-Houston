@@ -7,12 +7,12 @@ import { Link } from 'react-router-dom';
 
 export default function SidebarMenu() {
   return (
-    <div>
-      <div className='absolute h-[100%] top-0 bg-blue-950'>
+    <div className='bg-blue-950'>
+      <div className='h-[100%] bg-blue-950 border-r-4 border-blue-900'>
       <div className='pt-6 pb-3 pl-5'>
         <span className='text-white bg-red hover:opacity-50 transition-opacity'><RxHamburgerMenu /></span>
       </div>
-      <Sidebar className='w-[100%]'>
+      <Sidebar className='w-[100%] bg-blue-950'>
         <Menu className='bg-blue-950 text-white font-sans font-medium'>
           <Link to="/">
             <MenuItem className='hover:text-blue-950'>

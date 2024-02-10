@@ -12,6 +12,7 @@ function App() {
   return (
     <>
     <Router>
+      <div className='flex h-screen'>
       <SidebarMenu />
       <Routes>
         <Route exact path="/" element={<Hero />} />
@@ -19,6 +20,7 @@ function App() {
         <Route exact path="/cycletime" element={<CycleTime />} />
         <Route exact path="/leadtime" element={<LeadTime />} />
       </Routes>
+      </div>
     </Router>
     
     </>

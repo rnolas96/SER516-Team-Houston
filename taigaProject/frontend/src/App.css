@@ -4,7 +4,7 @@
 
  /*  */
 body {
-  height: 100%;
+  height: screen;
   width: auto;
   display: flexbox;
   justify-content: center;
@@ -17,7 +17,6 @@ body {
 
 .container {
   overflow: hidden;
-  margin-top: 275px;
   display: flex table-column;
   justify-content: center;
   align-items: center;
