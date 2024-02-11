@@ -1,12 +1,11 @@
 import os
 import json
 from fastapi import APIRouter, Request
-from service.userstory_burndown_service import get_userstory_burndown_by_project_id
 from taigaApi.authenticate import authenticate
 
-router2 = APIRouter()
+login_router = APIRouter()
 
-@router2.post("/login")
+@login_router.post("/login")
 async def login(request:Request):
     body = await request.body()
     try: 
