@@ -1,4 +1,5 @@
 import getpass
+from itertools import groupby
 import json
 from datetime import datetime, timedelta
 from taigaApi.authenticate import authenticate
@@ -6,7 +7,7 @@ from taigaApi.project.getProjectBySlug import get_project_by_slug
 from taigaApi.project.getProjectTaskStatusName import get_project_task_status_name
 from taigaApi.userStory.getUserStory import get_user_story
 from taigaApi.task.getTaskHistory import get_task_history
-from taigaApi.task.getTasks import get_closed_tasks, get_all_tasks
+from taigaApi.task.getTasks import get_closed_tasks, get_all_tasks, get_closed_tasks_for_sprint
 
 
 # Function to format datetime objects for JSON serialization
@@ -104,6 +105,16 @@ def get_lead_time(project_id, auth_token):
 def get_cycle_time(project_id, auth_token):
     tasks = get_closed_tasks(project_id, auth_token)
     cycle_time, closed_task = get_task_history(tasks, auth_token)
+    avg_cycle_time = round((cycle_time / closed_task), 2)
+    print("\n***********************************\n")
+    print("Average Cycle Time: ", avg_cycle_time)
+    print("\n***********************************\n")
+
+#function to calculate average cycle time for tasks which belong to a specific sprint
+def get_cycle_time_by_sprint_id(sprint_id, project_id, auth_token):
+
+    closed_sprint_tasks = get_closed_tasks_for_sprint(sprint_id, project_id, auth_token)
+    cycle_time, closed_task = get_task_history(closed_sprint_tasks, auth_token)
     avg_cycle_time = round((cycle_time / closed_task), 2)
 
     print("\n***********************************\n")
