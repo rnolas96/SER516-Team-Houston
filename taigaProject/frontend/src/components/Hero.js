@@ -47,9 +47,6 @@ export default function Hero() {
       setLoginState(false)
     }
 
-    return () => {
-      localStorage.removeItem('authToken');
-    }
   }, [])
   
   return (
