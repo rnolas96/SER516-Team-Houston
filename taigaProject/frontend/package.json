@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "autoprefixer": "^10.4.17",
     "axios": "^1.6.7",
+    "buffer": "^6.0.3",
     "chart.js": "^4.4.1",
     "flowbite-react": "^0.7.2",
     "postcss": "^8.4.33",
@@ -46,5 +47,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://api-container:8000"
+  "proxy": "http://localhost:8000"
 }
