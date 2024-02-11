@@ -1,9 +1,10 @@
 version: '3'
 services:
   backend: 
-    build: ./backend/reactApi
+    build: ./backend
     container_name: api-container
-                                    
+    environment:
+      - TAIGA_URL=https://api.taiga.io/api/v1
     ports:
       - '8000:8000'
 
