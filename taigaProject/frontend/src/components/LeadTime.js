@@ -6,6 +6,9 @@ import BarChartMaker from './reusable_components/BarChartMaker';
 
 export default function LeadTime() {
 
+  // Lead time UI integration, data poluation and calling the api 
+  // will be updated here. Only a base UI present currently.
+
   const [averageCycleTimeLabels, setAverageCycleTimeLabels] = useState([]);
   const [averageCycleTimeValues, setAverageCycleTimeValues] = useState([]);
 
