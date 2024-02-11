@@ -1,38 +1,75 @@
-.App {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+  height: 100%;
+  width: auto;
+  display: flexbox;
+  justify-content: center;
+  align-items: center;
+  font: medium black;
+  font-size: large;
+  margin: 0px;
+  padding: 0px;
+}
+
+.container {
+  overflow: hidden;
+  margin-top: 275px;
+  display: flex table-column;
+  justify-content: space-between;
+  align-items: center;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.teamName {
+  font: bolder;
+  font-size: x-large;
+  font: darkblue;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.heading {
+  font: bold;
+  font-size: larger;
+  font: teal;
+  margin-top: 25px;
+  margin-bottom: 25px;
 }
 
-.App-header {
-  background-color: #282c34;
+.align-content {
+  display: flex;
+  flex-direction: row; 
+}
+
+.height-full {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.container-full {
+  min-height: 100vh;
+  min-width: 100vh;
+  width: 100%;
+  display: flex;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.route-container {
+  min-width: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.graph-container {
+  min-height: 100vh;
+  min-width: 100vh;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
