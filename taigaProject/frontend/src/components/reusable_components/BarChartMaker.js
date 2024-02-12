@@ -42,7 +42,7 @@ export default function BarChartMaker({props}) {
     };
     const data = {
       labels: props? props.labels: [],
-      datasets: props? props.datasets : []
+      datasets: props? props.datasets: []
     };
 
     return (
