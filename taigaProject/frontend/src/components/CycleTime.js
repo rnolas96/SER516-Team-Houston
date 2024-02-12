@@ -5,7 +5,8 @@ import axios from 'axios'
 import BarChartMaker from './reusable_components/BarChartMaker';
 export default function CycleTime() {
 
-  const [averageCycleTimeData, setAverageCycleTimeData] = useState(null);
+
+const [averageCycleTimeData, setAverageCycleTimeData] = useState(null);
   function apiCall(url, updateCall, authToken) {
     axios.get(url, {
       headers: {
@@ -36,6 +37,7 @@ export default function CycleTime() {
     }
     );
   }
+  
   useEffect (() => {
     const authToken = localStorage.getItem('authToken');
     console.log("authToken", authToken);
