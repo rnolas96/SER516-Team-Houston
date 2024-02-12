@@ -5,7 +5,7 @@ from taigaApi.authenticate import authenticate
 
 login_router = APIRouter()
 
-@login_router.post("/")
+@login_router.post("/login")
 async def login(request:Request):
     body = await request.body()
     try: 
