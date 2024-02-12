@@ -1,4 +1,3 @@
-
 from taigaApi.userStory.getUserStory import get_user_story
 
 # funtion to get sprintwise burndown chart details for a project. 
@@ -29,6 +28,3 @@ def get_userstory_burndown_by_project_id(project_id,auth_token):
 
     response.append(sprint_story_points_map)
     return response
-
-
-
