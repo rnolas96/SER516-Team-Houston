@@ -15,12 +15,12 @@ def get_cycle_time_by_sprint_id(sprint_id, project_id, auth_token):
 
 # Function to calculate and display  sprintwise average cycle time
 def get_sprintwise_cycle_time(project_id, auth_token):
+    result={}
     tasks = get_closed_tasks(project_id, auth_token)
 
     # sort the tasks milestone wise
     tasks.sort(key=lambda x: x["milestone_slug"])
     for key, group in groupby(tasks, key=lambda x: x["milestone_slug"]):
-        result={}
         cycle_time, closed_task = get_task_history(list(group), auth_token)
         avg_cycle_time = round((cycle_time / closed_task), 2)
         result[str(key)] = avg_cycle_time
@@ -29,14 +29,13 @@ def get_sprintwise_cycle_time(project_id, auth_token):
 
 #function to get lead time for each sprint.        
 def get_sprintwise_lead_time(project_id, auth_token):
-    result=[]
+    result={}
     tasks = get_closed_tasks(project_id, auth_token)
     # sort the tasks milestone wise
     tasks.sort(key=lambda x: x["milestone_slug"])
     
     for key, group in groupby(tasks, key=lambda x: x["milestone_slug"]):
-       
-        sprint_task_map={}
+        milestone=""
         lead_time = 0
         closed_tasks = 0
         for task in list(group):
@@ -45,12 +44,8 @@ def get_sprintwise_lead_time(project_id, auth_token):
         
             lead_time += (finished_date - created_date).days
             closed_tasks += 1
+            milestone = str(task["milestone_slug"])
 
         avg_lead_time = round((lead_time / closed_tasks), 2)
-        milestone = str(task["milestone_slug"])
-        sprint_task_map[milestone] = avg_lead_time
-
-        result.append(sprint_task_map)
-      
-
+        result[milestone] = avg_lead_time
     return result
