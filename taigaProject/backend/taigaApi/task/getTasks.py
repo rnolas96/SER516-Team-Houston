@@ -61,13 +61,13 @@ def get_closed_tasks(project_id, auth_token):
     else:
         return None
     
-def get_closed_tasks_for_sprint(sprint_id,project_id,auth_token):
+def get_closed_tasks_for_sprint(sprint_id, project_id, auth_token):
 
-    #get tasks by calling get_tasks function
+    # Get tasks by calling get_tasks function
     tasks = get_tasks(project_id, auth_token)
-    if(tasks):
 
-        #filter tasks to include closed tasks for the given sprint
+    if tasks:
+        # Filter tasks to include closed tasks for the given sprint
         closed_tasks_list_for_sprint = [
             {
                 "id": task["id"],
@@ -78,7 +78,6 @@ def get_closed_tasks_for_sprint(sprint_id,project_id,auth_token):
                 "milestone_slug": task["milestone_slug"]
             }
             for task in tasks if task['milestone'] == sprint_id and task['is_closed']
-
         ]
 
         return closed_tasks_list_for_sprint
@@ -92,12 +91,14 @@ def get_all_tasks(project_id, auth_token):
 
     # Call the get_tasks function to retrieve all tasks for the project
     tasks = get_tasks(project_id, auth_token)
-    if tasks:
 
+    if tasks:
         # Format all tasks and return the result
         all_tasks = [
             {
                 "id": task["id"],
+                "milestone": task["milestone"],
+                "milestone_slug": task["milestone_slug"],
                 "created_date": task["created_date"],
                 "finished_date": task["finished_date"]
             }
