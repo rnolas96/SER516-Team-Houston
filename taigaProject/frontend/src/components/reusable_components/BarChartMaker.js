@@ -36,13 +36,13 @@ export default function BarChartMaker({props}) {
         },
         title: {
           display: true,
-          text: props.text,
+          text: props? props.text: "",
         },
       },
     };
     const data = {
-      labels: props.labels,
-      datasets: props.datasets
+      labels: props? props.labels: [],
+      datasets: props? props.datasets: []
     };
 
     return (
