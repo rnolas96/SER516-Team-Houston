@@ -11,6 +11,10 @@ function App() {
 
   // use the authtoke below to make sure that only the Hero page is
   // accessible until the authToken is available { @rkhatta1 }
+  window.onbeforeunload = function() {
+    localStorage.clear();
+  }
+
 
   const authToken = localStorage.getItem('authToken');
   console.log(authToken);
