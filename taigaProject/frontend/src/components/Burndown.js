@@ -57,7 +57,7 @@ export default function Burndown() {
     }
 
     if(!storyPointBurnDownData && authToken) {
-      apiCall('/api/userstory/userstory_burndown?project_id=1521718', setStoryPointBurnDownData, authToken);
+      apiCall('/api/userstory/userstory_burndown?project_id=1522285', setStoryPointBurnDownData, authToken);
     }
     if(!taskBurnDownData && authToken) {
       // apiCall('/api/business_value_burndown?project_id=1522285', setBusinessValueBurnDownData, authToken);
