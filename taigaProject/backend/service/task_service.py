@@ -21,10 +21,14 @@ def get_sprintwise_cycle_time(project_id, auth_token):
     for key, group in groupby(tasks, key=lambda x: x["milestone_slug"]):
         result={}
         cycle_time, closed_task = get_task_history(list(group), auth_token)
-        avg_cycle_time = round((cycle_time / closed_task), 2)
-
-        milestone_slug_split = str(key).split('-')
-        result["sprint"+milestone_slug_split[1]] = avg_cycle_time
+        
+        if closed_task > 0:
+            avg_cycle_time = round((cycle_time / closed_task), 2)
+        else:
+            avg_cycle_time = None   
+        
+        result[str(key)] = avg_cycle_time
+        
 
     return result
         
