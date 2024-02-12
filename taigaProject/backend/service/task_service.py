@@ -1,34 +1,34 @@
 from itertools import groupby
-from taigaApi.task.getTasks import get_closed_tasks_for_sprint, get_closed_tasks, get_all_tasks
+from taigaApi.task.getTasks import get_closed_tasks_for_sprint, get_closed_tasks, get_tasks, get_all_tasks
 from taigaApi.task.getTaskHistory import get_task_history
 
-
-def get_sprintwise_task_count(sprint_id, project_id, auth_token):
+# Function to get the number of open task for each sprint
+def get_sprintwise_task_count(project_id, auth_token):
     sprintwise_task_count = {}
+    sprintwise_closed_tasks_count = {}
+    sprintwise_open_task_count = {}
 
     tasks = get_all_tasks(project_id, auth_token)
 
     for task in tasks:
         sprint_id = task.get("milestone")
+        sprint_name = task.get("milestone_slug")
 
         if sprint_id is not None:
-            sprint_task_count = sprintwise_task_count.get(sprint_id)
-            
-            if sprint_task_count is not None:
-                sprintwise_task_count[sprint_id] = sprint_task_count + 1
+            if sprintwise_task_count.get(sprint_name) is None:
+                sprintwise_task_count[sprint_name] = 1
             else:
-                sprintwise_task_count[sprint_id] = 1
+                sprintwise_task_count[sprint_name] += 1
 
-    for task in tasks:
-        sprint_id = task.get("milestone")
+            closed_tasks = get_closed_tasks_for_sprint(sprint_id, project_id, auth_token)
+            sprintwise_closed_tasks_count[sprint_name] = len(closed_tasks)
 
-        closed_task = get_closed_tasks_for_sprint(sprint_id)
+    for task_count in sprintwise_task_count.keys():
+        sprintwise_open_task_count[task_count] = sprintwise_task_count[task_count] - sprintwise_closed_tasks_count[task_count]
+        
+    return sprintwise_open_task_count
 
-        sprintwise_task_count[sprint_id] = sprintwise_task_count[sprint_id] - len(closed_task)
-
-    return sprintwise_task_count
-
-#Function to calculate average cycle time for tasks which belong to a specific sprint
+#F unction to calculate average cycle time for tasks which belong to a specific sprint
 def get_cycle_time_by_sprint_id(sprint_id, project_id, auth_token):
 
     closed_sprint_tasks = get_closed_tasks_for_sprint(sprint_id, project_id, auth_token)

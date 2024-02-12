@@ -91,12 +91,14 @@ def get_all_tasks(project_id, auth_token):
 
     # Call the get_tasks function to retrieve all tasks for the project
     tasks = get_tasks(project_id, auth_token)
-    if tasks:
 
+    if tasks:
         # Format all tasks and return the result
         all_tasks = [
             {
                 "id": task["id"],
+                "milestone": task["milestone"],
+                "milestone_slug": task["milestone_slug"],
                 "created_date": task["created_date"],
                 "finished_date": task["finished_date"]
             }
