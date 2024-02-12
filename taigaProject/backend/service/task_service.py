@@ -22,7 +22,11 @@ def get_sprintwise_cycle_time(project_id, auth_token):
     tasks.sort(key=lambda x: x["milestone_slug"])
     for key, group in groupby(tasks, key=lambda x: x["milestone_slug"]):
         cycle_time, closed_task = get_task_history(list(group), auth_token)
-        avg_cycle_time = round((cycle_time / closed_task), 2)
+
+        if closed_task > 0:
+            avg_cycle_time = round((cycle_time / closed_task), 2)
+        else:
+            avg_cycle_time = None  
         result[str(key)] = avg_cycle_time
 
     return result
@@ -45,7 +49,10 @@ def get_sprintwise_lead_time(project_id, auth_token):
             lead_time += (finished_date - created_date).days
             closed_tasks += 1
             milestone = str(task["milestone_slug"])
-
-        avg_lead_time = round((lead_time / closed_tasks), 2)
+        
+        if closed_tasks > 0:
+            avg_lead_time = round((lead_time / closed_tasks), 2)
+        else:
+            avg_lead_time = None  
         result[milestone] = avg_lead_time
     return result
