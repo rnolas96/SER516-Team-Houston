@@ -6,6 +6,7 @@ import Burndown from './components/Burndown.js';
 import LeadTime from './components/LeadTime.js';
 import CycleTime from './components/CycleTime.js';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { ProSidebarProvider } from 'react-pro-sidebar';
 
 function App() {
 
@@ -18,6 +19,9 @@ function App() {
   return (
     <div className="container-full">
       <Router>
+        <ProSidebarProvider>
+          <SidebarMenu />
+        </ProSidebarProvider>
           <Routes>
             <Route exact path="/" element={<Hero />} />
             <Route exact path="/burndowncharts" element={<Burndown />} />
