@@ -84,10 +84,8 @@ def get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, au
     response = {}
 
     for user_story in user_stories:
-        print(user_story["subject"], user_story['is_closed'], user_story['finish_date'])
         if user_story['is_closed'] and user_story['finish_date']:
             current_date = datetime.fromisoformat(user_story['finish_date'].split("T")[0])
-            print("aksjdnkasjdaksjdkasjdn", current_date)
             user_story_id = user_story['id']
             custom_attribute_data = get_custom_attribute_from_userstory(user_story_id, auth_token)
             custom_attribute_type_id = get_custom_attribute_type_id(project_id, auth_token, custom_attribute_name)
