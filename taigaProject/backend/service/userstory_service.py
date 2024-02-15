@@ -1,8 +1,8 @@
 
 import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 from taigaApi.milestone.getMilestoneById import get_milestone_by_id
-from taigaApi.userStory.getUserStory import get_user_story
+from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story
 
 
 # funtion to get sprintwise burndown chart details for a project. 
@@ -34,7 +34,7 @@ def get_userstory_burndown_by_project_id(project_id,auth_token):
     response.append(sprint_story_points_map)
     return response
 
-def get_storypoint_burndown_for_sprint(sprint_id,auth_token):
+def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
     response=[]
     
     #get sprint info 
@@ -59,3 +59,54 @@ def get_storypoint_burndown_for_sprint(sprint_id,auth_token):
 
     return response
 
+def get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, auth_token, custom_attribute_name):
+    """
+    Description
+    -----------
+    Gets the user_story based on the project_id, filters it based on the sprint_id
+    and uses the custom_attribute to get back the custom_attribute_values
+
+    Arguments
+    ---------
+    project_id, print_id, auth_token, custom_attribute_name
+
+    Returns
+    -------
+    A map of date and business value completed.
+    """
+
+    sprint_data = get_milestone_by_id(sprint_id, auth_token)
+    user_stories = sprint_data['user_stories']
+
+    if not user_stories:
+        return {}
+
+    response = {}
+
+    for user_story in user_stories:
+        if user_story['is_closed'] and user_story['finish_date']:
+            current_date = datetime.fromisoformat(user_story['finish_date'].split("T")[0])
+            user_story_id = user_story['id']
+            custom_attribute_data = get_custom_attribute_from_userstory(user_story_id, auth_token)
+            custom_attribute_type_id = get_custom_attribute_type_id(project_id, auth_token, custom_attribute_name)
+            if current_date in response:
+                response[current_date] += int(custom_attribute_data[custom_attribute_type_id])
+            else:
+                response[current_date] = 0
+                response[current_date] += int(custom_attribute_data[custom_attribute_type_id])
+
+    total_custom_attribute_value = 0
+
+    for res_key, res_val in response.items():
+        total_custom_attribute_value += res_val
+
+    print(total_custom_attribute_value)
+
+    response = dict(sorted(response.items()))
+
+    for res_key, res_val in response.items():
+        response[res_key] = total_custom_attribute_value - response[res_key]
+        total_custom_attribute_value = response[res_key]
+
+    return response
+    
