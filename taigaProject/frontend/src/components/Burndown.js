@@ -57,7 +57,7 @@ export default function Burndown() {
     }
 
     if(!storyPointBurnDownData && authToken) {
-      apiCall('/api/userstory_burndown?project_id=1522285', setStoryPointBurnDownData, authToken);
+      apiCall('/api/userstory/userstory_burndown?project_id=1522285', setStoryPointBurnDownData, authToken);
     }
     if(!taskBurnDownData && authToken) {
       // apiCall('/api/business_value_burndown?project_id=1522285', setBusinessValueBurnDownData, authToken);
@@ -66,8 +66,7 @@ export default function Burndown() {
   }, []);
 
   return (
-    <div className='container-full'>
-      <SidebarMenu />
+    <div className='container-full bg-gradient-to-r from-[#00f9f9] to-[#ffffff]'>
       <div className='route-container'>
         <Tabs>
           <TabList style={{display: 'flex', justifyContent: "space-between"}}>
