@@ -71,9 +71,12 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
                     
                 finish_date = datetime.fromisoformat(user_story['finish_date'].replace('Z', '+00:00')).strftime('%Y-%m-%d')
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
                 print("date=====",finish_date)
 >>>>>>> b947cc9 (changed burndown api)
+=======
+>>>>>>> c0a16ab (removed unwanted prints)
                 if(finish_date in date_storypoint_map):
                     date_storypoint_map[finish_date] += user_story['total_points']
                 else:
@@ -81,9 +84,12 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
 <<<<<<< HEAD
 =======
 
+<<<<<<< HEAD
     print("dictionary",date_storypoint_map)
 >>>>>>> b947cc9 (changed burndown api)
 
+=======
+>>>>>>> c0a16ab (removed unwanted prints)
     for date in range((end_date - start_date).days+1):
        
         current_date = start_date+timedelta(days = date)
@@ -128,6 +134,7 @@ def get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, au
     start_date = sprint_data['estimated_start']
     end_date = sprint_data['estimated_finish']
 
+<<<<<<< HEAD
     start_date = datetime.strptime(start_date, "%Y-%m-%d")
     end_date = datetime.strptime(end_date, "%Y-%m-%d")
 
@@ -151,6 +158,8 @@ def get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, au
 
     response["0"] = total_custom_attribute_value
 
+=======
+>>>>>>> c0a16ab (removed unwanted prints)
     response = dict(sorted(response.items()))
 
     for res_key, res_val in response.items():
