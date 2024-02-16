@@ -108,4 +108,34 @@ def get_all_tasks(project_id, auth_token):
         return all_tasks
     else:
         return None
+    
 
+
+def get_tasks_by_milestone(project_id, sprint_id, auth_token):
+
+    # Get Taiga API URL from environment variables
+    taiga_url = os.getenv('TAIGA_URL')
+
+    # Construct the URL for the tasks API endpoint for the specified project
+    task_api_url = f"{taiga_url}/tasks?project={project_id}&milestone={sprint_id}"
+
+    # Define headers including the authorization token and content type
+    headers = {
+        'Authorization': f'Bearer {auth_token}',
+        'Content-Type': 'application/json',
+    }
+
+    try:
+
+        # Make a GET request to Taiga API to retrieve tasks
+        response = requests.get(task_api_url, headers=headers)
+        response.raise_for_status()  # Raise an exception for HTTP errors (4xx or 5xx)
+        # Extract and return the tasks information from the response
+        tasks = response.json()
+        return tasks
+
+    except requests.exceptions.RequestException as e:
+
+        # Handle errors during the API request and print an error message
+        print(f"Error fetching tasks: {e}")
+        return None
