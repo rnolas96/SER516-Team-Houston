@@ -37,30 +37,44 @@ def get_userstory_burndown_by_project_id(project_id,auth_token):
     response.append(sprint_story_points_map)
     return response
 
+ 
+
 def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
-    response=[]
-    
+    """
+    Description
+    -----------
+    Gets the user_story storypoint burndown based on the sprint_id.
+
+    Arguments
+    ---------
+    sprint_id, auth_token
+
+    Returns
+    -------
+    A map of date and remaining story points value for every day until end of the sprint.
+    """
+
     #get sprint info 
     sprint_data = get_milestone_by_id(sprint_id, auth_token)
     user_stories = sprint_data['user_stories']
+    total_story_points = sprint_data['total_points'] 
 
-    start_date = sprint_data['estimated_start']
-    end_date = sprint_data['estimated_finish']
+    start_date = datetime.strptime(sprint_data['estimated_start'],"%Y-%m-%d")
+    end_date =  datetime.strptime(sprint_data['estimated_finish'],"%Y-%m-%d")
+    result={}
 
     for date in range((end_date - start_date).days+1):
-        result={}
+       
         current_date = start_date+timedelta(days = date)
-        print("date ==",date)
         
         for user_story in user_stories:
             if user_story['is_closed']:
-                if user_story['finish_date'] and datetime.fromisoformat(user_story['finish_date'].split("T")[0])==current_date :
-                    result[current_date]=user_story['total_points']
-    print(result)
-   ##user_stories = get_user_story(project_id, auth_token)
-    total_story_points = 0
+                if user_story['finish_date'] and datetime.fromisoformat(user_story['finish_date'].replace('Z', '+00:00')).date()==current_date.date() :
+                    total_story_points -= user_story['total_points']
+                    
+            result[current_date] = total_story_points
 
-    return response
+    return result
 
 def get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, auth_token, custom_attribute_name):
     """
@@ -71,7 +85,7 @@ def get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, au
 
     Arguments
     ---------
-    project_id, print_id, auth_token, custom_attribute_name
+    project_id, sprint_id, auth_token, custom_attribute_name
 
     Returns
     -------
