@@ -70,13 +70,10 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
             if user_story['finish_date']  :
                     
                 finish_date = datetime.fromisoformat(user_story['finish_date'].replace('Z', '+00:00')).strftime('%Y-%m-%d')
-                print("date=====",finish_date)
                 if(finish_date in date_storypoint_map):
                     date_storypoint_map[finish_date] += user_story['total_points']
                 else:
                     date_storypoint_map[finish_date] = user_story['total_points']
-
-    print("dictionary",date_storypoint_map)
 
     for date in range((end_date - start_date).days+1):
        
