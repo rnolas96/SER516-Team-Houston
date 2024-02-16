@@ -59,17 +59,29 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
     start_date = datetime.strptime(sprint_data['estimated_start'],"%Y-%m-%d")
     end_date =  datetime.strptime(sprint_data['estimated_finish'],"%Y-%m-%d")
     result={}
+    date_storypoint_map={}
+
+    for user_story in user_stories:
+        if user_story['is_closed']:
+                
+            if user_story['finish_date']  :
+                    
+                finish_date = datetime.fromisoformat(user_story['finish_date'].replace('Z', '+00:00')).strftime('%Y-%m-%d')
+                print("date=====",finish_date)
+                if(finish_date in date_storypoint_map):
+                    date_storypoint_map[finish_date] += user_story['total_points']
+                else:
+                    date_storypoint_map[finish_date] = user_story['total_points']
+
+    print("dictionary",date_storypoint_map)
 
     for date in range((end_date - start_date).days+1):
        
         current_date = start_date+timedelta(days = date)
-        
-        for user_story in user_stories:
-            if user_story['is_closed']:
-                if user_story['finish_date'] and datetime.fromisoformat(user_story['finish_date'].replace('Z', '+00:00')).date()==current_date.date() :
-                    total_story_points -= user_story['total_points']
-                    
-            result[current_date] = total_story_points
+        if current_date.strftime('%Y-%m-%d') in date_storypoint_map:
+            total_story_points -= date_storypoint_map[current_date.strftime('%Y-%m-%d')]
+        result[current_date] = total_story_points
+                         
 
     return result
 
