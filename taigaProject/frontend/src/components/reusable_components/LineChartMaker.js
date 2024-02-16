@@ -39,6 +39,12 @@ export default function LineChartMaker({props}) {
           text: props? props.text: "",
         },
       },
+      indexAxis: 'x',
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
     };
     const data = {
       labels: props? props.labels: [],
