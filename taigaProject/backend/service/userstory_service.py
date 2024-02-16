@@ -67,13 +67,10 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
             if user_story['finish_date']  :
                     
                 finish_date = datetime.fromisoformat(user_story['finish_date'].replace('Z', '+00:00')).strftime('%Y-%m-%d')
-                print("date=====",finish_date)
                 if(finish_date in date_storypoint_map):
                     date_storypoint_map[finish_date] += user_story['total_points']
                 else:
                     date_storypoint_map[finish_date] = user_story['total_points']
-
-    print("dictionary",date_storypoint_map)
 
     for date in range((end_date - start_date).days+1):
        
@@ -125,8 +122,6 @@ def get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, au
 
     for res_key, res_val in response.items():
         total_custom_attribute_value += res_val
-
-    print(total_custom_attribute_value)
 
     response = dict(sorted(response.items()))
 
