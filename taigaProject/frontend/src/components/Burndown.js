@@ -10,11 +10,11 @@ import {Buffer} from 'buffer';
 
 export default function Burndown() {
 
+  const [storyPointBurnDownData, setStoryPointBurnDownData] = useState(null);
   const [businessValueBurnDownData, setBusinessValueBurnDownData] = useState(null);
-  const [partialStoryPointBurnDownData, setPartialStoryPointBurnDownData] = useState(null);
-  const [fullStoryPointBurnDownData, setFullStoryPointBurnDownData] = useState(null);
+  const [taskBurnDownData, setTaskBurnDownData] = useState(null);
 
-  function apiCall(url, updateCall, scenario, authToken) {
+  function apiCall(url, updateCall, authToken) {
     axios.get(url, {
       headers: {
         'Authorization': authToken
@@ -22,16 +22,15 @@ export default function Burndown() {
     )
     .then(res => {
 
-      console.log("res", res.data);
-      const labels = Object.keys(res.data);
-      const values = Object.values(res.data);
+      const labels = Object.keys(res.data[0]);
       labels[0] = "";
+
       const updated = {
         labels: labels,
-        text: "Burndown data for " + scenario,
+        text: "Burndown data of business value against sprints",
         datasets: [{
-          label: 'Burndown Data',
-          data: values,
+          label: 'Example burndown data',
+          data: Object.values(res.data[0]),
           borderColor: 'rgb(255, 99, 132)',
           backgroundColor: [
             'rgb(255, 99, 132)',
@@ -42,6 +41,7 @@ export default function Burndown() {
         }]
       }
     
+      console.log("comes here");
       updateCall(updated);
     }
     );
@@ -53,14 +53,14 @@ export default function Burndown() {
     console.log("authToken", authToken);
 
     if(!businessValueBurnDownData && authToken)  {
-      apiCall('/api/userstory/business_value_burndown?project_id=1521718&sprint_id=376612', setBusinessValueBurnDownData, "business value", authToken);
+      // apiCall('/api/business_value_burndown?project_id=1522285', setBusinessValueBurnDownData, authToken);
     }
 
-    if(!partialStoryPointBurnDownData && authToken) {
-      // apiCall('/api/userstory/userstory_burndown?project_id=1522285', setPartialStoryPointBurnDownData, "partial storypoints", authToken);
+    if(!storyPointBurnDownData && authToken) {
+      apiCall('/api/userstory/userstory_burndown?project_id=1522285', setStoryPointBurnDownData, authToken);
     }
-    if(!fullStoryPointBurnDownData && authToken) {
-      // apiCall('/api/userstory/userstory_burndown?project_id=1522285', setFullStoryPointBurnDownData, "partial storypoints", authToken);
+    if(!taskBurnDownData && authToken) {
+      // apiCall('/api/business_value_burndown?project_id=1522285', setBusinessValueBurnDownData, authToken);
     }
 
   }, []);
@@ -70,19 +70,19 @@ export default function Burndown() {
       <div className='route-container'>
         <Tabs>
           <TabList style={{display: 'flex', justifyContent: "space-between"}}>
-            <Tab>Partial SP Burndown</Tab>
-            <Tab>Full SP Burndown</Tab>
-            <Tab>Business Value Burndown</Tab>
+            <Tab>Story-Points vs Sprints</Tab>
+            <Tab>Business Value vs Sprints</Tab>
+            <Tab>Tasks vs Sprints</Tab>
           </TabList>
 
           <TabPanel>
-            <LineChartMaker props = {partialStoryPointBurnDownData}/>
-          </TabPanel>
-          <TabPanel>
-            <LineChartMaker props = {fullStoryPointBurnDownData}/>
+            <LineChartMaker props = {storyPointBurnDownData}/>
           </TabPanel>
           <TabPanel>
             <LineChartMaker props = {businessValueBurnDownData}/>
+          </TabPanel>
+          <TabPanel>
+            <LineChartMaker props = {taskBurnDownData}/>
           </TabPanel>
         </Tabs>
       </div>
