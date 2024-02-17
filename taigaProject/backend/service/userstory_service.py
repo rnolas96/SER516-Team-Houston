@@ -78,7 +78,7 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
         current_date = start_date+timedelta(days = date)
         if current_date.strftime('%Y-%m-%d') in date_storypoint_map:
             total_story_points -= date_storypoint_map[current_date.strftime('%Y-%m-%d')]
-        result[current_date.strftime("%Y-%m-%d %H:%M:%S")] = total_story_points
+        result[current_date.strftime("%Y-%m-%d")] = total_story_points
                          
 
     return result
