@@ -105,7 +105,18 @@ def get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, au
     if not user_stories:
         return {}
 
-    response = {}
+    response["0"] = 0
+    total_custom_attribute_value = 0
+
+    start_date = sprint_data['estimated_start']
+    end_date = sprint_data['estimated_finish']
+
+    start_date = datetime.strptime(start_date, "%Y-%m-%d")
+    end_date = datetime.strptime(end_date, "%Y-%m-%d")
+
+    for date in range((end_date - start_date).days+1):
+        current_date = start_date+timedelta(days = date)
+        response[str(current_date)] = 0
 
     for user_story in user_stories:
         if user_story['is_closed'] and user_story['finish_date']:
@@ -127,8 +138,12 @@ def get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, au
     response = dict(sorted(response.items()))
 
     for res_key, res_val in response.items():
-        response[res_key] = total_custom_attribute_value - response[res_key]
-        total_custom_attribute_value = response[res_key]
+        if res_key != "0":
+            response[res_key] = total_custom_attribute_value - response[res_key]
+            total_custom_attribute_value = response[res_key]
+            
+    serialized_response = json.dumps(response)
+    r_userstory.set('userstory_business_value_data', serialized_response)
 
     return response
     
