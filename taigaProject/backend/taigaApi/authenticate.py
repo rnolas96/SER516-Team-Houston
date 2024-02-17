@@ -26,7 +26,7 @@ def authenticate(username, password):
 
     except requests.exceptions.RequestException as e:
         # Handle authentication failure and print an error message
-        
-        print(f"{auth_token}")
+       
+        print(f"{auth_token}")       
         print(f"Authentication failed: {e}")
         return None
