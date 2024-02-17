@@ -28,7 +28,7 @@ def get_sprintwise_task_count(project_id, auth_token):
         
     return sprintwise_open_task_count
 
-#F unction to calculate average cycle time for tasks which belong to a specific sprint
+# Function to calculate average cycle time for tasks which belong to a specific sprint
 def get_cycle_time_by_sprint_id(sprint_id, project_id, auth_token):
 
     closed_sprint_tasks = get_closed_tasks_for_sprint(sprint_id, project_id, auth_token)
