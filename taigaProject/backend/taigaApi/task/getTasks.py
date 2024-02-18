@@ -84,8 +84,6 @@ def get_closed_tasks_for_sprint(sprint_id, project_id, auth_token):
     else:
         return None
     
-
-
 # Function to retrieve all tasks for a specific project from the Taiga API
 def get_all_tasks(project_id, auth_token):
 

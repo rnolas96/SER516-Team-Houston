@@ -30,8 +30,6 @@ from taigaApi.task.getTaskHistory import get_cycle_time
 
 # Function to calculate  cycle time for tasks which belong to a specific sprint
 def get_sprintwise_task_cycle_time(project_id, auth_token):
-
-
     closed_tasks = get_closed_tasks(project_id, auth_token)
     closed_tasks_response = {}
 
