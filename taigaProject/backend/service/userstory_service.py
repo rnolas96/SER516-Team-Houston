@@ -1,10 +1,14 @@
 import datetime
+
+import threading
+
 from datetime import datetime, timedelta
 from taigaApi.milestone.getMilestoneById import get_milestone_by_id
 from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story
 import redis
 import json
 from taigaApi.task.getTasks import get_tasks_by_milestone
+from fastapi import HTTPException
 
 r_userstory = redis.StrictRedis(host='localhost', port=6379, db=0)
 
@@ -51,7 +55,24 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
     -------
     A map of date and remaining story points value for every day until end of the sprint.
     """
+    r_userstory.flushdb()
 
+    response = {}
+    
+    serialized_cached_data = r_userstory.get(f'userstory_full_storypoint_data:{sprint_id}')
+    if serialized_cached_data:
+
+        background_thread = threading.Thread(target=storypoint_burndown_for_sprint_process, args=(sprint_id, auth_token))
+        background_thread.start()
+                
+        response = json.loads(serialized_cached_data)
+
+        return response
+    
+    response = storypoint_burndown_for_sprint_process(sprint_id, auth_token)
+    return response
+
+def storypoint_burndown_for_sprint_process(sprint_id, auth_token):
     #get sprint info 
     sprint_data = get_milestone_by_id(sprint_id, auth_token)
     user_stories = sprint_data['user_stories']
@@ -67,7 +88,9 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
                 
             if user_story['finish_date']  :
                     
-                finish_date = datetime.fromisoformat(user_story['finish_date'].replace('Z', '+00:00')).strftime('%Y-%m-%d')
+                finish_date = datetime.strptime(user_story['finish_date'],"%Y-%m-%dT%H:%M:%S.%fZ")
+                finish_date = finish_date.strftime("%Y-%m-%d")
+
                 if(finish_date in date_storypoint_map):
                     date_storypoint_map[finish_date] += user_story['total_points']
                 else:
@@ -79,7 +102,13 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
         if current_date.strftime('%Y-%m-%d') in date_storypoint_map:
             total_story_points -= date_storypoint_map[current_date.strftime('%Y-%m-%d')]
         result[current_date.strftime("%Y-%m-%d")] = total_story_points
-                         
+
+    serialized_response = json.dumps(result)
+    serialized_cached_data = r_userstory.get(f'userstory_full_storypoint_data:{sprint_id}')
+
+
+    if serialized_cached_data != serialized_response:
+            r_userstory.set(f'userstory_full_storypoint_data:{sprint_id}', serialized_response)     
 
     return result
 
@@ -99,12 +128,27 @@ def get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, au
     -------
     A map of date and business value completed.
     """
-    response = {}
-    
-    serialized_cached_data = r_userstory.get('userstory_business_value_data')
-    if serialized_cached_data:
-        response = json.loads(serialized_cached_data)
+    try:
+        response = {}
+        
+        serialized_cached_data = r_userstory.get(f'userstory_business_value_data:{sprint_id}')
+        if serialized_cached_data:
+
+            background_thread = threading.Thread(target=userstory_custom_attribute_burndown_for_sprint_process, args=(project_id, sprint_id, auth_token, custom_attribute_name))
+            background_thread.start()
+                    
+            response = json.loads(serialized_cached_data)
+
+            return response
+        
+        response = userstory_custom_attribute_burndown_for_sprint_process(project_id, sprint_id, auth_token, custom_attribute_name)
         return response
+    except:
+        raise HTTPException(status_code=401, detail="Missing custom attribute")
+    
+def userstory_custom_attribute_burndown_for_sprint_process(project_id, sprint_id, auth_token, custom_attribute_name):
+
+    response = {}
 
     sprint_data = get_milestone_by_id(sprint_id, auth_token)
     user_stories = sprint_data['user_stories']
@@ -123,7 +167,7 @@ def get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, au
 
     for date in range((end_date - start_date).days+1):
         current_date = start_date+timedelta(days = date)
-        response[str(current_date)] = 0
+        response[current_date.strftime("%Y-%m-%d")] = 0
 
     for user_story in user_stories:
 
@@ -133,25 +177,33 @@ def get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, au
         total_custom_attribute_value += int(custom_attribute_data[custom_attribute_type_id])
 
         if user_story['is_closed'] and user_story['finish_date']:
-            current_date = datetime.fromisoformat(user_story['finish_date'].split("T")[0])
-            if str(current_date) in response:
-                response[str(current_date)] += int(custom_attribute_data[custom_attribute_type_id])
+            current_date = datetime.strptime(user_story['finish_date'],"%Y-%m-%dT%H:%M:%S.%fZ") 
+            
+            prepared_current_date = current_date.strftime("%Y-%m-%d")
+            
+            if prepared_current_date in response:
+                response[prepared_current_date] += int(custom_attribute_data[custom_attribute_type_id])
             else:
-                response[str(current_date)] = int(custom_attribute_data[custom_attribute_type_id])
+                response[prepared_current_date] = int(custom_attribute_data[custom_attribute_type_id])
 
     response["0"] = total_custom_attribute_value
 
     response = dict(sorted(response.items()))
 
+    temp = ""
+
     for res_key, res_val in response.items():
         if res_key != "0":
+            temp=res_key
             response[res_key] = total_custom_attribute_value - response[res_key]
             total_custom_attribute_value = response[res_key]
 
-
     serialized_response = json.dumps(response)
+    serialized_cached_data = r_userstory.get(f'userstory_business_value_data:{sprint_id}')
 
-    r_userstory.set('userstory_business_value_data', serialized_response)
+
+    if serialized_cached_data != serialized_response:
+            r_userstory.set(f'userstory_business_value_data:{sprint_id}', serialized_response)
 
     return response
 
@@ -167,7 +219,22 @@ def get_partial_storypoint_burndown_for_sprint(sprint_id, auth_token):
     -------
     A map of date and partial storypoints value completed.
     """
+    response = {}
+    
+    serialized_cached_data = r_userstory.get(f'userstory_partial_storypoint_data:{sprint_id}')
+    if serialized_cached_data:
 
+        background_thread = threading.Thread(target=partial_storypoint_burndown_for_sprint_process, args=(sprint_id, auth_token))
+        background_thread.start()
+                
+        response = json.loads(serialized_cached_data)
+
+        return response
+    
+    response = partial_storypoint_burndown_for_sprint_process(sprint_id, auth_token)
+    return response
+
+def partial_storypoint_burndown_for_sprint_process(sprint_id, auth_token):
     #get sprint info 
     sprint_data = get_milestone_by_id(sprint_id, auth_token)
     user_stories = sprint_data['user_stories']
@@ -230,6 +297,12 @@ def get_partial_storypoint_burndown_for_sprint(sprint_id, auth_token):
 
 
         result[current_date.strftime("%Y-%m-%d")]= total_points_for_sprint
+
+    serialized_response = json.dumps(result)
+    serialized_cached_data = r_userstory.get(f'userstory_partial_storypoint_data:{sprint_id}')
+
+    if serialized_cached_data != serialized_response:
+            r_userstory.set(f'userstory_partial_storypoint_data:{sprint_id}', serialized_response)
 
     return result
     

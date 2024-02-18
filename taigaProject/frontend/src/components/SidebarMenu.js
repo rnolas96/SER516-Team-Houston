@@ -1,7 +1,7 @@
 import React from 'react'
 // import { Sidebar } from 'flowbite-react'
 // import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
-import { Sidebar, Menu, MenuItem, useProSidebar, menuClasses } from "react-pro-sidebar";
+import { Sidebar, Menu, MenuItem, useProSidebar, menuClasses, sidebarClasses } from "react-pro-sidebar";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
@@ -64,41 +64,41 @@ export default function SidebarMenu() {
         
     // </div>
     <div className='font-sans font-semibold'>
-    <div id="app" style={({ height: "100vh" }, { display: "flex", flexDirection: "row" })}>
-    <Sidebar
-        rootStyles={{
-          borderColor: "rgb(0, 249, 249)",
-          // backgroundColor: 'rgb(0, 249, 249)'
-          ['.' + menuClasses.button]: {
-            '&:hover' : {
-              backgroundColor: '#9CAF88',
-              transitionDuration: '0.3s',
-              // colors: '#000000',
+      <div id="app" style={({ height: "100vh" }, { display: "flex", flexDirection: "row" })}>
+        <Sidebar
+          rootStyles={{
+            ['.' + menuClasses.button]: {
+              '&:hover' : {
+                transitionDuration: '0.3s',
+                backgroundColor: "#FFC72C"
+                // colors: '#000000',
+              }
+            },
+            [`.${sidebarClasses.container}`]: {
+              background: 'linear-gradient(to right, #781d40 0%, #a01d40 100%)'
             }
-          }
-        }}
-        backgroundColor="rgb(0, 249, 249)"
-        rtl={false}
-        style={{ height: "100vh" }}>
-      <Menu>
-        <MenuItem
-          icon={<MenuOutlinedIcon />}
-          
-          onClick={() => {
-            collapseSidebar();
           }}
-          style={{ textAlign: "center" }}
-        >
-          {" "}
-        </MenuItem>
+          rtl={false}
+          style={{ height: "100vh" }}>
+          <Menu>
+            <MenuItem
+              icon={<MenuOutlinedIcon />}
+              
+              onClick={() => {
+                collapseSidebar();
+              }}
+              style={{ textAlign: "center" }}
+            >
+              {" "}
+            </MenuItem>
 
-        <MenuItem active icon={<HomeOutlinedIcon />} component={<Link to={"/"} />}>Home</MenuItem>
-        <MenuItem active icon={<PeopleOutlinedIcon />} component={<Link to={"/burndowncharts"} />}>Burndown Charts</MenuItem>
-        <MenuItem active icon={<ContactsOutlinedIcon />} component={<Link to={"/cycletime"} />}>Cycle Time</MenuItem>
-        <MenuItem active icon={<ReceiptOutlinedIcon />} component={<Link to={"/leadtime"} />}>Lead Time</MenuItem>
-      </Menu>
-    </Sidebar>
-    </div>
+            <MenuItem active icon={<HomeOutlinedIcon />} component={<Link to={"/"} />}>Home</MenuItem>
+            <MenuItem active icon={<PeopleOutlinedIcon />} component={<Link to={"/burndowncharts"} />}>Burndown Charts</MenuItem>
+            <MenuItem active icon={<ContactsOutlinedIcon />} component={<Link to={"/cycletime"} />}>Cycle Time</MenuItem>
+            <MenuItem active icon={<ReceiptOutlinedIcon />} component={<Link to={"/leadtime"} />}>Lead Time</MenuItem>
+          </Menu>
+        </Sidebar>
+      </div>
     </div>
   )
 }

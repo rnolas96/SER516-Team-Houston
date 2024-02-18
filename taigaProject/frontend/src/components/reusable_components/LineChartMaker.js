@@ -12,6 +12,10 @@ import {
 
 import 'chart.js/auto';
 
+import Loader from './Loader';
+
+import '../../App.css'
+
 import { Line } from "react-chartjs-2"
 
 ChartJS.register(
@@ -24,7 +28,7 @@ ChartJS.register(
     Legend
 );
 
-export default function LineChartMaker({props}) {
+export default function LineChartMaker(props) {
 
     console.log("props", props);
 
@@ -36,7 +40,7 @@ export default function LineChartMaker({props}) {
         },
         title: {
           display: true,
-          text: props? props.text: "",
+          text: props && props.data? props.data.text: "",
         },
       },
       indexAxis: 'x',
@@ -47,16 +51,19 @@ export default function LineChartMaker({props}) {
       }
     };
     const data = {
-      labels: props? props.labels: [],
-      datasets: props? props.datasets : []
+      labels: props && props.data? props.data.labels: [],
+      datasets: props && props.data? props.data.datasets : []
     };
 
     return (
       <div className='graph-container'>
-        <Line 
-          data = {data} 
-          options = {options}
-        />
+        {props && props.showLoader? 
+          <Loader/> 
+          : <Line 
+            data = {data} 
+            options = {options}
+          /> 
+        }
       </div>
     );
 }
