@@ -8,6 +8,7 @@ from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory,
 import redis
 import json
 from taigaApi.task.getTasks import get_tasks_by_milestone
+from fastapi import HTTPException
 
 r_userstory = redis.StrictRedis(host='localhost', port=6379, db=0)
 
@@ -54,9 +55,11 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
     -------
     A map of date and remaining story points value for every day until end of the sprint.
     """
+    r_userstory.flushdb()
+
     response = {}
     
-    serialized_cached_data = r_userstory.get('userstory_full_storypoint_data')
+    serialized_cached_data = r_userstory.get(f'userstory_full_storypoint_data:{sprint_id}')
     if serialized_cached_data:
 
         background_thread = threading.Thread(target=storypoint_burndown_for_sprint_process, args=(sprint_id, auth_token))
@@ -87,7 +90,7 @@ def storypoint_burndown_for_sprint_process(sprint_id, auth_token):
                     
                 finish_date = datetime.strptime(user_story['finish_date'],"%Y-%m-%dT%H:%M:%S.%fZ")
                 finish_date = finish_date.strftime("%Y-%m-%d")
-                
+
                 if(finish_date in date_storypoint_map):
                     date_storypoint_map[finish_date] += user_story['total_points']
                 else:
@@ -101,11 +104,11 @@ def storypoint_burndown_for_sprint_process(sprint_id, auth_token):
         result[current_date.strftime("%Y-%m-%d")] = total_story_points
 
     serialized_response = json.dumps(result)
-    serialized_cached_data = r_userstory.get('userstory_full_storypoint_data')
+    serialized_cached_data = r_userstory.get(f'userstory_full_storypoint_data:{sprint_id}')
 
 
     if serialized_cached_data != serialized_response:
-            r_userstory.set('userstory_full_storypoint_data', serialized_response)     
+            r_userstory.set(f'userstory_full_storypoint_data:{sprint_id}', serialized_response)     
 
     return result
 
@@ -125,20 +128,23 @@ def get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, au
     -------
     A map of date and business value completed.
     """
-    response = {}
-    
-    serialized_cached_data = r_userstory.get('userstory_business_value_data')
-    if serialized_cached_data:
+    try:
+        response = {}
+        
+        serialized_cached_data = r_userstory.get(f'userstory_business_value_data:{sprint_id}')
+        if serialized_cached_data:
 
-        background_thread = threading.Thread(target=userstory_custom_attribute_burndown_for_sprint_process, args=(project_id, sprint_id, auth_token, custom_attribute_name))
-        background_thread.start()
-                
-        response = json.loads(serialized_cached_data)
+            background_thread = threading.Thread(target=userstory_custom_attribute_burndown_for_sprint_process, args=(project_id, sprint_id, auth_token, custom_attribute_name))
+            background_thread.start()
+                    
+            response = json.loads(serialized_cached_data)
 
+            return response
+        
+        response = userstory_custom_attribute_burndown_for_sprint_process(project_id, sprint_id, auth_token, custom_attribute_name)
         return response
-    
-    response = userstory_custom_attribute_burndown_for_sprint_process(project_id, sprint_id, auth_token, custom_attribute_name)
-    return response
+    except:
+        raise HTTPException(status_code=401, detail="Missing custom attribute")
     
 def userstory_custom_attribute_burndown_for_sprint_process(project_id, sprint_id, auth_token, custom_attribute_name):
 
@@ -193,11 +199,11 @@ def userstory_custom_attribute_burndown_for_sprint_process(project_id, sprint_id
             total_custom_attribute_value = response[res_key]
 
     serialized_response = json.dumps(response)
-    serialized_cached_data = r_userstory.get('userstory_business_value_data')
+    serialized_cached_data = r_userstory.get(f'userstory_business_value_data:{sprint_id}')
 
 
     if serialized_cached_data != serialized_response:
-            r_userstory.set('userstory_business_value_data', serialized_response)
+            r_userstory.set(f'userstory_business_value_data:{sprint_id}', serialized_response)
 
     return response
 
@@ -215,7 +221,7 @@ def get_partial_storypoint_burndown_for_sprint(sprint_id, auth_token):
     """
     response = {}
     
-    serialized_cached_data = r_userstory.get('userstory_partial_storypoint_data')
+    serialized_cached_data = r_userstory.get(f'userstory_partial_storypoint_data:{sprint_id}')
     if serialized_cached_data:
 
         background_thread = threading.Thread(target=partial_storypoint_burndown_for_sprint_process, args=(sprint_id, auth_token))
@@ -293,10 +299,10 @@ def partial_storypoint_burndown_for_sprint_process(sprint_id, auth_token):
         result[current_date.strftime("%Y-%m-%d")]= total_points_for_sprint
 
     serialized_response = json.dumps(result)
-    serialized_cached_data = r_userstory.get('userstory_partial_storypoint_data')
+    serialized_cached_data = r_userstory.get(f'userstory_partial_storypoint_data:{sprint_id}')
 
     if serialized_cached_data != serialized_response:
-            r_userstory.set('userstory_partial_storypoint_data', serialized_response)
+            r_userstory.set(f'userstory_partial_storypoint_data:{sprint_id}', serialized_response)
 
     return result
     
