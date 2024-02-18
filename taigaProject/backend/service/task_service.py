@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from datetime import datetime, timedelta
 from itertools import groupby
 from taigaApi.task.getTasks import TaskFetchingError, get_closed_tasks, get_milestone_name, get_tasks_by_milestone
 from taigaApi.task.getTaskHistory import get_cycle_time, get_lead_time
@@ -30,7 +31,7 @@ def get_sprintwise_task_cycle_time(project_id, auth_token):
                 task_response.append(
                     {
                         "task_id": closed_task.get("id"),
-                        "cycle_time": get_cycle_time(closed_task, auth_token)
+                        "lead_time": get_lead_time(closed_task, auth_token)
                         }
                 )
 
@@ -38,7 +39,7 @@ def get_sprintwise_task_cycle_time(project_id, auth_token):
             else:
                 closed_tasks_response[sprint_name] = [{
                     "task_id": closed_task.get("id"),
-                     "cycle_time": get_cycle_time(closed_task, auth_token)
+                     "lead_time": get_lead_time(closed_task, auth_token)
                 }]
 
         return closed_tasks_response
