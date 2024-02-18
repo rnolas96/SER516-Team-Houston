@@ -6,18 +6,15 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
-import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
-import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 // import { RxHamburgerMenu } from "react-icons/rx";
 import '../App.css'
 import { Link } from 'react-router-dom';
-import { colors } from '@mui/material';
 
 
 export default function SidebarMenu() {
   
-  const { collapseSidebar, toggleSidebar, collapsed, toggled, broken, rtl } = useProSidebar();
+  const { collapseSidebar, toggleSidebar, collapsed, toggled, broken } = useProSidebar();
   
   const toggle = () => {
   toggleSidebar();
@@ -31,57 +28,38 @@ export default function SidebarMenu() {
   };
   
   return (
-    // <div className="height-full">
-    //   <div className='top-0 bg-blue-950'>
-    //   <div className='pt-6 pb-3 pl-5'>
-    //     <span className='text-white bg-red hover:opacity-50 transition-opacity'><RxHamburgerMenu /></span>
-    //   </div>
-    //   <Sidebar className='w-[100%]'>
-    //     <Menu className='bg-blue-950 text-white font-sans font-medium'>
-    //       <MenuItem className='hover:text-blue-950'>
-    //         <Link to="/">
-    //           Home
-    //         </Link>
-    //       </MenuItem>
-    //       <MenuItem className='hover:text-blue-950'>
-    //         <Link to="/burndowncharts">
-    //           Burndown Charts
-    //         </Link>
-    //       </MenuItem>
-    //       <MenuItem className='hover:text-blue-950'>
-    //         <Link to="/cycletime">
-    //           Cycle Time
-    //         </Link>
-    //       </MenuItem>
-    //       <MenuItem className='hover:text-blue-950'>
-    //         <Link to="/leadtime">
-    //           Lead Time
-    //         </Link>
-    //       </MenuItem>
-    //     </Menu>
-    //   </Sidebar>
-    //   </div>
-        
-    // </div>
     <div className='font-sans font-semibold'>
     <div id="app" style={({ height: "100vh" }, { display: "flex", flexDirection: "row" })}>
     <Sidebar
         rootStyles={{
-          borderColor: "rgb(0, 249, 249)",
+          borderColor: "white",
           // backgroundColor: 'rgb(0, 249, 249)'
           ['.' + menuClasses.button]: {
             '&:hover' : {
-              backgroundColor: '#9CAF88',
+              backgroundColor: '#ffe59f',
               transitionDuration: '0.3s',
-              // colors: '#000000',
             }
           }
         }}
-        backgroundColor="rgb(0, 249, 249)"
-        rtl={false}
+        backgroundColor="white"
         style={{ height: "100vh" }}>
-      <Menu>
+      <Menu
+        rootStyles={{
+          [`.${menuClasses.mI}`]: {
+            backgroundColor: 'red',
+          },
+        }}
+        menuItemStyles={{
+          button: {
+            ['&.active']: {
+              backgroundColor: '#ffe59f',
+              color: '#ffe59f'
+            }
+          }
+        }}
+      >
         <MenuItem
+          className='mI'
           icon={<MenuOutlinedIcon />}
           
           onClick={() => {
@@ -92,10 +70,10 @@ export default function SidebarMenu() {
           {" "}
         </MenuItem>
 
-        <MenuItem active icon={<HomeOutlinedIcon />} component={<Link to={"/"} />}>Home</MenuItem>
-        <MenuItem active icon={<PeopleOutlinedIcon />} component={<Link to={"/burndowncharts"} />}>Burndown Charts</MenuItem>
-        <MenuItem active icon={<ContactsOutlinedIcon />} component={<Link to={"/cycletime"} />}>Cycle Time</MenuItem>
-        <MenuItem active icon={<ReceiptOutlinedIcon />} component={<Link to={"/leadtime"} />}>Lead Time</MenuItem>
+        <MenuItem className='mI' icon={<HomeOutlinedIcon />} component={<Link to={"/"} />}>Home</MenuItem>
+        <MenuItem className='mI' icon={<PeopleOutlinedIcon />} component={<Link to={"/burndowncharts"} />}>Burndown Charts</MenuItem>
+        <MenuItem className='mI' icon={<ContactsOutlinedIcon />} component={<Link to={"/cycletime"} />}>Cycle Time</MenuItem>
+        <MenuItem className='mI' icon={<ReceiptOutlinedIcon />} component={<Link to={"/leadtime"} />}>Lead Time</MenuItem>
       </Menu>
     </Sidebar>
     </div>
