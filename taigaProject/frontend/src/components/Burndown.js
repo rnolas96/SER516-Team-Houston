@@ -14,11 +14,22 @@ export default function Burndown() {
   const [partialStoryPointBurnDownData, setPartialStoryPointBurnDownData] = useState(null);
   const [fullStoryPointBurnDownData, setFullStoryPointBurnDownData] = useState(null);
 
+
+  function doubleCheck(url, updateCall, scenario, authToken) {
+
+    apiCall(url, updateCall, scenario, authToken)
+    let count = 0
+    setTimeout(() => {
+      doubleCheck(url, updateCall, scenario, authToken)
+    }, 30000)
+  }
+
   function apiCall(url, updateCall, scenario, authToken) {
+
     axios.get(url, {
-      headers: {
-        'Authorization': authToken
-      }}
+        headers: {
+          'Authorization': authToken
+        }}
     )
     .then(res => {
 
@@ -41,10 +52,10 @@ export default function Burndown() {
           hoverOffset: 4
         }]
       }
+        updateCall(updated);
+      }
+    );    
     
-      updateCall(updated);
-    }
-    );
   }
 
   useEffect (() => {
@@ -53,14 +64,14 @@ export default function Burndown() {
     console.log("authToken", authToken);
 
     if(!businessValueBurnDownData && authToken)  {
-      apiCall('/api/userstory/business_value_burndown?project_id=1521718&sprint_id=376612', setBusinessValueBurnDownData, "business value", authToken);
+      doubleCheck('/api/userstory/business_value_burndown?project_id=1521718&sprint_id=376612', setBusinessValueBurnDownData, "business value", authToken);
     }
 
     if(!partialStoryPointBurnDownData && authToken) {
-      // apiCall('/api/userstory/userstory_burndown?project_id=1522285', setPartialStoryPointBurnDownData, "partial storypoints", authToken);
+      // doubleCheck('/api/userstory/userstory_burndown?project_id=1522285', setPartialStoryPointBurnDownData, "partial storypoints", authToken);
     }
     if(!fullStoryPointBurnDownData && authToken) {
-      // apiCall('/api/userstory/userstory_burndown?project_id=1522285', setFullStoryPointBurnDownData, "partial storypoints", authToken);
+      // doubleCheck('/api/userstory/userstory_burndown?project_id=1522285', setFullStoryPointBurnDownData, "partial storypoints", authToken);
     }
 
   }, []);
