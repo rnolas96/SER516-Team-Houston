@@ -229,7 +229,7 @@ def get_partial_storypoint_burndown_for_sprint(sprint_id, auth_token):
             total_points_for_sprint -= partial_story_points
 
 
-        result[current_date.date()]= total_points_for_sprint
+        result[current_date.strftime("%Y-%m-%d")]= total_points_for_sprint
 
     return result
     
