@@ -46,7 +46,6 @@ export default function Burndown() {
           borderColor: 'rgb(255, 99, 132)',
           backgroundColor: [
             'rgb(255, 99, 132)',
-            'rgb(54, 162, 235)',
             'rgb(255, 205, 86)'
           ],
           hoverOffset: 4
@@ -66,12 +65,11 @@ export default function Burndown() {
     if(!businessValueBurnDownData && authToken)  {
       doubleCheck('/api/userstory/business_value_burndown?project_id=1521718&sprint_id=376612', setBusinessValueBurnDownData, "business value", authToken);
     }
-
     if(!partialStoryPointBurnDownData && authToken) {
-      // doubleCheck('/api/userstory/userstory_burndown?project_id=1522285', setPartialStoryPointBurnDownData, "partial storypoints", authToken);
+      doubleCheck('/api/userstory/partial_userstory_burndown?sprint_id=376612', setPartialStoryPointBurnDownData, "partial storypoints", authToken);
     }
     if(!fullStoryPointBurnDownData && authToken) {
-      // doubleCheck('/api/userstory/userstory_burndown?project_id=1522285', setFullStoryPointBurnDownData, "partial storypoints", authToken);
+      doubleCheck('/api/userstory/userstory_burndown?sprint_id=376612', setFullStoryPointBurnDownData, "full storypoints", authToken);
     }
 
   }, []);

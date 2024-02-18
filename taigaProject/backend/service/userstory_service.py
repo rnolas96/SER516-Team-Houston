@@ -54,7 +54,22 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
     -------
     A map of date and remaining story points value for every day until end of the sprint.
     """
+    response = {}
+    
+    serialized_cached_data = r_userstory.get('userstory_full_storypoint_data')
+    if serialized_cached_data:
 
+        background_thread = threading.Thread(target=storypoint_burndown_for_sprint_process, args=(sprint_id, auth_token))
+        background_thread.start()
+                
+        response = json.loads(serialized_cached_data)
+
+        return response
+    
+    response = storypoint_burndown_for_sprint_process(sprint_id, auth_token)
+    return response
+
+def storypoint_burndown_for_sprint_process(sprint_id, auth_token):
     #get sprint info 
     sprint_data = get_milestone_by_id(sprint_id, auth_token)
     user_stories = sprint_data['user_stories']
@@ -71,6 +86,8 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
             if user_story['finish_date']  :
                     
                 finish_date = datetime.strptime(user_story['finish_date'],"%Y-%m-%dT%H:%M:%S.%fZ")
+                finish_date = finish_date.strftime("%Y-%m-%d")
+                
                 if(finish_date in date_storypoint_map):
                     date_storypoint_map[finish_date] += user_story['total_points']
                 else:
@@ -82,7 +99,13 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
         if current_date.strftime('%Y-%m-%d') in date_storypoint_map:
             total_story_points -= date_storypoint_map[current_date.strftime('%Y-%m-%d')]
         result[current_date.strftime("%Y-%m-%d")] = total_story_points
-                         
+
+    serialized_response = json.dumps(result)
+    serialized_cached_data = r_userstory.get('userstory_full_storypoint_data')
+
+
+    if serialized_cached_data != serialized_response:
+            r_userstory.set('userstory_full_storypoint_data', serialized_response)     
 
     return result
 
@@ -190,7 +213,22 @@ def get_partial_storypoint_burndown_for_sprint(sprint_id, auth_token):
     -------
     A map of date and partial storypoints value completed.
     """
+    response = {}
+    
+    serialized_cached_data = r_userstory.get('userstory_partial_storypoint_data')
+    if serialized_cached_data:
 
+        background_thread = threading.Thread(target=partial_storypoint_burndown_for_sprint_process, args=(sprint_id, auth_token))
+        background_thread.start()
+                
+        response = json.loads(serialized_cached_data)
+
+        return response
+    
+    response = partial_storypoint_burndown_for_sprint_process(sprint_id, auth_token)
+    return response
+
+def partial_storypoint_burndown_for_sprint_process(sprint_id, auth_token):
     #get sprint info 
     sprint_data = get_milestone_by_id(sprint_id, auth_token)
     user_stories = sprint_data['user_stories']
@@ -253,6 +291,12 @@ def get_partial_storypoint_burndown_for_sprint(sprint_id, auth_token):
 
 
         result[current_date.strftime("%Y-%m-%d")]= total_points_for_sprint
+
+    serialized_response = json.dumps(result)
+    serialized_cached_data = r_userstory.get('userstory_partial_storypoint_data')
+
+    if serialized_cached_data != serialized_response:
+            r_userstory.set('userstory_partial_storypoint_data', serialized_response)
 
     return result
     
