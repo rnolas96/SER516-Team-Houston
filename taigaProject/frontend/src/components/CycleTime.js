@@ -32,7 +32,7 @@ export default function CycleTime() {
   };
 
   return (
-    <div className='container-full bg-gradient-to-r from-[#00f9f9] to-[#ffffff]'>
+    <div className='container-full bg-white'>
       <div className='route-container'>        
         <BarChartMaker props={data}/>
       </div>

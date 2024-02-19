@@ -1,4 +1,15 @@
 @tailwind base;
+
+@layer base {
+  html {
+    @apply text-neutral-800;
+  }
+  html.dark {
+    @apply text-neutral-50;
+    @apply bg-neutral-800;
+  }
+}
+
 @tailwind components;
 @tailwind utilities;
 
@@ -90,6 +101,37 @@ body {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.tabElements {
+  cursor: pointer;
+  border: none;
+  transition: ease;
+  transition-duration: 500ms;
+  background-color: white;
+  /* border-radius: 0.6rem; */
+  transition-property: background-color;
+  /* padding-inline: 0.8rem; */
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  /* width: 12rem; */
+  font-size: small;
+  border-bottom: none;
+}
+
+
+.selectedTabElements {
+  background-color: white;
+  border-bottom: 2px solid #ffd053;
+}
+
+.tabElements:hover {
+  /* box-shadow: 5px 5px 10px lightgrey; */
+  /* transition-property: box-shadow; */
+  transition-property: background-color;
+  background-color: #ffe59f;
+  transition: ease;
+  transition-duration: 500ms;
 }
 
 .visually-hidden {

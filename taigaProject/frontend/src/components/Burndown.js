@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useEffect, useState } from 'react'
 import '../App.css'
 import LineChartMaker from './reusable_components/LineChartMaker'
-import commonApiCall from '../commons'
 import SidebarMenu from './SidebarMenu';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
@@ -105,8 +104,7 @@ export default function Burndown() {
     })
   }
 
-  useEffect (() => {
-
+  useEffect(() => {
     const callApis = () => {
 
       const authToken = localStorage.getItem('authToken');
@@ -134,13 +132,16 @@ export default function Burndown() {
   }, [sprintId, projectId]);
 
   return (
-    <div className='container-full bg-gradient-to-r from-[#FFB32C] to-[#ffd12c]'>
-      <div className='route-container'>
-        <Tabs style={{display: "flex", justifyContent: "space-between", flexDirection:"column"}}>
-          <TabList style={{display: 'flex', justifyContent: "space-between"}}>
-            <Tab>Partial SP Burndown</Tab>
-            <Tab>Full SP Burndown</Tab>
-            <Tab>Business Value Burndown</Tab>
+    <div className="container-full bg-white ">
+      <div className="route-container flex flex-col">
+        <Tabs style={{ fontFamily: 'Poppins', fontWeight: '500', fontSize: '0.9rem', border: 'none', justifyContent: 'space-between', minHeight: '60%', display: 'flex', flexDirection: 'column',  }}>
+          <TabList style={{display: 'flex', justifyContent: "left", border: 'none' }}>
+            <Tab
+            className={'tabElements'} selectedClassName="selectedTabElements"><p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">Story-Points vs Sprints</p></Tab>
+            <Tab
+            className={'tabElements'} selectedClassName="selectedTabElements"><p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">Business value vs Sprint</p></Tab>
+            <Tab
+            className={'tabElements'} selectedClassName="selectedTabElements" ><p className="px-[0.8rem] text-center">Task vs Story</p></Tab>
           </TabList>
           <div style={{display: "flex", flexDirection:"column", justifyContent: "space-between", width: "50%"}}>
             <span className='text-[1.2rem] font-bold font-sans'>Project Slug:</span>
@@ -169,5 +170,5 @@ export default function Burndown() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }
