@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/plots": "^2.1.13",
+    "@sgratzl/chartjs-chart-boxplot": "^4.2.8",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -10,6 +12,8 @@
     "axios": "^1.6.7",
     "buffer": "^6.0.3",
     "chart.js": "^4.4.1",
+    "chartjs-adapter-moment": "^1.0.1",
+    "chartjs-chart-box-and-violin-plot": "^2.2.0",
     "flowbite-react": "^0.7.2",
     "package.json": "^0.0.0",
     "postcss": "^8.4.33",
