@@ -9,7 +9,7 @@ This project is a Python script for interacting with the Taiga API to perform va
 Before running the script, make sure you have the following installed:
 
 - Python 3
-- latest Node package
+- node version >= 20.0
 - Required Python packages (install using `pip install -r requirements.txt`)
 - Taiga account with API access
 - Taiga project slug
