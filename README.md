@@ -78,3 +78,9 @@ To interact with the Taiga API using the provided Python script, you will need t
      sudo service redis-server start
      ```
 your default redis server port = 6379
+
+
+## Docker Setup
+### run the docker container
+ ```
+docker-compose up -d
