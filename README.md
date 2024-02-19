@@ -84,3 +84,17 @@ your default redis server port = 6379
 ### run the docker container
  ```
 docker-compose up -d
+
+ ```
+
+## Unit Testing
+
+**1. goto taigaproject/backend/test directory
+**2.  ```
+     python -m pytest 
+     ```
+**3.
+   for specific file:
+      ```
+     python -m pytest filename.py
+     ```
