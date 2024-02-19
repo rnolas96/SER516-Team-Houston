@@ -89,7 +89,7 @@ docker-compose up -d
 
 ## Unit Testing
 
-1. goto taigaproject/backend/test directory **
+1. goto taigaproject/backend/test directory 
 2.  ```  
      python -m pytest 
      ```
