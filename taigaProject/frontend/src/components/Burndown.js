@@ -135,7 +135,6 @@ export default function Burndown() {
     };
 
     callApis();
-
     const intervalId = setInterval(callApis, 30000);
     return () => clearInterval(intervalId);
   }, [sprintId, projectId]);

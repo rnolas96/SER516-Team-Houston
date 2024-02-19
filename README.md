@@ -49,3 +49,38 @@ To interact with the Taiga API using the provided Python script, you will need t
 2. **Select the Project**: Navigate to the project for which you want to obtain the project slug.
 
 3. **Project URL**: Look at the URL in your browser's address bar while you are inside the project. The project slug is the part of the URL that comes after the last slash ("/"). For example:
+
+## Redis Setup for Windows
+
+### 1. Install WSL (Windows Subsystem for Linux)
+   - Open PowerShell and type the following command:
+     ```
+     wsl --install
+     ```
+
+### 2. Install Ubuntu from Microsoft Store
+   - Open the Microsoft Store and search for "Ubuntu".
+   - Install Ubuntu from the store.
+
+### 3. Install Redis in Ubuntu
+   - Open the Ubuntu terminal and update the package list by typing:
+     ```
+     sudo apt-get update
+     ```
+   - Install Redis by typing:
+     ```
+     sudo apt-get install redis
+     ```
+
+### 4. Start the Redis Server
+   - Start the Redis server by typing:
+     ```
+     sudo service redis-server start
+     ```
+your default redis server port = 6379
+
+
+## Docker Setup
+### run the docker container
+ ```
+docker-compose up -d
