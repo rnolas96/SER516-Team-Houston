@@ -106,8 +106,11 @@ def get_all_tasks(project_id, auth_token):
         return all_tasks
     else:
         return None
+    
+
 
 def get_milestone_name(project_id, auth_token):
+
     # Get Taiga API URL from environment variables
     taiga_url = os.getenv('TAIGA_URL')
 

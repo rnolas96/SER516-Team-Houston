@@ -115,7 +115,6 @@ export default function CycleTime() {
   
   return (
     <div className='container-full'>
-      <SidebarMenu />
       <div className='route-container' style={{display: "flex", flexDirection:"column", justifyContent: "space-between"}}>
         <div style={{marginTop: 50}}>
           <span className='text-[1.2rem] font-bold font-sans'>Project Slug:</span>
@@ -126,6 +125,7 @@ export default function CycleTime() {
           {cycleTimeData &&
             <Box {...cycleTimeData} />}
         </div>
+
       </div>
     </div>
   )

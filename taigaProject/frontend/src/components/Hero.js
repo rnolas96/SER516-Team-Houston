@@ -2,7 +2,6 @@ import React from 'react'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../App.css'
-import SidebarMenu from './SidebarMenu'
 
 export default function Hero() {
 
@@ -50,18 +49,19 @@ export default function Hero() {
   }, [])
   
   return (
-    <div className='container-full'>
-      <SidebarMenu />
+    <div className='container-full bg-white'>
       <div className='route-container'>
         {!loginState?
           <div style={{display: "flex", flexDirection:"column", justifyContent: "space-between"}}>
-            <input value={userName} onChange={onChangeUserName} style={{backgroundColor: "gray", marginBottom: "20px"}}/>
-            <input value={password} onChange={onChangePassword}  style={{backgroundColor: "gray", marginBottom: "20px"}}/>
-            <button style={{backgroundColor: "blue"}} onClick = {() => setAuthToken()}>Submit</button>
+            <span className='text-[1.2rem] font-bold font-sans'>Username:</span>
+            <input className='bg-white border-2 rounded-xl hover:rounded-lg duration-300 border-[#ffd053] active:border-[#ffd053] h-[2.3rem] px-3 text-[1rem] font-sans' type='username' value={userName} onChange={onChangeUserName} aria-label='username' style={{marginBottom: "20px"}}/>
+            <span className=' text-[1.2rem] font-bold font-sans'>Password:</span>
+            <input className='bg-white border-2 rounded-xl hover:rounded-lg duration-300 border-[#ffd053] active:border-[#ffd053] h-[2.3rem] px-3' type='password' value={password} onChange={onChangePassword} style={{marginBottom: "20px"}}/>
+            <button className=' p-4 border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-lg' onClick = {() => setAuthToken()}>Submit</button>
           </div>
-        : <div>
-            <span className=' teamName'>SER-516 Team Houston</span><br/>
-            <span className=' heading'>Contributors:</span><br/>
+        : <div className=' text-left text-xl font-medium align-center mx-auto font-sans'>
+            <p className=' text-4xl font-bold'>SER-516 Team Houston</p><br/>
+            <p className=' text-3xl mt-[-0.5rem] mb-[-1rem] font-semibold'>Contributors:</p><br/>
             Raajveer Khattar<br/>
             Rahul Manoj<br/>
             Akash Vijayasarathy<br/>

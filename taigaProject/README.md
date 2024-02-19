@@ -34,7 +34,7 @@
 
 - For testing with FAST API, deploy python code like so,
 
-   ``` uvicorn backend/reactApi/FastApiTest:app --reload ``` 
+   ```python -m uvicorn main:app ``` 
 
 ### 3. Running react code
 
@@ -44,7 +44,7 @@
 
 ### 4. Docker Setup
 
-- (To be added)
+- # docker-compose up -d
 
 
 
