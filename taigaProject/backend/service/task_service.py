@@ -20,6 +20,8 @@ def get_sprintwise_task_cycle_time(project_id, auth_token):
 
     closed_tasks_response = {}
 
+    milestones_name = get_milestone_name(project_id, auth_token)
+
     if closed_tasks is not None:
         for closed_task in closed_tasks:
             print("closedtask--------------------", closed_task)
