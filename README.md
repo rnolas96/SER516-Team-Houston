@@ -85,7 +85,7 @@ To interact with the Taiga API using the provided Python script, you will need t
 
 
 ### FrontEnd
-
+**goto SER516-Team-Houston directory and type**
 1. ```
    cd taigaproject/frontend
    ```
