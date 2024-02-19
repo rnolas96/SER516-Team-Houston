@@ -6,7 +6,7 @@ userstory_router = APIRouter()
 @userstory_router.get("/userstory_burndown")
 def get_userstories(request:Request,sprint_id: int):
     access_token = request.headers.get('Authorization')
-    if(access_token):
+    if access_token :
         return get_storypoint_burndown_for_sprint(sprint_id, access_token)
     else:
         raise HTTPException(status_code=401, detail="Missing or invalid access token")
@@ -14,7 +14,7 @@ def get_userstories(request:Request,sprint_id: int):
 @userstory_router.get("/business_value_burndown")
 def get_userstories_business_value_burndown(request:Request, project_id: int, sprint_id: int):
     access_token = request.headers.get('Authorization')
-    if(access_token):
+    if access_token :
         return get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, access_token, "BV")
     else:
         raise HTTPException(status_code=401, detail="Missing or invalid access token")
@@ -24,7 +24,7 @@ def get_userstories_business_value_burndown(request:Request, project_id: int, sp
 @userstory_router.get("/partial_userstory_burndown")
 def get_partial_userstories_burndown(request:Request,sprint_id: int):
     access_token = request.headers.get('Authorization')
-    if(access_token):
+    if access_token :
         return get_partial_storypoint_burndown_for_sprint(sprint_id, access_token)
     else:
         raise HTTPException(status_code=401, detail="Missing or invalid access token")
