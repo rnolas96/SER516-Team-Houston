@@ -1,5 +1,3 @@
-from datetime import datetime, timedelta
-from itertools import groupby
 from taigaApi.task.getTasks import get_closed_tasks, get_milestone_name
 from taigaApi.task.getTaskHistory import get_lead_time
 

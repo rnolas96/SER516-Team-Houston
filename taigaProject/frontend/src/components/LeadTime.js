@@ -4,8 +4,8 @@ import SidebarMenu from './SidebarMenu'
 import axios from 'axios'
 import BarChartMaker from './reusable_components/BarChartMaker';
 
-
 export default function LeadTime() {
+  
 const [averageLeadTimeData, setAverageLeadTimeData] = useState(null);
   function apiCall(url, updateCall, authToken) {
     axios.get(url, {
@@ -37,13 +37,15 @@ const [averageLeadTimeData, setAverageLeadTimeData] = useState(null);
     }
     );
   }
+  
   useEffect (() => {
     const authToken = localStorage.getItem('authToken');
     console.log("authToken", authToken);
     if(!averageLeadTimeData && authToken) {
       apiCall('/api/task/lead_time?project_id=1522285', setAverageLeadTimeData, authToken);
-    }
+    }    
   }, []);
+  
   return (
     <div className='container-full'>
       <SidebarMenu />
