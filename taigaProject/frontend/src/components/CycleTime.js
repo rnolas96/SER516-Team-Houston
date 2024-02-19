@@ -116,10 +116,10 @@ export default function CycleTime() {
   return (
     <div className='container-full'>
       <div className='route-container' style={{display: "flex", flexDirection:"column", justifyContent: "space-between"}}>
-        <div style={{marginTop: 50}}>
-          <span className='text-[1.2rem] font-bold font-sans'>Project Slug:</span>
-          <input className='bg-white border-2 rounded-xl hover:rounded-none duration-300 border-black h-[2.3rem] px-3 text-[1rem] font-sans' type='username' value={projectSlug} onChange={onChangeProjectSlug} aria-label='username' style={{marginBottom: "20px"}}/>
-          <button className=' p-4 border-4 border-blue-950 hover:bg-blue-950 duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-none' onClick = {() => setProjectDetails()}>Submit</button>
+        <div style={{marginTop: 50,  display: "flex", flexDirection:"column"}}>
+          <span className='text-[1rem] mb-[0.3rem] font-bold font-sans'>Project Slug:</span>
+          <input className='bg-white border-2 rounded-xl hover:rounded-md duration-300 border-[#ffd053] h-[2.3rem] px-3 text-[1rem] font-sans' type='username' value={projectSlug} onChange={onChangeProjectSlug} aria-label='username' style={{marginBottom: "20px"}}/>
+          <button className=' p-4 border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-md' onClick = {() => setProjectDetails()}>Submit</button>
         </div>
         <div>
           {cycleTimeData &&
