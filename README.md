@@ -15,29 +15,64 @@ Before running the script, make sure you have the following installed:
 
 ## Setup
 
+## Redis Setup for Windows
+
+### 1. Install WSL (Windows Subsystem for Linux)
+   - Open PowerShell and type the following command:
+     ```
+     wsl --install
+     ```
+
+### 2. Install Ubuntu from Microsoft Store
+   - Open the Microsoft Store and search for "Ubuntu".
+   - Install Ubuntu from the store.
+
+### 3. Install Redis in Ubuntu
+   - Open the Ubuntu terminal and update the package list by typing:
+     ```
+     sudo apt-get update
+     ```
+   - Install Redis by typing:
+     ```
+     sudo apt-get install redis
+     ```
+
+### 4. Start the Redis Server
+   - Start the Redis server by typing:
+     ```
+     sudo service redis-server start
+     ```
+your default redis server port = 6379
+
+## Backend Setup
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/ser516asu/SER516-Team-Houston.git
+   git clone https://github.com/ser516asu/SER516-Team-Miami.git
    cd SER516-Team-Houston
    ```
 
-2. Install dependencies:
+2. Type
+   ```
+    cd taigaproject/backend
+   ```
+
+3. Install dependencies:
 
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Create a .env file in the project root and add the following:
+4. Create a .env file in the project root and add the following:
 
    ```bash
    TAIGA_URL=https://api.taiga.io/api/v1
    ```
 
-4. Run the script:
+5. Run the script:
 
    ```bash
-   python3 app.py
+   python -m uvicorn main:app --reload
    ```
 
 ## Getting Taiga Project Slug
@@ -49,3 +84,18 @@ To interact with the Taiga API using the provided Python script, you will need t
 2. **Select the Project**: Navigate to the project for which you want to obtain the project slug.
 
 3. **Project URL**: Look at the URL in your browser's address bar while you are inside the project. The project slug is the part of the URL that comes after the last slash ("/"). For example:
+
+
+### FrontEnd Setup
+**note: goto SER516-Team-Houston directory and then type the following command**
+1. ```
+   cd taigaproject/frontend
+   ```
+2. ```
+   npm install
+   npm start
+   ```
+
+
+
+
