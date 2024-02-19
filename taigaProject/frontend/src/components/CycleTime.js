@@ -7,7 +7,14 @@ import { Box } from '@ant-design/plots';
 
 export default function CycleTime() {
 
+  const [projectSlug, setProjectSlug] = useState(null);
+  const [projectId, setProjectId] = useState(null)
   const [cycleTimeData, setCycleTimeData] = useState({});
+
+  function onChangeProjectSlug(event) {
+    setProjectSlug(event.target.value)
+  }
+
   function apiCall(url, updateCall, authToken) {
     axios.get(url, {
       headers: {
@@ -78,84 +85,48 @@ export default function CycleTime() {
       if(!hasLongList)
         updated['boxType'] = 'boxplot'
 
-      setCycleTimeData(updated);
+      updateCall(updated);
     });
   }
+
+  function setProjectDetails() {
+    const authToken = localStorage.getItem('authToken');
+    let url = '/api/project/milestone_data?project_slug=' + projectSlug
+    axios.get(url, {
+      headers: {
+          'Authorization': authToken
+      }
+    }).then(result => {
+      console.log("result", result.data)
+      console.log("p_id", Object.keys(result.data)[0])
+      let p_id = Object.keys(result.data)[0]
+      // let p_id = 1521718
+      setProjectId(p_id)
+    })
+  }
+
   useEffect (() => {
     const authToken = localStorage.getItem('authToken');
     console.log("authToken", authToken);
-    if(!cycleTimeData.length && authToken) {
-      apiCall('/api/task/cycle_time?project_id=1521718', setCycleTimeData, authToken);
+    if(!cycleTimeData.length && authToken && projectId) {
+      apiCall(`/api/task/cycle_time?project_id=${projectId}`, setCycleTimeData, authToken);
     }
-    
-  }, []);
+  }, [projectId]);
   
   return (
     <div className='container-full'>
       <SidebarMenu />
-      <div className='route-container'>
-      {/* <span className='text-[1.2rem] font-bold font-sans'>Project Slug:</span>
-        <input className='bg-white border-2 rounded-xl hover:rounded-none duration-300 border-black h-[2.3rem] px-3 text-[1rem] font-sans' type='username' value={projectSlug} onChange={onChangeProjectSlug} aria-label='username' style={{marginBottom: "20px"}}/>
-         */}
-        {cycleTimeData &&
-           <Box {...cycleTimeData} />}
-         
-        {/* <BarChartMaker props={averageCycleTimeData}/> */}
+      <div className='route-container' style={{display: "flex", flexDirection:"column", justifyContent: "space-between"}}>
+        <div style={{marginTop: 50}}>
+          <span className='text-[1.2rem] font-bold font-sans'>Project Slug:</span>
+          <input className='bg-white border-2 rounded-xl hover:rounded-none duration-300 border-black h-[2.3rem] px-3 text-[1rem] font-sans' type='username' value={projectSlug} onChange={onChangeProjectSlug} aria-label='username' style={{marginBottom: "20px"}}/>
+          <button className=' p-4 border-4 border-blue-950 hover:bg-blue-950 duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-none' onClick = {() => setProjectDetails()}>Submit</button>
+        </div>
+        <div>
+          {cycleTimeData &&
+            <Box {...cycleTimeData} />}
+        </div>
       </div>
     </div>
   )
 }
-
-// const updated = {
-      //   height: 500,
-      //   width: 100,
-      //   autoFit: true,
-      //   inset: 8,
-      //   data: {
-      //     value: res.data[]
-      //   },
-      //   boxType: 'boxplot',
-      //   xField: 'sprint 1',
-      //   yField: 'lead_time',
-      //   point: {
-      //     size: 5,
-      //     shape: 'point',
-      //   },
-      //   tooltip: {
-      //     items: [
-      //       { name: 'Lead Time (Days)', channel: 'y' }        
-      //     ],
-      //   },
-      //   // coordinate: { transform: [{ type: 'transpose' }] },
-      //   style: { boxFill: 'red', pointStroke: 'white' },
-      // }
-    
-      // console.log("comes here", updated);
-      // updateCall(updated);
-
-
-      // const data = [
-      //   { x: 'Oceania', y: [1, 9, 16, 22, 24] },
-      //   { x: 'East Europe', y: [1, 5, 8, 12, 16] },
-      //   { x: 'Australia', y: [1, 8, 12, 19, 26] },
-      //   { x: 'South America', y: [2, 8, 12, 21, 28] },
-      //   { x: 'North Africa', y: [1, 8, 14, 18, 24] },
-      //   { x: 'North America', y: [3, 10, 17, 28, 30] },
-      //   { x: 'West Europe', y: [1, 7, 10, 17, 22] },
-      //   { x: 'West Africa', y: [1, 6, 8, 13, 16] },
-      // ];
-    
-      // const config = {
-      //   data: {
-      //     value: data,
-      //   },
-      //   xField: 'x',
-      //   yField: 'y',
-      //   colorField: 'x',
-      //   scale: { x: { paddingInner: 0.6, paddingOuter: 0.3 }, y: { zero: true } },
-      //   coordinate: { type: 'polar', innerRadius: 0.2 },
-      //   style: { stroke: 'black' },
-      //   axis: { y: { tickCount: 5 } },
-      //   legend: false,
-      // };
-      // return <Box {...config} />;
