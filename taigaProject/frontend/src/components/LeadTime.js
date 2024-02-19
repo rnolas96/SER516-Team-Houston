@@ -7,7 +7,14 @@ import { Box } from '@ant-design/plots';
 
 export default function LeadTime() {
   
-const [leadTimeData, setLeadTimeData] = useState([]);
+  const [leadTimeData, setLeadTimeData] = useState([]);
+  const [projectSlug, setProjectSlug] = useState(null);
+  const [projectId, setProjectId] = useState(null)
+
+  function onChangeProjectSlug(event) {
+    setProjectSlug(event.target.value)
+  }
+
   function apiCall(url, updateCall, authToken) {
     axios.get(url, {
       headers: {
@@ -15,6 +22,8 @@ const [leadTimeData, setLeadTimeData] = useState([]);
       }}
     )
     .then(res => {
+
+      console.log(res.data)
       let sprintData = []
 
       if (res.data) { // Only proceed if res.data exists
@@ -81,21 +90,48 @@ const [leadTimeData, setLeadTimeData] = useState([]);
     }
     );
   }
+
+  function setProjectDetails() {
+    
+    const authToken = localStorage.getItem('authToken');
+    let url = '/api/project/milestone_data?project_slug=' + projectSlug
+    
+    axios.get(url, {
+      headers: {
+          'Authorization': authToken
+      }
+    }).then(result => {
+      console.log("result", result.data)
+      console.log("p_id", Object.keys(result.data)[0])
+      
+      let p_id = Object.keys(result.data)[0]
+      // let p_id = 1521718
+      setProjectId(p_id)
+
+    })
+  }
   
   useEffect (() => {
     const authToken = localStorage.getItem('authToken');
     console.log("authToken", authToken);
-    if(!leadTimeData.length && authToken) {
-      apiCall('/api/task/lead_time?project_id=1522285', setLeadTimeData, authToken);
+    if(!leadTimeData.length && authToken && projectId) {
+      apiCall(`/api/task/lead_time?project_id=${projectId}`, setLeadTimeData, authToken);
     }    
-  }, []);
+  }, [projectId]);
   
   return (
     <div className='container-full'>
       <SidebarMenu />
-      <div className='route-container'>
-        {leadTimeData &&
-           <Box {...leadTimeData} />}
+      <div className='route-container' style={{display: "flex", flexDirection:"column", justifyContent: "space-between"}}>
+        <div style={{marginTop: 50}}>
+          <span className='text-[1.2rem] font-bold font-sans'>Project Slug:</span>
+          <input className='bg-white border-2 rounded-xl hover:rounded-none duration-300 border-black h-[2.3rem] px-3 text-[1rem] font-sans' type='username' value={projectSlug} onChange={onChangeProjectSlug} aria-label='username' style={{marginBottom: "20px"}}/>
+          <button className=' p-4 border-4 border-blue-950 hover:bg-blue-950 duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-none' onClick = {() => setProjectDetails()}>Submit</button>
+        </div>
+        <div>
+          {leadTimeData &&
+            <Box {...leadTimeData} />}
+        </div>
       </div>
     </div>
   )
