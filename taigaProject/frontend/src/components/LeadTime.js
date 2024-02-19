@@ -3,10 +3,18 @@ import '../App.css'
 import SidebarMenu from './SidebarMenu'
 import axios from 'axios'
 import BarChartMaker from './reusable_components/BarChartMaker';
+import { Box } from '@ant-design/plots';
 
 export default function LeadTime() {
   
-const [averageLeadTimeData, setAverageLeadTimeData] = useState(null);
+  const [leadTimeData, setLeadTimeData] = useState([]);
+  const [projectSlug, setProjectSlug] = useState(null);
+  const [projectId, setProjectId] = useState(null)
+
+  function onChangeProjectSlug(event) {
+    setProjectSlug(event.target.value)
+  }
+
   function apiCall(url, updateCall, authToken) {
     axios.get(url, {
       headers: {
@@ -14,42 +22,115 @@ const [averageLeadTimeData, setAverageLeadTimeData] = useState(null);
       }}
     )
     .then(res => {
+
       console.log(res.data)
-      const labels = Object.keys(res.data);
-      console.log("something")
-      const updated = {
-        labels: labels,
-        text: "LeadTime data",
-        datasets: [{
-          label: 'LeadTime',
-          data: Object.values(res.data),
-          borderColor: 'rgb(255, 99, 132)',
-          backgroundColor: [
-            'rgb(255, 99, 132)',
-            'rgb(54, 162, 235)',
-            'rgb(255, 205, 86)'
-          ],
-          hoverOffset: 4
-        }]
+      let sprintData = []
+
+      if (res.data) { // Only proceed if res.data exists
+        const data = Object.entries(res.data).reduce((acc, [sprint, tasks]) => {
+          acc[sprint] = acc[sprint] || [];
+          acc[sprint].push(...tasks.map(task => task.lead_time));
+          return acc;
+        }, {});
+        // Convert the object to an array of sprints with cycle time arrays
+        sprintData = Object.entries(data).map(([x, y]) => ({
+          x,
+          y
+        }));
+        console.log("sprintData", sprintData);
+      } else {
+        console.error("res.data is undefined. Cannot process data.");
       }
-      console.log("comes here", updated);
+      console.log("sprintData", sprintData);
+
+      const hasLongList = sprintData.some(item => item.y.length >= 5);
+
+      console.log("hasLongList", hasLongList);
+
+      // let sprintData = [
+      //   { x: 'Sprint1', y : [1, 9, 16, 22, 24]},
+      //   { x: 'Sprint2', y : [2, 8, 12, 21, 28]},
+      //   { x: 'Sprint3', y : [1, 7, 10, 17, 22]}
+      // ]
+
+      let updated = {
+        height: 600,
+        width: 600,
+        autoFit: false,
+        inset: 8,
+        data: {
+          value: sprintData
+        },
+        // boxType: 'boxplot',
+        boxStyle: {
+          stroke: '#545454',
+          fill: '#1890FF',
+          fillOpacity: 0.3,
+        },
+        xField: 'x',
+        yField: 'y',
+        point: {
+          size: 5,
+          shape: 'point',
+        },
+        tooltip: {
+          items: [
+            { name: 'Lead Time (Days)', channel: 'y' }
+          ],
+        },
+        axis: { y: { tickCount: 2 } },
+        // coordinate: { transform: [{ type: 'transpose' }] },
+        style: { boxFill: 'red', pointStroke: 'white' },
+      }
+
+      if(!hasLongList)
+        updated['boxType'] = 'boxplot'
+
       updateCall(updated);
     }
     );
+  }
+
+  function setProjectDetails() {
+    
+    const authToken = localStorage.getItem('authToken');
+    let url = '/api/project/milestone_data?project_slug=' + projectSlug
+    
+    axios.get(url, {
+      headers: {
+          'Authorization': authToken
+      }
+    }).then(result => {
+      console.log("result", result.data)
+      console.log("p_id", Object.keys(result.data)[0])
+      
+      let p_id = Object.keys(result.data)[0]
+      // let p_id = 1521718
+      setProjectId(p_id)
+
+    })
   }
   
   useEffect (() => {
     const authToken = localStorage.getItem('authToken');
     console.log("authToken", authToken);
-    if(!averageLeadTimeData && authToken) {
-      apiCall('/api/task/lead_time?project_id=1522285', setAverageLeadTimeData, authToken);
+    if(!leadTimeData.length && authToken && projectId) {
+      apiCall(`/api/task/lead_time?project_id=${projectId}`, setLeadTimeData, authToken);
     }    
-  }, []);
+  }, [projectId]);
   
   return (
     <div className='container-full'>
-      <div className='route-container'>
-        <BarChartMaker props={averageLeadTimeData}/>
+      <div className='route-container' style={{display: "flex", flexDirection:"column", justifyContent: "space-between"}}>
+        <div style={{marginTop: 50,  display: "flex", flexDirection:"column"}}>
+          <span className='text-[1rem] mb-[0.3rem] font-bold font-sans'>Project Slug:</span>
+          <input className='bg-white border-2 rounded-xl hover:rounded-md duration-300 border-[#ffd053] h-[2.3rem] px-3 text-[1rem] font-sans' type='username' value={projectSlug} onChange={onChangeProjectSlug} aria-label='username' style={{marginBottom: "20px"}}/>
+          <button className=' p-4 border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-md' onClick = {() => setProjectDetails()}>Submit</button>
+        </div>
+        <div>
+          {leadTimeData &&
+            <Box {...leadTimeData} />}
+        </div>
       </div>
     </div>
   )

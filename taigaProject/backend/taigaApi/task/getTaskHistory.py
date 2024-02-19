@@ -136,3 +136,14 @@ def get_cycle_time(task, auth_token):
         print(f"Error fetching cycle time: {e}")
 
     return cycle_time
+
+def get_lead_time(task, auth_token):
+    finished_date = task['finished_date']
+    creation_date = task['created_date']
+    
+    finished_date = datetime.fromisoformat(finished_date[: -1])
+    creation_date = datetime.fromisoformat(creation_date[: -1])
+
+    lead_time = (finished_date - creation_date).days
+
+    return lead_time
