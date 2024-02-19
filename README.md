@@ -83,6 +83,16 @@ To interact with the Taiga API using the provided Python script, you will need t
 your default redis server port = 6379
 
 
+###FrontEnd
+
+1. ```
+   cd taigaproject/frontend
+   ```
+2. ```
+   npm install
+   npm start
+   ```
+
 ## Docker Setup
 ### run the docker container
  ```
