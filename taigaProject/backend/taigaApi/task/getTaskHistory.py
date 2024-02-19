@@ -117,3 +117,33 @@ def get_lead_time(task, auth_token):
     lead_time = (finished_date - creation_date).days
 
     return lead_time
+
+def get_cycle_time(task, auth_token):
+    cycle_time = 0
+    taiga_url = os.getenv('TAIGA_URL')
+    finished_date = task['finished_date']
+    task_id = task.get('id')
+    headers = {
+        'Authorization': f'Bearer {auth_token}',
+        'Content-Type': 'application/json'
+    }
+
+    task_history_url = f"{taiga_url}/history/task/{task_id}"
+
+    try:
+        response = requests.get(task_history_url, headers=headers)
+        response.raise_for_status()
+        history_data = response.json()
+
+        in_progress_date = extract_new_to_in_progress_date(history_data)
+
+        finished_date = datetime.fromisoformat(finished_date[:-1])
+
+        if in_progress_date:
+            in_progress_date = datetime.fromisoformat(str(in_progress_date)[:-6])
+
+            cycle_time += (finished_date - in_progress_date).days
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching cycle time: {e}")
+
+    return cycle_time
