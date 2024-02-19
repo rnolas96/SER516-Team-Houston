@@ -44,7 +44,7 @@ Before running the script, make sure you have the following installed:
      ```
 your default redis server port = 6379
 
-
+## Backend Setup
 1. Clone the repository:
 
    ```bash
