@@ -21,7 +21,7 @@ def get_milestone_by_id(milestone_id, auth_token):
         return milestone_info
     
     except requests.exceptions.RequestException as e:
-        print(f'error fetching milestones:{e}')
+        print(f'Error fetching milestones:{e}')
         return None
 
 
