@@ -52,21 +52,23 @@ your default redis server port = 6379
    cd SER516-Team-Houston
    ```
 
-2. Install dependencies:
+2. Type
+   ```
+    cd taigaproject/backend
+   ```
+
+3. Install dependencies:
 
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Create a .env file in the project root and add the following:
+4. Create a .env file in the project root and add the following:
 
    ```bash
    TAIGA_URL=https://api.taiga.io/api/v1
    ```
-4. Type
-   ```
-    cd taigaproject/backend
-   ```
+
 5. Run the script:
 
    ```bash
