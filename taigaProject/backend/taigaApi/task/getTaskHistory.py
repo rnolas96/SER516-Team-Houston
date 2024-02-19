@@ -118,6 +118,7 @@ def get_cycle_time(task, auth_token):
     }
 
     task_history_url = f"{taiga_url}/history/task/{task_id}"
+
     try:
         response = requests.get(task_history_url, headers=headers)
         response.raise_for_status()
