@@ -37,7 +37,7 @@ Before running the script, make sure you have the following installed:
 4. Run the script:
 
    ```bash
-   python3 app.py
+   python -m uvicorn main:app --reload
    ```
 
 ## Getting Taiga Project Slug
