@@ -33,7 +33,10 @@ Before running the script, make sure you have the following installed:
    ```bash
    TAIGA_URL=https://api.taiga.io/api/v1
    ```
-4. Type cd taigaproject/backend
+4. Type
+   ```
+    cd taigaproject/backend
+   ```
 5. Run the script:
 
    ```bash
