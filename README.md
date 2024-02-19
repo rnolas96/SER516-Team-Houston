@@ -52,17 +52,17 @@ To interact with the Taiga API using the provided Python script, you will need t
 
 ## Redis Setup for Windows
 
-### 1. Install WSL (Windows Subsystem for Linux)
+**1. Install WSL (Windows Subsystem for Linux)**
    - Open PowerShell and type the following command:
      ```
      wsl --install
      ```
 
-### 2. Install Ubuntu from Microsoft Store
+**2. Install Ubuntu from Microsoft Store**
    - Open the Microsoft Store and search for "Ubuntu".
    - Install Ubuntu from the store.
 
-### 3. Install Redis in Ubuntu
+**3. Install Redis in Ubuntu**
    - Open the Ubuntu terminal and update the package list by typing:
      ```
      sudo apt-get update
@@ -72,7 +72,7 @@ To interact with the Taiga API using the provided Python script, you will need t
      sudo apt-get install redis
      ```
 
-### 4. Start the Redis Server
+**4. Start the Redis Server**
    - Start the Redis server by typing:
      ```
      sudo service redis-server start
