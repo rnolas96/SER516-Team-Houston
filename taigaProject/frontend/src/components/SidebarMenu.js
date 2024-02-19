@@ -1,13 +1,10 @@
 import React from 'react'
-// import { Sidebar } from 'flowbite-react'
-// import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
-import { Sidebar, Menu, MenuItem, useProSidebar, menuClasses } from "react-pro-sidebar";
+import { Sidebar, Menu, MenuItem, useProSidebar, menuClasses, sidebarClasses } from "react-pro-sidebar";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-// import { RxHamburgerMenu } from "react-icons/rx";
 import '../App.css'
 import { Link } from 'react-router-dom';
 
@@ -66,9 +63,9 @@ export default function SidebarMenu() {
             collapseSidebar();
           }}
           style={{ textAlign: "center" }}
-        >
+         >
           {" "}
-        </MenuItem>
+         </MenuItem>
 
         <MenuItem className='mI' icon={<HomeOutlinedIcon />} component={<Link to={"/"} />}>Home</MenuItem>
         <MenuItem className='mI' icon={<PeopleOutlinedIcon />} component={<Link to={"/burndowncharts"} />}>Burndown Charts</MenuItem>
