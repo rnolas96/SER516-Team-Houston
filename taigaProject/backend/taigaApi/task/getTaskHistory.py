@@ -61,3 +61,78 @@ def extract_new_to_in_progress_date(history_data):
             created_at = datetime.fromisoformat(event["created_at"])
             return created_at
     return None
+
+# Function to retrieve task history and calculate cycle time for closed tasks
+def get_task_history(tasks, auth_token):
+
+    # Get Taiga API URL from environment variables
+    taiga_url = os.getenv('TAIGA_URL')
+
+    # Define headers including the authorization token and content type
+    headers = {
+        'Authorization': f'Bearer {auth_token}',
+        'Content-Type': 'application/json',
+    }
+
+    # Initialize variables to store cycle time and count of closed tasks
+    cycle_time = 0
+    closed_tasks = 0
+
+    # Iterate over each task to retrieve task history and calculate cycle time
+    for task in tasks:
+        task_history_url = f"{taiga_url}/history/task/{task['id']}"
+        finished_date = task["finished_date"]
+        try:
+            # Make a GET request to Taiga API to retrieve task history
+            response = requests.get(task_history_url, headers=headers)
+            response.raise_for_status()  # Raise an exception for HTTP errors (4xx or 5xx)
+            history_data = response.json()
+
+            # Extract the date when the task transitioned from 'New' to 'In progress'
+            in_progress_date = extract_new_to_in_progress_date(history_data)
+
+            # Convert finished_date and in_progress_date to datetime objects
+            finished_date = datetime.fromisoformat(finished_date[:-1])
+            if in_progress_date:
+                in_progress_date = datetime.fromisoformat(str(in_progress_date)[:-6])
+
+                # Calculate cycle time and increment closed_tasks count
+                cycle_time += (finished_date - in_progress_date).days
+                closed_tasks += 1
+
+        except requests.exceptions.RequestException as e:
+            # Handle errors during the API request and print an error message
+            print(f"Error fetching project by slug: {e}")
+
+    # Return a list containing cycle_time and closed_tasks count
+    return [cycle_time, closed_tasks]
+
+def get_cycle_time(task, auth_token):
+    cycle_time = 0
+    taiga_url = os.getenv('TAIGA_URL')
+    finished_date = task['finished_date']
+    task_id = task.get('id')
+    headers = {
+        'Authorization': f'Bearer {auth_token}',
+        'Content-Type': 'application/json'
+    }
+
+    task_history_url = f"{taiga_url}/history/task/{task_id}"
+
+    try:
+        response = requests.get(task_history_url, headers=headers)
+        response.raise_for_status()
+        history_data = response.json()
+
+        in_progress_date = extract_new_to_in_progress_date(history_data)
+
+        finished_date = datetime.fromisoformat(finished_date[:-1])
+
+        if in_progress_date:
+            in_progress_date = datetime.fromisoformat(str(in_progress_date)[:-6])
+
+            cycle_time += (finished_date - in_progress_date).days
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching cycle time: {e}")
+
+    return cycle_time
