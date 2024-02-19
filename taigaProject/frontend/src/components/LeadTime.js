@@ -48,7 +48,6 @@ const [averageLeadTimeData, setAverageLeadTimeData] = useState(null);
   
   return (
     <div className='container-full'>
-      <SidebarMenu />
       <div className='route-container'>
         <BarChartMaker props={averageLeadTimeData}/>
       </div>

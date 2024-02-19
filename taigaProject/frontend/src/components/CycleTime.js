@@ -49,7 +49,6 @@ const [averageCycleTimeData, setAverageCycleTimeData] = useState(null);
   
   return (
     <div className='container-full'>
-      <SidebarMenu />
       <div className='route-container'>
         <BarChartMaker props={averageCycleTimeData}/>
       </div>
