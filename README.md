@@ -16,7 +16,8 @@ Before running the script, make sure you have the following installed:
 
 ## Setup
 
-## Redis Setup for Windows
+## Redis Setup for Windows/Ubuntu
+**note: Ubuntu users start from step 3.**
 
 ### 1. Install WSL (Windows Subsystem for Linux)
    - Open PowerShell and type the following command:
@@ -28,7 +29,7 @@ Before running the script, make sure you have the following installed:
    - Open the Microsoft Store and search for "Ubuntu".
    - Install Ubuntu from the store.
 
-### 3. Install Redis in Ubuntu
+### 3. Install Redis in Ubuntu 
    - Open the Ubuntu terminal and update the package list by typing:
      ```
      sudo apt-get update
