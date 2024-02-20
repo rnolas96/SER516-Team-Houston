@@ -16,7 +16,8 @@ Before running the script, make sure you have the following installed:
 
 ## Setup
 
-## Redis Setup for Windows
+## Redis Setup for Windows/Ubuntu
+**note: Ubuntu users start from step 3.**
 
 ### 1. Install WSL (Windows Subsystem for Linux)
    - Open PowerShell and type the following command:
