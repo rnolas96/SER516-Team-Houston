@@ -49,28 +49,32 @@ your default redis server port = 6379
 1. Clone the repository:
 
    ```bash
+
    git clone https://github.com/ser516asu/SER516-Team-Miami.git
+
+   git checkout period-one
+
    cd SER516-Team-Houston
    ```
 
-2. Type
+3. Type
    ```
     cd taigaproject/backend
    ```
 
-3. Install dependencies:
+4. Install dependencies:
 
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Create a .env file in the project root and add the following:
+5. Create a .env file in the project root and add the following:
 
    ```bash
    TAIGA_URL=https://api.taiga.io/api/v1
    ```
 
-5. Run the script:
+6. Run the script:
 
    ```bash
    python -m uvicorn main:app --reload
