@@ -56,7 +56,7 @@ your default redis server port = 6379
 
    ```
 
-3. Type
+3. Goto backend directory
    ```
     cd SER516-Team-Houston
    
