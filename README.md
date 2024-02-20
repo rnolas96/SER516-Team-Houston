@@ -54,11 +54,12 @@ your default redis server port = 6379
 
    git checkout period-one
 
-   cd SER516-Team-Houston
    ```
 
 3. Type
    ```
+    cd SER516-Team-Houston
+   
     cd taigaproject/backend
    ```
 
