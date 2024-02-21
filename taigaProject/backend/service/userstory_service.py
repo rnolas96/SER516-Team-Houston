@@ -21,10 +21,10 @@ def get_userstory_burndown_by_project_id(project_id,auth_token):
 
     user_stories_map = {}
     for user_story in user_stories: 
-        if user_story['milestone_name'] :
+        if(user_story['milestone_name']):
             print(user_story)
             sprint = user_story['milestone_name']
-            if user_story['total_points'] :
+            if(user_story['total_points']):
                 user_stories_map[str(sprint)] = user_story['total_points']
                 total_story_points += user_story['total_points']
             else:
@@ -74,17 +74,14 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
 
 def storypoint_burndown_for_sprint_process(sprint_id, auth_token):
     #get sprint info 
-    try:
-        sprint_data = get_milestone_by_id(sprint_id, auth_token)
-        if sprint_data :
+    sprint_data = get_milestone_by_id(sprint_id, auth_token)
+    user_stories = sprint_data['user_stories']
+    total_story_points = sprint_data['total_points'] 
 
-            user_stories = sprint_data['user_stories']
-            total_story_points = sprint_data['total_points'] 
-
-            start_date = datetime.strptime(sprint_data['estimated_start'],"%Y-%m-%d")
-            end_date =  datetime.strptime(sprint_data['estimated_finish'],"%Y-%m-%d")
-            result={}
-            date_storypoint_map={}
+    start_date = datetime.strptime(sprint_data['estimated_start'],"%Y-%m-%d")
+    end_date =  datetime.strptime(sprint_data['estimated_finish'],"%Y-%m-%d")
+    result={}
+    date_storypoint_map={}
 
     for user_story in user_stories:
         if user_story['is_closed']:
@@ -113,13 +110,8 @@ def storypoint_burndown_for_sprint_process(sprint_id, auth_token):
     if serialized_cached_data != serialized_response:
             r_userstory.set(f'userstory_full_storypoint_data:{sprint_id}', serialized_response)     
 
-            return result
-        
-        else:
-            print("Error: milestone not found")
-             
-    except Exception as e:
-         print(f"An error occurred: {e}")
+    return result
+
 
 def get_userstory_custom_attribute_burndown_for_sprint(project_id, sprint_id, auth_token, custom_attribute_name):
     """
@@ -248,67 +240,63 @@ def partial_storypoint_burndown_for_sprint_process(sprint_id, auth_token):
     user_stories = sprint_data['user_stories']
     total_points_for_sprint = sprint_data['total_points'] 
 
-            start_date = datetime.strptime(sprint_data['estimated_start'],"%Y-%m-%d")
-            end_date =  datetime.strptime(sprint_data['estimated_finish'],"%Y-%m-%d")
-            story_point_map ={}
-            result={}
+    start_date = datetime.strptime(sprint_data['estimated_start'],"%Y-%m-%d")
+    end_date =  datetime.strptime(sprint_data['estimated_finish'],"%Y-%m-%d")
+    story_point_map ={}
+    result={}
+    tasks = get_tasks_by_milestone(sprint_data['project'],sprint_id, auth_token)
 
-            try:
-                tasks = get_tasks_by_milestone(sprint_data['project'],sprint_id, auth_token)
+    user_story_task_count_map = {}
 
-                if tasks:
+    # map userstory with storypoints
+    for userstory in user_stories:
+        story_point_map[userstory['id']]= userstory['total_points']
 
-                    user_story_task_count_map = {}
+    # map userstoru with total task count 
+    for task in tasks:
+        if(task['user_story']):
+            userstory_id = task['user_story'] 
 
-                    # map userstory with storypoints
-                    for userstory in user_stories:
-                        story_point_map[userstory['id']]= userstory['total_points']
+            if userstory_id in user_story_task_count_map:
+                user_story_task_count_map[userstory_id]+=1
 
-                    # map userstoru with total task count 
-                    for task in tasks:
-                        if task['user_story'] :
-                            userstory_id = task['user_story'] 
-
-                            if userstory_id in user_story_task_count_map:
-                                user_story_task_count_map[userstory_id]+=1
-
-                            else:
-                                user_story_task_count_map[userstory_id] = 1
+            else:
+               user_story_task_count_map[userstory_id] = 1
 
 
-                    #calculate burndown for every day from start to end of the sprint          
-                    for date in range((end_date - start_date).days+1):
-                        current_date = start_date+timedelta(days = date)
+    #calculate burndown for every day from start to end of the sprint          
+    for date in range((end_date - start_date).days+1):
+        current_date = start_date+timedelta(days = date)
 
-                        partial_task_count_map={}
+        partial_task_count_map={}
 
-                        # count the number of partial tasks for a user story
-                        for task in tasks:
+        # count the number of partial tasks for a user story
+        for task in tasks:
 
-                            if task['user_story'] :
-                                userstory_id = task['user_story'] 
+            if(task['user_story']):
+                userstory_id = task['user_story'] 
 
-                                if task['is_closed'] and  datetime.fromisoformat(task["finished_date"].split("T")[0])==current_date:
+                if task['is_closed'] and  datetime.fromisoformat(task["finished_date"].split("T")[0])==current_date:
 
-                                    if userstory_id in partial_task_count_map:
-                                        partial_task_count_map[userstory_id]+=1
+                    if userstory_id in partial_task_count_map:
+                        partial_task_count_map[userstory_id]+=1
 
-                                    else:   
-                                        partial_task_count_map[userstory_id]=1
+                    else:   
+                        partial_task_count_map[userstory_id]=1
 
-                        # iterate through the partial task map and find the remaining points for the date           
-                        for key,partial_task_count in partial_task_count_map.items(): 
+        # iterate through the partial task map and find the remaining points for the date           
+        for key,partial_task_count in partial_task_count_map.items(): 
 
-                            total_task_count =  user_story_task_count_map[key]
+            total_task_count =  user_story_task_count_map[key]
 
-                            userstory_points = story_point_map[key]
+            userstory_points = story_point_map[key]
 
-                            partial_story_points = (partial_task_count/total_task_count)*userstory_points
+            partial_story_points = (partial_task_count/total_task_count)*userstory_points
 
-                            total_points_for_sprint -= partial_story_points
+            total_points_for_sprint -= partial_story_points
 
 
-                        result[current_date.strftime("%Y-%m-%d")]= total_points_for_sprint
+        result[current_date.strftime("%Y-%m-%d")]= total_points_for_sprint
 
     serialized_response = json.dumps(result)
     serialized_cached_data = r_userstory.get(f'userstory_partial_storypoint_data:{sprint_id}')
