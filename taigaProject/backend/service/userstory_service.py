@@ -1,13 +1,14 @@
 import datetime
-
 import threading
 
 from datetime import datetime, timedelta
-from taigaApi.milestone.getMilestoneById import get_milestone_by_id
+
+from taigaApi.milestone.getMilestoneById import MilestoneFetchingError, get_milestone_by_id
+from taigaApi.task.getTasks import TaskFetchingError, get_tasks_by_milestone
 from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story
+
 import redis
 import json
-from taigaApi.task.getTasks import get_tasks_by_milestone
 from fastapi import HTTPException
 
 r_userstory = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -235,22 +236,25 @@ def get_partial_storypoint_burndown_for_sprint(sprint_id, auth_token):
     return response
 
 def partial_storypoint_burndown_for_sprint_process(sprint_id, auth_token):
+    story_point_map ={}
+    user_story_task_count_map = {}
+    result={}
+
     #get sprint info 
     sprint_data = get_milestone_by_id(sprint_id, auth_token)
     user_stories = sprint_data['user_stories']
-    total_points_for_sprint = sprint_data['total_points'] 
 
     start_date = datetime.strptime(sprint_data['estimated_start'],"%Y-%m-%d")
     end_date =  datetime.strptime(sprint_data['estimated_finish'],"%Y-%m-%d")
-    story_point_map ={}
-    result={}
+    
+    total_points_for_sprint = sprint_data['total_points'] 
+    
     tasks = get_tasks_by_milestone(sprint_data['project'],sprint_id, auth_token)
 
-    user_story_task_count_map = {}
 
     # map userstory with storypoints
     for userstory in user_stories:
-        story_point_map[userstory['id']]= userstory['total_points']
+        story_point_map[userstory['id']] = userstory['total_points']
 
     # map userstoru with total task count 
     for task in tasks:
@@ -266,6 +270,7 @@ def partial_storypoint_burndown_for_sprint_process(sprint_id, auth_token):
 
     #calculate burndown for every day from start to end of the sprint          
     for date in range((end_date - start_date).days+1):
+        
         current_date = start_date+timedelta(days = date)
 
         partial_task_count_map={}
@@ -273,7 +278,7 @@ def partial_storypoint_burndown_for_sprint_process(sprint_id, auth_token):
         # count the number of partial tasks for a user story
         for task in tasks:
 
-            if(task['user_story']):
+            if task['user_story'] :
                 userstory_id = task['user_story'] 
 
                 if task['is_closed'] and  datetime.fromisoformat(task["finished_date"].split("T")[0])==current_date:
@@ -305,4 +310,87 @@ def partial_storypoint_burndown_for_sprint_process(sprint_id, auth_token):
             r_userstory.set(f'userstory_partial_storypoint_data:{sprint_id}', serialized_response)
 
     return result
+
+
+def get_cost_of_delay_for_tasks(sprint_id, auth_token):
+    user_stories = []
+    story_point_map = {}
+    user_story_task_count_map = {}
+    result = {'ideal_points':[], 'actual_points':[], 'cumulative_difference':[],'date':[]}
+
+    try:
+        #fetch sprint data
+        sprint_data = get_milestone_by_id(sprint_id, auth_token)
+        
+        if sprint_data and len(sprint_data) > 1 :
+           
+            # filter user stories
+            user_stories = sprint_data.get('user_stories', [])
+            total_points_for_sprint = sprint_data.get('total_points',0)
+            start_date = datetime.strptime(sprint_data['estimated_start'],"%Y-%m-%d")
+            end_date =  datetime.strptime(sprint_data['estimated_finish'],"%Y-%m-%d")
+             
+            # map userstory with storypoints
+            if user_stories and len(user_stories) > 1:
+                for userstory in user_stories:
+                    story_point_map[userstory['id']] = userstory['total_points']
+        
+        # fetch tasks
+        tasks = get_tasks_by_milestone(sprint_id, auth_token)
+
+        if tasks and len(tasks)>1:
+                for task in tasks:
+                    if(task['user_story']):
+                        userstory_id = task['user_story'] 
+
+                        # map user story and count of tasks for that userstory
+                        if userstory_id in user_story_task_count_map:
+                            user_story_task_count_map[userstory_id]+=1
+
+                        else:
+                            user_story_task_count_map[userstory_id] = 1
+
+        sprint_duration = (end_date - start_date) + 1
+        ideal_story_points_per_day = total_points_for_sprint/sprint_duration
+        ideal_points_for_the_day = 0
+        cumulative_difference = ideal_story_points_per_day
+        
+        for date in range((end_date - start_date).days+1):
+            ideal_points_for_the_day += ideal_story_points_per_day
+            current_date = start_date+timedelta(days = date)
+            total_points_for_the_day = 0
+
+            if tasks and len(tasks)>1:
+                for task in tasks:
+
+                    if task['user_story'] :
+                        userstory_id = task['user_story'] 
+
+                        if task['is_closed'] and  datetime.fromisoformat(task["finished_date"].split("T")[0])==current_date:
+                            
+                            total_userstory_points = story_point_map[userstory_id]
+                            total_task_count = user_story_task_count_map[userstory_id]
+                            task_points = (total_userstory_points / total_task_count)
+                            total_points_for_the_day += task_points
+                            cumulative_difference -= task_points
+                           
+
+            result['actual_points'].append(total_points_for_the_day)
+            result['ideal_points'].append(ideal_points_for_the_day)
+            result['cumulative_difference']= cumulative_difference
+            result['date'].append(current_date)
+
+        return result
+    
+    except TaskFetchingError as e:
+        print("Error fetching tasks: {e}")
+        return None
+
+    except MilestoneFetchingError as e:
+        print(f"Error fetching milestones: {e}")
+        return None  
+
+    except Exception as e:
+        print("Unexpected error calculating cost:")
+        raise  
     
