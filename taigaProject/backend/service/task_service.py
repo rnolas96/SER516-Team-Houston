@@ -165,4 +165,4 @@ def get_cost_of_delay_for_tasks(sprint_id, auth_token):
 
     except Exception as e:
         print("Unexpected error calculating cost:")
-        raise  
+        return None
