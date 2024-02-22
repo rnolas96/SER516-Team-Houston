@@ -25,6 +25,8 @@ export default function CycleTime() {
 
       let sprintData = []
 
+      console.log("res.data", res.data)
+
       if (res.data) { // Only proceed if res.data exists
         const data = Object.entries(res.data).reduce((acc, [sprint, tasks]) => {
           acc[sprint] = acc[sprint] || [];
@@ -42,15 +44,20 @@ export default function CycleTime() {
       }
       console.log("sprintData", sprintData);
 
-      const hasLongList = sprintData.some(item => item.y.length >= 5);
+      // const hasLongList = sprintData.some(item => item.y.length >= 5);
 
-      console.log("hasLongList", hasLongList);
+      // console.log("hasLongList", hasLongList);
 
       // let sprintData = [
       //   { x: 'Sprint1', y : [1, 9, 16, 22, 24]},
       //   { x: 'Sprint2', y : [2, 8, 12, 21, 28]},
       //   { x: 'Sprint3', y : [1, 7, 10, 17, 22]}
       // ]
+      
+      console.log("sprintData", sprintData);
+      const hasLongList = sprintData.some(item => item.y.length >= 5);
+
+      console.log("hasLongList", hasLongList);
 
       let updated = {
         height: 600,
@@ -77,7 +84,7 @@ export default function CycleTime() {
             { name: 'Cycle Time (Days)', channel: 'y' }
           ],
         },
-        axis: { y: { tickCount: 2 } },
+        axis: { y: { tickCount: 20 } },
         // coordinate: { transform: [{ type: 'transpose' }] },
         style: { boxFill: 'red', pointStroke: 'white' },
       }

@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ProSidebarProvider } from 'react-pro-sidebar';
 // import Engagement from './components/Engagement.js';
 import CostOfDelay from './components/CostOfDelay.js';
+import CostOfDelay from './components/CostOfDelay.js';
 
 function App() {
 
@@ -35,8 +36,9 @@ function App() {
             <Route exact path="/burndowncharts" element={<Burndown />} />
             <Route exact path="/cycletime" element={<CycleTime />} />
             <Route exact path="/leadtime" element={<LeadTime />} />
-            <Route exact path="/costofdelay" element={<CostOfDelay/>} /> */}
-            {/* <Route exact path="/engagement" element={<Engagement/>} /> */}
+            <Route exact path="/costofdelay" element={<CostOfDelay/>} />
+            <Route exact path="/engagement" element={<Engagement/>} />
+            <Route exact path="/costofdelay" element={<CostOfDelay/>} />
           </Routes>
       </Router>
     </div>
