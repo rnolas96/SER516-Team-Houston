@@ -9,7 +9,6 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ProSidebarProvider } from 'react-pro-sidebar';
 // import Engagement from './components/Engagement.js';
 import CostOfDelay from './components/CostOfDelay.js';
-import CostOfDelay from './components/CostOfDelay.js';
 
 function App() {
 
