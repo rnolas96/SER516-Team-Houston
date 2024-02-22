@@ -72,7 +72,6 @@ export default function SidebarMenu() {
         <MenuItem className='mI' icon={<ContactsOutlinedIcon />} component={<Link to={"/cycletime"} />}>Cycle Time</MenuItem>
         <MenuItem className='mI' icon={<ReceiptOutlinedIcon />} component={<Link to={"/leadtime"} />}>Lead Time</MenuItem>
         <MenuItem className='mI' icon={<ReceiptOutlinedIcon />} component={<Link to={"/costofdelay"} />}>Cost of Delay</MenuItem>
-        <MenuItem className='mI' icon={<ReceiptOutlinedIcon />} component={<Link to={"/engagement"} />}>Engagement</MenuItem>
       </Menu>
     </Sidebar>
     </div>
