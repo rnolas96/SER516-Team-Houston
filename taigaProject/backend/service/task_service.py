@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from itertools import groupby
 from taigaApi.task.getTasks import TaskFetchingError, get_closed_tasks_for_sprint, get_closed_tasks, get_tasks, get_all_tasks, get_tasks_by_milestone
 from taigaApi.task.getTaskHistory import get_task_history
-from taigaProject.backend.taigaApi.milestone.getMilestoneById import MilestoneFetchingError, get_milestone_by_id
+from taigaApi.milestone.getMilestoneById import MilestoneFetchingError, get_milestone_by_id
 
 # Function to get the number of open task for each sprint
 def get_sprintwise_task_count(project_id, auth_token):
