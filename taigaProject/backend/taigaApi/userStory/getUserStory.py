@@ -5,6 +5,10 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
+class UserStoryFetchingError(Exception):
+    def __init__(self, status_code, reason):
+        self.status_code = status_code
+        self.reason = reason
 
 # Function to retrieve user stories for a specific project from the Taiga API
 def get_user_story(project_id, auth_token):
@@ -31,11 +35,17 @@ def get_user_story(project_id, auth_token):
         project_info = response.json()
         return project_info
 
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error fetching UserStory: {e}")
+        raise UserStoryFetchingError(e.response.status_code, e.response.reason)
 
-        # Handle errors during the API request and print an error message
-        print(f"Error fetching project by slug: {e}")
-        return None
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error fetching UserStory: {e}")
+        raise UserStoryFetchingError("CONNECTION_ERROR", str(e))
+
+    except Exception as e:
+        print("Unexpected error fetching UserStory:")
+        raise 
 
 def get_custom_attribute_from_userstory(user_story_id, auth_token):
 
@@ -58,10 +68,17 @@ def get_custom_attribute_from_userstory(user_story_id, auth_token):
 
         return custom_attribute_data
 
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error fetching UserStory: {e}")
+        raise UserStoryFetchingError(e.response.status_code, e.response.reason)
 
-        print(f"Error fetching project by slug: {e}")
-        return None
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error fetching UserStory: {e}")
+        raise UserStoryFetchingError("CONNECTION_ERROR", str(e))
+
+    except Exception as e:
+        print("Unexpected error fetching UserStory:")
+        raise 
     
 def get_custom_attribute_type_id(project_id, auth_token, attribute_name):
 
@@ -83,10 +100,17 @@ def get_custom_attribute_type_id(project_id, auth_token, attribute_name):
             if res["name"] == attribute_name:
                 return str(res["id"])
 
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error fetching UserStory: {e}")
+        raise UserStoryFetchingError(e.response.status_code, e.response.reason)
 
-        print(f"Error fetching project by slug: {e}")
-        return None
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error fetching UserStory: {e}")
+        raise UserStoryFetchingError("CONNECTION_ERROR", str(e))
+
+    except Exception as e:
+        print("Unexpected error fetching UserStory:")
+        raise 
 
     # return "40205"
 
@@ -111,8 +135,14 @@ def get_userstories_by_sprint(sprint_id, auth_token):
         project_info = response.json()
         return project_info
 
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error fetching UserStory: {e}")
+        raise UserStoryFetchingError(e.response.status_code, e.response.reason)
 
-        # Handle errors during the API request and print an error message
-        print(f"Error fetching project by slug: {e}")
-        return None
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error fetching UserStory: {e}")
+        raise UserStoryFetchingError("CONNECTION_ERROR", str(e))
+
+    except Exception as e:
+        print("Unexpected error fetching UserStory:")
+        raise 
