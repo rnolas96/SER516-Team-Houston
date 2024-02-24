@@ -306,3 +306,7 @@ def partial_storypoint_burndown_for_sprint_process(sprint_id, auth_token):
 
     return result
     
+
+def get_sb_coupling(userstory_id, auth_token):
+    result ={}
+    return result
