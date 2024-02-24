@@ -34,9 +34,9 @@ def get_partial_userstories_burndown(request:Request,sprint_id: int):
     
 
 @userstory_router.get("/sb_coupling")
-def get_partial_userstories_burndown(request:Request,userstory_id: int):
+def get_partial_userstories_burndown(request:Request,sprint_id: int):
     access_token = request.headers.get('Authorization')
     if(access_token):
-        return get_sb_coupling(userstory_id, access_token)
+        return get_sb_coupling(sprint_id, access_token)
     else:
         raise HTTPException(status_code=401, detail="Missing or invalid access token")
