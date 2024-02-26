@@ -1,16 +1,19 @@
 import datetime
-
+import re
+import logging
 import threading
 
 from datetime import datetime, timedelta
 from taigaApi.milestone.getMilestoneById import get_milestone_by_id
-from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story
+from taigaApi.userStory.getUserStory import UserStoryFetchingError, get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, get_userstories_by_sprint
 import redis
 import json
 from taigaApi.task.getTasks import get_tasks_by_milestone
 from fastapi import HTTPException
 
 r_userstory = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+logging.basicConfig(level=logging.INFO)
 
 # funtion to get sprintwise burndown chart details for a project. 
 def get_userstory_burndown_by_project_id(project_id,auth_token):
@@ -306,3 +309,56 @@ def partial_storypoint_burndown_for_sprint_process(sprint_id, auth_token):
 
     return result
     
+
+def get_sb_coupling(sprint_id, auth_token):
+    result ={}
+    userstory_ref_map={}
+
+    user_stories = []
+
+    try:
+        custom_attribute_name = "DependsOn"
+        user_stories = get_userstories_by_sprint(sprint_id, auth_token)
+        if user_stories and len(user_stories)>0:
+
+            for userstory in user_stories:
+                userstory_ref_map[userstory['ref']] = userstory['id']
+           
+           
+            for userstory in user_stories:
+
+                logging.info(f"userstory id :{userstory['id']}")         
+                logging.info(f"userstory subject :{userstory['subject']}")               
+      
+                depends_on_values=[]
+                depends_on_list=[]
+
+                custom_attribute_data = get_custom_attribute_from_userstory(userstory['id'], auth_token)
+                custom_attribute_type_id = get_custom_attribute_type_id(userstory['project'], auth_token, custom_attribute_name)
+
+                logging.info(f"custom attribute data : {custom_attribute_data}")
+                logging.info(f"custom attribute type id : {custom_attribute_type_id}")
+
+
+                if(custom_attribute_type_id in custom_attribute_data):
+                    depends_on_str = custom_attribute_data[custom_attribute_type_id]
+                    depends_on_values = re.findall(r"#(\d+)", depends_on_str)
+
+                for depends_on in depends_on_values:
+                    depends_on_list.append(userstory_ref_map[int(depends_on)])
+                    logging.info(f"depends on list", depends_on_list)
+
+                if len(depends_on_list) > 0:
+                    result[userstory['id']] =  depends_on_list
+                
+        return result
+
+
+    except UserStoryFetchingError as e:
+        print(f"Error fetching UserStories: {e}")
+        return None  
+
+    except Exception as e:
+        print(f"Unexpected error :{e}")
+        return None
+
