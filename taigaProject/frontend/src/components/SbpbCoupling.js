@@ -26,6 +26,8 @@ export default function SbpbCoupling() {
 
   const [showLoader, setShowLoader] = useState(false);
 
+  const [tab, setTab] = useState(0);
+
   const clearData = () => {
     setSprintData([]);
     setSprintId(null);
@@ -38,7 +40,6 @@ export default function SbpbCoupling() {
 
   const handleDropdownChange = (e) => {
     setSelectedOption(e.target.value);
-    console.log(e.target.value);
     setSprintId(e.target.value);
     setShowLoader(true);
   };
@@ -49,19 +50,17 @@ export default function SbpbCoupling() {
   }
 
   function apiCall(url, updateCall, scenario, authToken) {
-    // axios
-    //   .get(url, {
-    //     headers: {
-    //       Authorization: authToken,
-    //     },
-    //   })
-    //   .then((res) => {
-        // console.log("res", res.data);
+    axios
+      .get(url, {
+        headers: {
+          Authorization: authToken,
+        },
+      })
+      .then((res) => {
+        console.log("res", res.data);
         // const labels = Object.keys(res.data);
         // const values = Object.values(res.data);
         
-        setShowLoader(false);
-
         // labels[0] = "";
         // const updated = {
         //   labels: labels,
@@ -77,12 +76,10 @@ export default function SbpbCoupling() {
         //   ],
         // };
         
-        const updated = {
-          "someData": "present"
-        };
+        const updated = res.data;
         updateCall(updated);
 
-    //   });
+      });
   }
 
   function setProjectDetails() {
@@ -104,6 +101,8 @@ export default function SbpbCoupling() {
         console.log(s_Data);
         setProjectId(p_id);
         setSprintData(s_Data);
+        if(tab == 1)
+          setIsSprintDisabled(false);
         setShowLoader(true);
       });
   }
@@ -115,9 +114,9 @@ export default function SbpbCoupling() {
       console.log("sprintId", sprintId);
       console.log("projectId", projectId);
 
-      if (authToken && projectId) {
+      if (authToken && projectId && sprintId) {
         apiCall(
-          `/api/userstory/partial_userstory_burndown?sprint_id=${sprintId}`,
+          `/api/userstory/sb_coupling?sprint_id=${sprintId}`,
           setPbCouplingData,
           "Product Backlog information",
           authToken
@@ -125,7 +124,7 @@ export default function SbpbCoupling() {
       }
       if (authToken && projectId && sprintId) {
         apiCall(
-          `/api/userstory/userstory_burndown?project_id=${projectId}&sprint_id=${sprintId}`,
+          `/api/userstory/sb_coupling?sprint_id=${sprintId}`,
           setSbCouplingData,
           "Sprint Backlog information",
           authToken
@@ -133,7 +132,6 @@ export default function SbpbCoupling() {
       }
     };
 
-    console.log("isSprintDisabled", isSprintDisabled);
     callApis();
     const intervalId = setInterval(callApis, 30000);
     return () => clearInterval(intervalId);
@@ -153,11 +151,14 @@ export default function SbpbCoupling() {
             flexDirection: "column",
           }}
           onSelect={(index)  => {
-            console.log("something happens", index)
-            if(index == 1)
+            if(index == 1) {
               setIsSprintDisabled(false)
-            if(index == 0)
+              setTab(1);
+            }
+            if(index == 0) {
               setIsSprintDisabled(true);
+              setTab(0);
+            }
           }}
         >
           <TabList
@@ -239,6 +240,7 @@ export default function SbpbCoupling() {
             <NetworkChartMaker
               data={pbCouplingData}
               showLoader={showLoader}
+              setShowLoader={setShowLoader}
               scenario={"Enter Project Id to see the network chart"}
             />
           </TabPanel>
@@ -246,6 +248,7 @@ export default function SbpbCoupling() {
             <NetworkChartMaker
               data={sbCouplingData}
               showLoader={showLoader}
+              setShowLoader={setShowLoader}
               scenario={"Enter Project Id and Sprint Id to see the network chart"}
             />
           </TabPanel>          
