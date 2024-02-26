@@ -10,7 +10,7 @@ import { Buffer } from "buffer";
 export default function CostOfDelay() {
   const [businessValueCostOfDelayData, setBusinessValueCostOfDelayData] =
     useState(null);
-  const [storyPointCostDelayData, setStoryPointCostOfDelayData] =
+  const [storyPointCostOfDelayData, setStoryPointCostOfDelayData] =
     useState(null);
 
   const [projectSlug, setProjectSlug] = useState(null);
@@ -45,29 +45,20 @@ export default function CostOfDelay() {
   }
 
   function apiCall(url, updateCall, scenario, authToken) {
-    // axios
-    //   .get(url, {
-    //     headers: {
-    //       Authorization: authToken,
-    //     },
-    //   })
-    //   .then((res) => {
-        // console.log("res", res.data);
-        // const labels = Object.keys(res.data);
-        // const values = Object.values(res.data);
+    axios
+      .get(url, {
+        headers: {
+          Authorization: authToken,
+        },
+      })
+      .then((res) => {
+        console.log("res", res.data);
+    
+        const data = res.data;
 
-        const data = {
-            sprintDates: ["", "1st Feb 2024", "2nd Feb 2024", "3rd Feb 2024", "4th Feb 2024",
-                         "5th Feb 2024", "6th Feb 2024", "7th Feb 2024", "8th Feb 2024",
-                         "9th Feb 2024", "10th Feb 2024"],
-            idealPath: [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30],
-            actualPath: [0, 1, 3, 5, 7, 11, 15, 17, 18, 21, 25],
-            difference : [0, 2, 3, 4, 5, 4, 3, 4, 6, 6, 5]
-        }
-
-        const labels = data.sprintDates;
-        const idealValues = data.idealPath
-        const actualValues = data.actualPath;
+        const labels = data.date;
+        const idealValues = data.ideal_points;
+        const actualValues = data.actual_points;
 
         setShowLoader(false);
 
@@ -92,8 +83,9 @@ export default function CostOfDelay() {
             },
           ],
         };
+        console.log("updated", updated)
         updateCall(updated);
-    //   });
+      });
   }
 
   function setProjectDetails() {
@@ -127,16 +119,16 @@ export default function CostOfDelay() {
       console.log("projectId", projectId);
 
       if (authToken && projectId && sprintId) {
-        apiCall(
-          `/api/userstory/business_value_cost_of_delay?project_id=${projectId}&sprint_id=${sprintId}`,
-          setBusinessValueCostOfDelayData,
-          "business value",
-          authToken
-        );
+        // apiCall(
+        //   `/api/userstory/business_value_cost_of_delay?project_id=${projectId}&sprint_id=${sprintId}`,
+        //   setBusinessValueCostOfDelayData,
+        //   "business value",
+        //   authToken
+        // );
       }
-      if (authToken && sprintId & projectId) {
+      if (authToken && sprintId) {
         apiCall(
-          `/api/userstory/partial_userstory_cost_of_delay?project_id=${projectId}&sprint_id=${sprintId}`,
+          `/api/task/cost_of_delay?sprint_id=${sprintId}`,
           setStoryPointCostOfDelayData,
           "storypoints",
           authToken
@@ -244,7 +236,7 @@ export default function CostOfDelay() {
           </TabPanel>
           <TabPanel>
             <LineChartMaker
-              data={storyPointCostDelayData}
+              data={storyPointCostOfDelayData}
               showLoader={showLoader}
             />
           </TabPanel>
@@ -253,5 +245,3 @@ export default function CostOfDelay() {
     </div>
   );
 }
-
-//end of code
