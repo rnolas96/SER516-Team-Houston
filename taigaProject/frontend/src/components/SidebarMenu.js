@@ -39,13 +39,8 @@ export default function SidebarMenu() {
           }
         }}
         backgroundColor="white"
-        style={{ height: "100vh" }}>
+        style={{ height: "100vh"}}>
       <Menu
-        rootStyles={{
-          [`.${menuClasses.mI}`]: {
-            backgroundColor: 'red',
-          },
-        }}
         menuItemStyles={{
           button: {
             ['&.active']: {
@@ -67,7 +62,7 @@ export default function SidebarMenu() {
           {" "}
          </MenuItem>
 
-        <MenuItem className='mI' icon={<HomeOutlinedIcon />} component={<Link to={"/"} />}>Home</MenuItem>
+        <MenuItem className='mIT' icon={<HomeOutlinedIcon />} component={<Link to={"/"} />}>Home</MenuItem>
         <MenuItem className='mI' icon={<PeopleOutlinedIcon />} component={<Link to={"/burndowncharts"} />}>Burndown Charts</MenuItem>
         <MenuItem className='mI' icon={<ContactsOutlinedIcon />} component={<Link to={"/cycletime"} />}>Cycle Time</MenuItem>
         <MenuItem className='mI' icon={<ReceiptOutlinedIcon />} component={<Link to={"/leadtime"} />}>Lead Time</MenuItem>

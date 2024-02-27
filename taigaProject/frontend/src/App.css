@@ -77,7 +77,6 @@ body {
 }
 
 .graph-container {
-  height: "100%";
   min-width: 100vh;
   display: flex;
   align-items: center;

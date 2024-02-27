@@ -139,7 +139,7 @@ export default function SbpbCoupling() {
 
   return (
     <div className="container-full bg-white">
-      <div className="route-container flex flex-col min-h-[100%]">
+      <div className="flex flex-col min-h-[100%] justify-between w-full py-[1rem] px-[2rem]">
         <Tabs
           style={{
             fontFamily: "Poppins",
@@ -177,7 +177,7 @@ export default function SbpbCoupling() {
               selectedClassName="selectedTabElements"
               
             >
-              <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
+              <p className="px-[0.8rem] text-center border-none ">
                 Sprint Backlog Coupling
               </p>
             </Tab>
@@ -236,15 +236,18 @@ export default function SbpbCoupling() {
               </select>
             ) : null}
           </div>
-          <TabPanel >
+          <TabPanel
+          >
             <NetworkChartMaker
               data={pbCouplingData}
               showLoader={showLoader}
               setShowLoader={setShowLoader}
               scenario={"Enter Project Id to see the network chart"}
+              
             />
           </TabPanel>
-          <TabPanel >
+          <TabPanel 
+          >
             <NetworkChartMaker
               data={sbCouplingData}
               showLoader={showLoader}
