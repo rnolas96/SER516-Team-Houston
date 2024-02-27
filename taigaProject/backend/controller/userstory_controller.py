@@ -44,8 +44,6 @@ def get_sprint_backlog_coupling(request:Request, sprint_id: int):
 
 @userstory_router.get("/pb_coupling")
 def get_product_backlog_coupling(request:Request, project_id: int):
-    print("Access toen ========", request.headers)
-
     access_token = request.headers.get('Authorization')
     if(access_token):
         return get_pb_coupling(project_id, access_token)

@@ -379,9 +379,11 @@ def get_pb_coupling(project_id, auth_token):
 
         return pb_user_stories
 
-       
+    except UserStoryFetchingError as e:
+        print(f"Error fetching UserStories: {e}")
+        return None
+         
     except Exception as e :
-    
         print(f"Unexpected error :{e}")
         return None
     
