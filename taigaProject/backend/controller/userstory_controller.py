@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Header, Request, HTTPException
-from service.userstory_service import get_storypoint_burndown_for_sprint, get_userstory_custom_attribute_burndown_for_sprint, get_partial_storypoint_burndown_for_sprint, get_sb_coupling
+from service.userstory_service import get_storypoint_burndown_for_sprint, get_userstory_custom_attribute_burndown_for_sprint, get_partial_storypoint_burndown_for_sprint, get_sb_coupling, get_pb_coupling
 
 userstory_router = APIRouter()
 
@@ -34,9 +34,19 @@ def get_partial_userstories_burndown(request:Request,sprint_id: int):
     
 
 @userstory_router.get("/sb_coupling")
-def get_partial_userstories_burndown(request:Request,sprint_id: int):
+def get_sprint_backlog_coupling(request:Request, sprint_id: int):
     access_token = request.headers.get('Authorization')
     if(access_token):
         return get_sb_coupling(sprint_id, access_token)
     else:
         raise HTTPException(status_code=401, detail="Missing or invalid access token")
+    
+
+@userstory_router.get("/pb_coupling")
+def get_product_backlog_coupling(request:Request, project_id: int):
+    access_token = request.headers.get('Authorization')
+    if(access_token):
+        return get_pb_coupling(project_id, access_token)
+    else:
+        raise HTTPException(status_code=401, detail="Missing or invalid access token")
+    
