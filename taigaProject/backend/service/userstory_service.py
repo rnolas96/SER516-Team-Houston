@@ -361,4 +361,27 @@ def get_sb_coupling(sprint_id, auth_token):
     except Exception as e:
         print(f"Unexpected error :{e}")
         return None
+    
 
+
+def get_pb_coupling(project_id, auth_token):
+
+    result = {}
+    user_stories = []
+    pb_user_stories = []
+
+    try:
+        user_stories = get_user_story(project_id, auth_token)
+
+        for user_story in user_stories:
+            if(user_story['milestone']==None):
+                pb_user_stories.append(user_story)
+
+        return pb_user_stories
+
+       
+    except Exception as e :
+    
+        print(f"Unexpected error :{e}")
+        return None
+    
