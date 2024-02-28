@@ -67,8 +67,8 @@ const BoxPlotChartMaker = (props) => {
   }, [props])
 
   return (
-    <div style={{minWidth: 500, minHeight: 500}}>
-      <canvas ref={chartContainer} width="100" height="100" />
+    <div className='w-[80%]'>
+      <canvas ref={chartContainer} />
     </div>
   );
 };
