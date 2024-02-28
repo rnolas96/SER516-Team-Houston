@@ -3,7 +3,8 @@ import '../App.css'
 import SidebarMenu from './SidebarMenu'
 import axios from 'axios'
 import BarChartMaker from './reusable_components/BarChartMaker';
-import { Box } from '@ant-design/plots';
+// import { Box } from '@ant-design/plots';
+import BoxPlotChartMaker from './reusable_components/BoxPlotChartMaker';
 
 export default function CycleTime() {
 
@@ -23,67 +24,32 @@ export default function CycleTime() {
     )
     .then(res => {
 
-      let sprintData = []
+      console.log("data", res.data);
 
-      if (res.data) { // Only proceed if res.data exists
-        const data = Object.entries(res.data).reduce((acc, [sprint, tasks]) => {
-          acc[sprint] = acc[sprint] || [];
-          acc[sprint].push(...tasks.map(task => task.cycle_time));
-          return acc;
-        }, {});
-        // Convert the object to an array of sprints with cycle time arrays
-        sprintData = Object.entries(data).map(([x, y]) => ({
-          x,
-          y
-        }));
-        console.log("sprintData", sprintData);
-      } else {
-        console.error("res.data is undefined. Cannot process data.");
-      }
-      console.log("sprintData", sprintData);
-
-      const hasLongList = sprintData.some(item => item.y.length >= 5);
-
-      console.log("hasLongList", hasLongList);
+      let data = res.data;
 
       // let sprintData = [
       //   { x: 'Sprint1', y : [1, 9, 16, 22, 24]},
       //   { x: 'Sprint2', y : [2, 8, 12, 21, 28]},
       //   { x: 'Sprint3', y : [1, 7, 10, 17, 22]}
       // ]
+      
+      const cycleTimeValuesByKey = {};
+
+      for (const key in data) {
+        cycleTimeValuesByKey[key] = data[key].map(item => item['cycle_time']);
+      }
+      
+      let labels = Object.keys(cycleTimeValuesByKey);
+      let values = Object.values(cycleTimeValuesByKey);
+      
 
       let updated = {
-        height: 600,
-        width: 600,
-        autoFit: false,
-        inset: 8,
-        data: {
-          value: sprintData
-        },
-        // boxType: 'boxplot',
-        boxStyle: {
-          stroke: '#545454',
-          fill: '#1890FF',
-          fillOpacity: 0.3,
-        },
-        xField: 'x',
-        yField: 'y',
-        point: {
-          size: 5,
-          shape: 'point',
-        },
-        tooltip: {
-          items: [
-            { name: 'Cycle Time (Days)', channel: 'y' }
-          ],
-        },
-        axis: { y: { tickCount: 2 } },
-        // coordinate: { transform: [{ type: 'transpose' }] },
-        style: { boxFill: 'red', pointStroke: 'white' },
-      }
+        labels: labels,
+        values: values
+      };
 
-      if(!hasLongList)
-        updated['boxType'] = 'boxplot'
+      updated["label"] = "Boxplot";
 
       updateCall(updated);
     });
@@ -123,7 +89,7 @@ export default function CycleTime() {
         </div>
         <div>
           {cycleTimeData &&
-            <Box {...cycleTimeData} />}
+            <BoxPlotChartMaker {...cycleTimeData} />}
         </div>
 
       </div>
