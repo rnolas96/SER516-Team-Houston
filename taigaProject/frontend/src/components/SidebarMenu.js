@@ -5,6 +5,7 @@ import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import HubIcon from '@mui/icons-material/Hub';
 import '../App.css'
 import { Link } from 'react-router-dom';
 
@@ -71,7 +72,7 @@ export default function SidebarMenu() {
         <MenuItem className='mI' icon={<PeopleOutlinedIcon />} component={<Link to={"/burndowncharts"} />}>Burndown Charts</MenuItem>
         <MenuItem className='mI' icon={<ContactsOutlinedIcon />} component={<Link to={"/cycletime"} />}>Cycle Time</MenuItem>
         <MenuItem className='mI' icon={<ReceiptOutlinedIcon />} component={<Link to={"/leadtime"} />}>Lead Time</MenuItem>
-        <MenuItem className='mI' icon={<ReceiptOutlinedIcon />} component={<Link to={"/sbpbcoupling"} />}>SB/PB Coupling</MenuItem>
+        <MenuItem className='mI' icon={<HubIcon />} component={<Link to={"/sbpbcoupling"} />}>SB/PB Coupling</MenuItem>
 
       </Menu>
     </Sidebar>
