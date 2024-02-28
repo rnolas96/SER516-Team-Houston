@@ -4,7 +4,6 @@ import { Sidebar, Menu, MenuItem, useProSidebar, menuClasses, sidebarClasses } f
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-
 import '../App.css'
 import { Link } from 'react-router-dom';
 import SvgIcon from './reusable_components/SvgIcon';
@@ -40,13 +39,8 @@ export default function SidebarMenu() {
           }
         }}
         backgroundColor="white"
-        style={{ height: "100vh" }}>
+        style={{ height: "100vh"}}>
       <Menu
-        rootStyles={{
-          [`.${menuClasses.mI}`]: {
-            backgroundColor: 'red',
-          },
-        }}
         menuItemStyles={{
           button: {
             ['&.active']: {
