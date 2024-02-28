@@ -41,10 +41,10 @@ def get_task_cycle_time(request: Request, project_id: int):
 
     
 @task_router.get("/cost_of_delay")
-def get_cost_of_delay(request: Request, project_id: int, sprint_id: int):
+def get_cost_of_delay(request: Request, project_id: int, sprint_id: int, business_value_cost_factor: int):
     auth_token = request.headers.get('Authorization')
 
     if (auth_token):
-        return get_cost_of_delay_for_sprint(project_id, sprint_id, auth_token)
+        return get_cost_of_delay_for_sprint(project_id, sprint_id, business_value_cost_factor, auth_token)
     else:
         raise HTTPException(status_code = 401, detail = "Missing or invalid access token")
