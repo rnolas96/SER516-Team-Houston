@@ -1,12 +1,12 @@
 import React from 'react'
 import { Sidebar, Menu, MenuItem, useProSidebar, menuClasses, sidebarClasses } from "react-pro-sidebar";
+
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
-import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
+import ShowChartIcon from '@mui/icons-material/ShowChart';
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import '../App.css'
 import { Link } from 'react-router-dom';
+import SvgIcon from './reusable_components/SvgIcon';
 
 
 export default function SidebarMenu() {
@@ -39,13 +39,8 @@ export default function SidebarMenu() {
           }
         }}
         backgroundColor="white"
-        style={{ height: "100vh" }}>
+        style={{ height: "100vh"}}>
       <Menu
-        rootStyles={{
-          [`.${menuClasses.mI}`]: {
-            backgroundColor: 'red',
-          },
-        }}
         menuItemStyles={{
           button: {
             ['&.active']: {
@@ -68,10 +63,11 @@ export default function SidebarMenu() {
          </MenuItem>
 
         <MenuItem className='mI' icon={<HomeOutlinedIcon />} component={<Link to={"/"} />}>Home</MenuItem>
-        <MenuItem className='mI' icon={<PeopleOutlinedIcon />} component={<Link to={"/burndowncharts"} />}>Burndown Charts</MenuItem>
-        <MenuItem className='mI' icon={<ContactsOutlinedIcon />} component={<Link to={"/cycletime"} />}>Cycle Time</MenuItem>
-        <MenuItem className='mI' icon={<ReceiptOutlinedIcon />} component={<Link to={"/leadtime"} />}>Lead Time</MenuItem>
-        <MenuItem className='mI' icon={<ReceiptOutlinedIcon />} component={<Link to={"/costofdelay"} />}>Cost of Delay</MenuItem>
+        <MenuItem className='mI' icon={<ShowChartIcon />} component={<Link to={"/burndowncharts"} />}>Burndown Charts</MenuItem>
+        <MenuItem className='mI' icon={<SvgIcon name="boxplot" className="w-4 white" />} component={<Link to={"/cycletime"} />}>Cycle Time</MenuItem>
+        <MenuItem className='mI' icon={<SvgIcon name="boxplot" className="w-4 white" />} component={<Link to={"/leadtime"} />}>Lead Time</MenuItem>
+        <MenuItem className='mI' icon={<ShowChartIcon />} component={<Link to={"/costofdelay"} />}>Cost of Delay</MenuItem>
+
       </Menu>
     </Sidebar>
     </div>

@@ -56,7 +56,7 @@ export default function LineChartMaker(props) {
     };
 
     return (
-      <div className='graph-container'>
+      <div className='w-[70%]'>
         {props && props.showLoader? 
           <Loader/> 
           : <Line 
