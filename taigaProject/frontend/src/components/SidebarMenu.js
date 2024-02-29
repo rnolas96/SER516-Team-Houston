@@ -66,6 +66,8 @@ export default function SidebarMenu() {
         <MenuItem className='mI' icon={<ShowChartIcon />} component={<Link to={"/burndowncharts"} />}>Burndown Charts</MenuItem>
         <MenuItem className='mI' icon={<SvgIcon name="boxplot" className="w-4 white" />} component={<Link to={"/cycletime"} />}>Cycle Time</MenuItem>
         <MenuItem className='mI' icon={<SvgIcon name="boxplot" className="w-4 white" />} component={<Link to={"/leadtime"} />}>Lead Time</MenuItem>
+        <MenuItem className='mI' icon={<ShowChartIcon />} component={<Link to={"/costofdelay"} />}>Cost of Delay</MenuItem>
+
       </Menu>
     </Sidebar>
     </div>
