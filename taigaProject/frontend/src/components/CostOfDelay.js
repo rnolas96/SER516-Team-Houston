@@ -145,7 +145,7 @@ export default function CostOfDelay() {
 
   return (
     <div className="container-full bg-white">
-      <div className="route-container flex flex-col min-h-[100%]">
+      <div className="flex flex-col min-h-[100%] justify-between w-full py-[1rem] px-[2rem]">
         <Tabs
           style={{
             fontFamily: "Poppins",
