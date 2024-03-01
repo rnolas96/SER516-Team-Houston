@@ -23,6 +23,7 @@ def get_tasks(project_id, auth_token):
     headers = {
         'Authorization': f'Bearer {auth_token}',
         'Content-Type': 'application/json',
+        'x-disable-pagination': 'True'
     }
 
     try:
@@ -47,6 +48,7 @@ def get_closed_tasks(project_id, auth_token):
 
     # Call the get_tasks function to retrieve all tasks for the project
     tasks = get_tasks(project_id, auth_token)
+
     if tasks:
         # Filter tasks to include only closed tasks and format the result
         closed_tasks = [
@@ -57,9 +59,10 @@ def get_closed_tasks(project_id, auth_token):
                 "finished_date": task["finished_date"],
                 "milestone_id": task["milestone"],
                 "milestone_slug": task["milestone_slug"],
+                "assigned_to": task["assigned_to_extra_info"]['full_name_display'],
                 "user_story": task["user_story"]
             }
-            for task in tasks if task.get("is_closed")
+            for task in tasks if task.get("is_closed") and task['assigned_to_extra_info'] is not None
         ]
 
         return closed_tasks

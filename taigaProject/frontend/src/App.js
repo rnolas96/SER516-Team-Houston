@@ -9,17 +9,8 @@ import SbpbCoupling from './components/SbpbCoupling.js';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ProSidebarProvider } from 'react-pro-sidebar';
 import CostOfDelay from './components/CostOfDelay.js';
-
+import Engagement from './components/Engagement.js';
 function App() {
-
-  // use the authtoke below to make sure that only the Hero page is
-  // accessible until the authToken is available { @rkhatta1 }
-
-  // Testing Stuff: 
-  // window.onbeforeunload = function() {
-  //   localStorage.clear();
-  // }
-
 
   const authToken = localStorage.getItem('authToken');
   console.log(authToken);
@@ -37,6 +28,7 @@ function App() {
             <Route exact path="/leadtime" element={<LeadTime />} />
             <Route exact path="/costofdelay" element={<CostOfDelay/>} />
             <Route exact path="/sbpbcoupling" element={<SbpbCoupling/>} />
+            <Route exact path="/engagement" element={<Engagement/>} />
           </Routes>
       </Router>
     </div>
