@@ -6,6 +6,12 @@ from datetime import datetime
 # Load environment variables from .env file
 load_dotenv()
 
+class TaskHistoryError(Exception):
+    def __init__(self, status_code, reason):
+        self.status_code = status_code
+        self.reason = reason
+
+
 
 # Function to retrieve task history and calculate cycle time for closed tasks
 def get_task_history(tasks, auth_token):
@@ -45,9 +51,18 @@ def get_task_history(tasks, auth_token):
                 cycle_time += (finished_date - in_progress_date).days
                 closed_tasks += 1
 
-        except requests.exceptions.RequestException as e:
-            # Handle errors during the API request and print an error message
-            print(f"Error fetching project by slug: {e}")
+        except requests.exceptions.HTTPError as e:
+            print(f"HTTP error fetching Task History: {e}")
+            raise TaskHistoryError(e.response.status_code, e.response.reason)
+
+        except requests.exceptions.ConnectionError as e:
+            print(f"Connection error fetching Task History: {e}")
+            raise TaskHistoryError("CONNECTION_ERROR", str(e))
+
+        except Exception as e:
+            print(f"Unexpected error fetching Task History:{e}")
+            raise 
+
 
     # Return a list containing cycle_time and closed_tasks count
     return [cycle_time, closed_tasks]
@@ -100,10 +115,18 @@ def get_task_history(tasks, auth_token):
                 cycle_time += (finished_date - in_progress_date).days
                 closed_tasks += 1
 
-        except requests.exceptions.RequestException as e:
-            # Handle errors during the API request and print an error message
-            print(f"Error fetching project by slug: {e}")
+      
+        except requests.exceptions.HTTPError as e:
+            print(f"HTTP error fetching Task History: {e}")
+            raise TaskHistoryError(e.response.status_code, e.response.reason)
 
+        except requests.exceptions.ConnectionError as e:
+            print(f"Connection error fetching Task History: {e}")
+            raise TaskHistoryError("CONNECTION_ERROR", str(e))
+
+        except Exception as e:
+            print(f"Unexpected error fetching Task History:{e}")
+            raise 
     # Return a list containing cycle_time and closed_tasks count
     return [cycle_time, closed_tasks]
 
@@ -124,6 +147,8 @@ def get_cycle_time(task, auth_token):
         response.raise_for_status()
         history_data = response.json()
 
+        print("historydata----------------", history_data)
+
         in_progress_date = extract_new_to_in_progress_date(history_data)
 
         finished_date = datetime.fromisoformat(finished_date[:-1])
@@ -132,8 +157,18 @@ def get_cycle_time(task, auth_token):
             in_progress_date = datetime.fromisoformat(str(in_progress_date)[:-6])
 
             cycle_time += (finished_date - in_progress_date).days
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching cycle time: {e}")
+   
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error fetching Task History: {e}")
+        raise TaskHistoryError(e.response.status_code, e.response.reason)
+
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error fetching Task History: {e}")
+        raise TaskHistoryError("CONNECTION_ERROR", str(e))
+
+    except Exception as e:
+        print(f"Unexpected error while Calculating Cycle Time:{e}")
+        raise 
 
     return cycle_time
 

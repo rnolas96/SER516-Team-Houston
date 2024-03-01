@@ -5,6 +5,11 @@ from dotenv import load_dotenv
 # Load environment variables from a .env file
 load_dotenv()
 
+class TaskFetchingError(Exception):
+    def __init__(self, status_code, reason):
+        self.status_code = status_code
+        self.reason = reason
+
 
 # Function to retrieve tasks for a specific project from the Taiga API
 def get_tasks(project_id, auth_token):
@@ -26,40 +31,61 @@ def get_tasks(project_id, auth_token):
         # Make a GET request to Taiga API to retrieve tasks
         response = requests.get(task_api_url, headers=headers)
         response.raise_for_status()  # Raise an exception for HTTP errors (4xx or 5xx)
+        
+        if response.status_code == 401:
+            raise TaskFetchingError(401, "Client Error: Unauthorized")
 
         # Extract and return the tasks information from the response
         project_info = response.json()
         return project_info
 
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error fetching Tasks: {e}")
+        raise TaskFetchingError(e.response.status_code, e.response.reason)
 
-        # Handle errors during the API request and print an error message
-        print(f"Error fetching tasks: {e}")
-        return None
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error fetching Tasks: {e}")
+        raise TaskFetchingError("CONNECTION_ERROR", str(e))
+
+    except Exception as e:
+        print(f"Unexpected error fetching Tasks:{e}")
+        raise 
+
 
 
 # Function to retrieve closed tasks for a specific project from the Taiga API
 def get_closed_tasks(project_id, auth_token):
 
-    # Call the get_tasks function to retrieve all tasks for the project
-    tasks = get_tasks(project_id, auth_token)
-    if tasks:
-        # Filter tasks to include only closed tasks and format the result
-        closed_tasks = [
-            {
-                "id": task["id"],
-                "subject": task["subject"],
-                "created_date": task["created_date"],
-                "finished_date": task["finished_date"],
-                "milestone_id": task["milestone"],
-                "milestone_slug": task["milestone_slug"]
-            }
-            for task in tasks if task.get("is_closed")
-        ]
+    try:
+        # Call the get_tasks function to retrieve all tasks for the project
+        tasks = get_tasks(project_id, auth_token)
+        if tasks:
+            # Filter tasks to include only closed tasks and format the result
+            closed_tasks = [
+                {
+                    "id": task["id"],
+                    "subject": task["subject"],
+                    "created_date": task["created_date"],
+                    "finished_date": task["finished_date"],
+                    "milestone_id": task["milestone"],
+                    "milestone_slug": task["milestone_slug"]
+                }
+                for task in tasks if task.get("is_closed")
+            ]
 
-        return closed_tasks
-    else:
-        return None
+            return closed_tasks
+        else:
+            return None
+    
+    except TaskFetchingError as e:
+        raise
+    
+    except Exception as e:
+        print(f"Unexpected error fetching Tasks:{e}")
+        raise 
+    
+    except requests.exceptions.HTTPError as e:
+        raise
     
 def get_closed_tasks_for_sprint(sprint_id, project_id, auth_token):
 
@@ -87,24 +113,34 @@ def get_closed_tasks_for_sprint(sprint_id, project_id, auth_token):
 # Function to retrieve all tasks for a specific project from the Taiga API
 def get_all_tasks(project_id, auth_token):
 
-    # Call the get_tasks function to retrieve all tasks for the project
-    tasks = get_tasks(project_id, auth_token)
+    try:
+        # Call the get_tasks function to retrieve all tasks for the project
+        tasks = get_tasks(project_id, auth_token)
 
-    if tasks:
-        # Format all tasks and return the result
-        all_tasks = [
-            {
-                "id": task["id"],
-                "milestone": task["milestone"],
-                "milestone_slug": task["milestone_slug"],
-                "created_date": task["created_date"],
-                "finished_date": task["finished_date"]
-            }
-            for task in tasks
-        ]
+        if tasks:
+            # Format all tasks and return the result
+            all_tasks = [
+                {
+                    "id": task["id"],
+                    "milestone": task["milestone"],
+                    "milestone_slug": task["milestone_slug"],
+                    "created_date": task["created_date"],
+                    "finished_date": task["finished_date"]
+                }
+                for task in tasks
+            ]
 
-        return all_tasks
-    else:
+            return all_tasks
+        else:
+            return None
+    
+    except TaskFetchingError as e:
+        raise
+
+    except Exception as e:
+        # Handle unexpected exceptions in get_all_tasks
+        print(f"Unexpected error in get_all_tasks: {e}")
+        # Consider returning None or a specific error message here
         return None
     
 def get_tasks_by_milestone(project_id, sprint_id, auth_token):
@@ -121,13 +157,25 @@ def get_tasks_by_milestone(project_id, sprint_id, auth_token):
         # Make a GET request to Taiga API to retrieve tasks
         response = requests.get(task_api_url, headers=headers)
         response.raise_for_status()  # Raise an exception for HTTP errors (4xx or 5xx)
+        
+        if response.status_code == 401:
+            raise TaskFetchingError(401, "Client Error: Unauthorized")
+
         # Extract and return the tasks information from the response
         tasks = response.json()
         return tasks
-    except requests.exceptions.RequestException as e:
-        # Handle errors during the API request and print an error message
-        print(f"Error fetching tasks: {e}")
-        return None
+   
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error fetching Tasks: {e}")
+        raise TaskFetchingError(e.response.status_code, e.response.reason)
+
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error fetching Tasks: {e}")
+        raise TaskFetchingError("CONNECTION_ERROR", str(e))
+
+    except Exception as e:
+        print("Unexpected error fetching Tasks:")
+        raise 
 
 def get_milestone_name(project_id, auth_token):
 
