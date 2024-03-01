@@ -4,6 +4,7 @@ import { Sidebar, Menu, MenuItem, useProSidebar, menuClasses, sidebarClasses } f
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import HubIcon from '@mui/icons-material/Hub';
 import '../App.css'
 import { Link } from 'react-router-dom';
 import SvgIcon from './reusable_components/SvgIcon';
@@ -67,6 +68,7 @@ export default function SidebarMenu() {
         <MenuItem className='mI' icon={<SvgIcon name="boxplot" className="w-4 white" />} component={<Link to={"/cycletime"} />}>Cycle Time</MenuItem>
         <MenuItem className='mI' icon={<SvgIcon name="boxplot" className="w-4 white" />} component={<Link to={"/leadtime"} />}>Lead Time</MenuItem>
         <MenuItem className='mI' icon={<ShowChartIcon />} component={<Link to={"/costofdelay"} />}>Cost of Delay</MenuItem>
+        <MenuItem className='mI' icon={<HubIcon />} component={<Link to={"/sbpbcoupling"} />}>SB/PB Coupling</MenuItem>
 
       </Menu>
     </Sidebar>
