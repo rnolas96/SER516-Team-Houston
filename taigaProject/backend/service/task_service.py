@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from itertools import groupby
-from taigaApi.task.getTasks import TaskFetchingError, get_closed_tasks, get_tasks_by_milestone
+from taigaApi.task.getTasks import TaskFetchingError, get_closed_tasks, get_milestone_name, get_tasks_by_milestone
 from taigaApi.task.getTaskHistory import get_cycle_time, get_lead_time
 from taigaApi.milestone.getMilestoneById import MilestoneFetchingError, get_milestone_by_id
 from taigaApi.issue.getIssuesByProjectId import get_issues_by_project_id
