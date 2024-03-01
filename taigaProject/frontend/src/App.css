@@ -143,3 +143,15 @@ body {
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+
+.vis-network {
+  overflow:visible;
+}
+
+.vis-tooltip {
+  position: absolute;
+  background-color: #ffe59f;
+  padding-inline: 0.6rem;
+  padding-block: 0.4rem;
+  border-radius: 1.5rem;
+}
