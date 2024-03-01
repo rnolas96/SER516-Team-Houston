@@ -82,7 +82,23 @@ export default function SbpbCoupling() {
       });
   }
 
+  // function SbCouplingValues() {
+  //   const authToken = localStorage.getItem('authToken');
+  //   let url = '/api/userstory/sb_coupling?sprint_id=' + sprintId
+  //   axios.get(url, {
+  //     headers: {
+  //         'Authorization': authToken
+  //     }
+  //   }).then(result => {
+  //     console.log("result", result.data)
+  //     console.log("p_id", Object.keys(result.data)[0])
+  //     let p_id = Object.keys(result.data)[0]
+  //   })
+  // }
+  
+
   function setProjectDetails() {
+    
     const authToken = localStorage.getItem("authToken");
     let url = "/api/project/milestone_data?project_slug=" + projectSlug;
 
