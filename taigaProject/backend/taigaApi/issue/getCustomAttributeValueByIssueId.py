@@ -32,7 +32,6 @@ def get_custom_attribute_value_by_issue_id(issue_id, attribute_id, auth_token):
 
         # Extract and return the issue response list from the response
         custom_attribute_info = response.json()
-        print("custom_Attribute_info============", custom_attribute_info)
         return custom_attribute_info['attributes_values'][attribute_id]
 
     except requests.exceptions.HTTPError as e:
