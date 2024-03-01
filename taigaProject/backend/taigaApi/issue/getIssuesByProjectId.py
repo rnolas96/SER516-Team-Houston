@@ -5,6 +5,11 @@ from dotenv import load_dotenv
 # Load environment variables from a .env file
 load_dotenv()
 
+class IssueFetchingError(Exception):
+    def __init__(self, status_code, reason):
+        self.status_code = status_code
+        self.reason = reason
+
 
 # Function to retrieve issues based on project id
 def get_issues_by_project_id(project_id, auth_token):
@@ -25,11 +30,21 @@ def get_issues_by_project_id(project_id, auth_token):
         response = requests.get(issue_api_url, headers=headers)
         response.raise_for_status()
 
+        if response.status_code == 401:
+            raise IssueFetchingError(401, "Client Error: Unauthorized")
+
         # Extract and return the issue response list from the response
         issue_info = response.json()
         return issue_info
 
-    except requests.exceptions.RequestException as e:
-        # Handle errors during the API request and print an error message
-        print(f"Error fetching issues by project id: {e}")
-        return None
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error fetching Issues: {e}")
+        raise IssueFetchingError(e.response.status_code, e.response.reason)
+
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error fetching Issues: {e}")
+        raise IssueFetchingError("CONNECTION_ERROR", str(e))
+
+    except Exception as e:
+        print(f"Unexpected error fetching Issues:{e}")
+        raise 
