@@ -22,8 +22,6 @@ def get_userstories_business_value_burndown(request:Request, project_id: int, sp
     else:
         raise HTTPException(status_code=401, detail="Missing or invalid access token")
     
-
-
 @userstory_router.get("/partial_userstory_burndown")
 def get_partial_userstories_burndown(request:Request,sprint_id: int):
     access_token = request.headers.get('Authorization')
