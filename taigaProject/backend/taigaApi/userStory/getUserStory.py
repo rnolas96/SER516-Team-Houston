@@ -35,17 +35,11 @@ def get_user_story(project_id, auth_token):
         project_info = response.json()
         return project_info
 
-    except requests.exceptions.HTTPError as e:
-        print(f"HTTP error fetching UserStory: {e}")
-        raise UserStoryFetchingError(e.response.status_code, e.response.reason)
+    except requests.exceptions.RequestException as e:
 
-    except requests.exceptions.ConnectionError as e:
-        print(f"Connection error fetching UserStory: {e}")
-        raise UserStoryFetchingError("CONNECTION_ERROR", str(e))
-
-    except Exception as e:
-        print("Unexpected error fetching UserStory:")
-        raise 
+        # Handle errors during the API request and print an error message
+        print(f"Error fetching project by slug: {e}")
+        return None
 
 def get_custom_attribute_from_userstory(user_story_id, auth_token):
 
@@ -68,54 +62,11 @@ def get_custom_attribute_from_userstory(user_story_id, auth_token):
 
         return custom_attribute_data
 
-    except requests.exceptions.HTTPError as e:
-        print(f"HTTP error fetching UserStory: {e}")
-        raise UserStoryFetchingError(e.response.status_code, e.response.reason)
+    except requests.exceptions.RequestException as e:
 
-    except requests.exceptions.ConnectionError as e:
-        print(f"Connection error fetching UserStory: {e}")
-        raise UserStoryFetchingError("CONNECTION_ERROR", str(e))
-
-    except Exception as e:
-        print("Unexpected error fetching UserStory:")
-        raise 
+        print(f"Error fetching project by slug: {e}")
+        return None
     
-def get_custom_attribute_type_id(project_id, auth_token, attribute_name):
-
-    taiga_url = os.getenv('TAIGA_URL')
-
-    custom_attribute_api_url = f"{taiga_url}/userstory-custom-attributes?project={project_id}"
-
-    headers = {
-        'Authorization': f'Bearer {auth_token}',
-        'Content-Type': 'application/json',
-    }
-
-    try:
-
-        response = requests.get(custom_attribute_api_url, headers=headers)
-        response.raise_for_status() 
-
-        for res in response.json():
-            if res["name"] == attribute_name:
-                return str(res["id"])
-
-    except requests.exceptions.HTTPError as e:
-        print(f"HTTP error fetching UserStory: {e}")
-        raise UserStoryFetchingError(e.response.status_code, e.response.reason)
-
-    except requests.exceptions.ConnectionError as e:
-        print(f"Connection error fetching UserStory: {e}")
-        raise UserStoryFetchingError("CONNECTION_ERROR", str(e))
-
-    except Exception as e:
-        print("Unexpected error fetching UserStory:")
-        raise 
-
-    # return "40205"
-
-
-
 def get_userstories_by_sprint(sprint_id, auth_token):
     taiga_url = os.getenv('TAIGA_URL')
 
@@ -146,3 +97,32 @@ def get_userstories_by_sprint(sprint_id, auth_token):
     except Exception as e:
         print("Unexpected error fetching UserStory:")
         raise 
+    
+def get_custom_attribute_type_id(project_id, auth_token, attribute_name):
+
+    taiga_url = os.getenv('TAIGA_URL')
+
+    custom_attribute_api_url = f"{taiga_url}/userstory-custom-attributes?project={project_id}"
+
+    headers = {
+        'Authorization': f'Bearer {auth_token}',
+        'Content-Type': 'application/json',
+    }
+
+    try:
+
+        response = requests.get(custom_attribute_api_url, headers=headers)
+        response.raise_for_status() 
+
+        for res in response.json():
+            print("response----------------------------->", res)
+            if res["name"] == attribute_name:
+                print("id---------------------------->",res["id"])
+                return str(res["id"])
+
+    except requests.exceptions.RequestException as e:
+
+        print(f"Error fetching project by slug: {e}")
+        return None
+
+    # return "40205"

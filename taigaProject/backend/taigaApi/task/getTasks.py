@@ -5,6 +5,10 @@ from dotenv import load_dotenv
 # Load environment variables from a .env file
 load_dotenv()
 
+class TaskFetchingError(Exception):
+    def __init__(self, status_code, reason):
+        self.status_code = status_code
+        self.reason = reason
 
 # Function to retrieve tasks for a specific project from the Taiga API
 def get_tasks(project_id, auth_token):
@@ -52,7 +56,8 @@ def get_closed_tasks(project_id, auth_token):
                 "created_date": task["created_date"],
                 "finished_date": task["finished_date"],
                 "milestone_id": task["milestone"],
-                "milestone_slug": task["milestone_slug"]
+                "milestone_slug": task["milestone_slug"],
+                "user_story": task["user_story"]
             }
             for task in tasks if task.get("is_closed")
         ]
@@ -124,10 +129,18 @@ def get_tasks_by_milestone(project_id, sprint_id, auth_token):
         # Extract and return the tasks information from the response
         tasks = response.json()
         return tasks
-    except requests.exceptions.RequestException as e:
-        # Handle errors during the API request and print an error message
-        print(f"Error fetching tasks: {e}")
-        return None
+  
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error fetching the tasks: {e}")
+        raise TaskFetchingError(e.response.status_code, e.response.reason)
+
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error fetching the tasks: {e}")
+        raise TaskFetchingError("CONNECTION_ERROR", str(e))
+
+    except Exception as e:
+        print("Unexpected error fetching the tasks:")
+        raise 
 
 def get_milestone_name(project_id, auth_token):
 

@@ -8,6 +8,7 @@ import CycleTime from './components/CycleTime.js';
 import SbpbCoupling from './components/SbpbCoupling.js';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ProSidebarProvider } from 'react-pro-sidebar';
+import CostOfDelay from './components/CostOfDelay.js';
 
 function App() {
 
@@ -34,7 +35,8 @@ function App() {
             <Route exact path="/burndowncharts" element={<Burndown />} />
             <Route exact path="/cycletime" element={<CycleTime />} />
             <Route exact path="/leadtime" element={<LeadTime />} />
-            <Route exact path="/sbpbcoupling" element={<SbpbCoupling />} />
+            <Route exact path="/costofdelay" element={<CostOfDelay/>} />
+            <Route exact path="/sbpbcoupling" element={<SbpbCoupling/>} />
           </Routes>
       </Router>
     </div>

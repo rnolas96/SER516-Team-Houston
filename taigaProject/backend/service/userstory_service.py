@@ -1,19 +1,16 @@
 import datetime
-import re
 import logging
 import threading
-
+import re
 from datetime import datetime, timedelta
 from taigaApi.milestone.getMilestoneById import get_milestone_by_id
-from taigaApi.userStory.getUserStory import UserStoryFetchingError, get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, get_userstories_by_sprint
+from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint
 import redis
 import json
 from taigaApi.task.getTasks import get_tasks_by_milestone
 from fastapi import HTTPException
 
 r_userstory = redis.StrictRedis(host='localhost', port=6379, db=0)
-
-logging.basicConfig(level=logging.INFO)
 
 # funtion to get sprintwise burndown chart details for a project. 
 def get_userstory_burndown_by_project_id(project_id,auth_token):
