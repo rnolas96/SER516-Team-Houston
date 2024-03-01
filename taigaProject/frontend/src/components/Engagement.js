@@ -3,32 +3,31 @@ import '../App.css'
 import SidebarMenu from './SidebarMenu'
 import axios from 'axios'
 import BarChartMaker from './reusable_components/BarChartMaker';
+import { selectClasses } from '@mui/material';
+import Loader from './reusable_components/Loader';
 export default function Engagement() {
 
   const [engagementData, setEngagementData] = useState(null);
+  const [barChartData, setBarChartData] = useState(null);
 
   const [projectSlug, setProjectSlug] = useState(null);
-  const [sprintData, setSprintData] = useState([]);
+  const [engagementDataLabels, setEngagementDataLabels] = useState([]);
 
   const [selectedOption, setSelectedOption] = useState("");
 
   const [projectId, setProjectId] = useState(null);
-  const [sprintId, setSprintId] = useState(null);
 
   const [showLoader, setShowLoader] = useState(false);
 
   const clearData = () => {
-    setSprintData([]);
-    setSprintId(null);
+    setEngagementDataLabels([]);
     setEngagementData(null);
-    setSelectedOption("");
     setShowLoader(false);
+    setBarChartData(null);
   };
 
   const handleDropdownChange = (e) => {
     setSelectedOption(e.target.value);
-    console.log(e.target.value);
-    setSprintId(e.target.value);
     setShowLoader(true);
   };
 
@@ -37,115 +36,78 @@ export default function Engagement() {
     clearData();
   }
 
-  function setProjectDetails() {
+  function setEngagementDetails() {
     const authToken = localStorage.getItem("authToken");
-    let url = "/api/project/milestone_data?project_slug=" + projectSlug;
-
-    axios
-      .get(url, {
-        headers: {
-          Authorization: authToken,
-        },
-      })
-      .then((result) => {
-        console.log("result", result.data);
-        console.log("p_id", Object.keys(result.data)[0]);
-
-        let p_id = Object.keys(result.data)[0];
-        let s_Data = result.data[p_id];
-        console.log(s_Data);
-        setProjectId(p_id);
-        setSprintData(s_Data);
-        setShowLoader(true);
-      });
-  }
-
-
-  function apiCall(url, updateCall, authToken) {
-    // axios.get(url, {
-    //   headers: {
-    //     'Authorization': authToken
-    //   }}
-    // )
-    // .then(res => {
-    //   console.log(res.data)
-    //   const labels = Object.keys(res.data);
-
-      const engagementLabels = ["commits", "task activity", "pull requests", "something else 1", "something else 2"]
-      const engagementValues = [10, 20, 13, 55, 14];
-
-      console.log("something")
-      const updated = {
-        labels: engagementLabels,
-        text: "Engagement data",
-        datasets: [
-          {
-            label: "Person 1",
-            data: engagementValues,
-            backgroundColor: [
-                'rgb(255, 99, 132)'
-            ],
-            hoverOffset: 4
+    const projectDataUrl = `/api/project/milestone_data?project_slug=${projectSlug}`;
+    setShowLoader(true);
+    async function fetchData() {
+      try {
+        const projectDataResponse = await axios.get(projectDataUrl, {
+          headers: {
+            Authorization: authToken,
           },
-          {
-            label: "Person 2",
-            data: engagementValues,
-            backgroundColor: [
-                'rgb(54, 132, 99)'
-            ],
-            hoverOffset: 4
-          },
-          {
-            label: "Person 3",
-            data: engagementValues,
-            backgroundColor: [
-                'rgb(99, 132, 255)'
-            ],
-            hoverOffset: 4
-          },
-          {
-            label: "Person 4",
-            data: engagementValues,
-            backgroundColor: [
-                'rgb(99, 99, 54)'
-            ],
-            hoverOffset: 4
-          },
-          {
-            label: "Person 5",
-            data: engagementValues,
-            backgroundColor: [
-                'rgb(132, 132, 0)'
-            ],
-            hoverOffset: 4
-          },
-        ]
-      }
-      console.log("comes here", updated);
-      updateCall(updated);
-    // }
-    // );
-  }
-  
-  useEffect (() => {
-
-    const callApis = () => {
-        const authToken = localStorage.getItem("authToken");
-        console.log("authToken", authToken);
-        console.log("sprintId", sprintId);
-        console.log("projectId", projectId);
-  
-        if (authToken && projectId && sprintId) {
-            apiCall('/api/engagement/engagement_data?project_id=1522285', setEngagementData, authToken);
-        }
-      };
-  
-      callApis();
-      const intervalId = setInterval(callApis, 30000);
-      return () => clearInterval(intervalId);
+        });
     
-  }, [sprintId, projectId]);
+        const projectId = Object.keys(projectDataResponse.data)[0];
+        setProjectId(projectId);
+
+        const engagementUrl = `/api/engagement/taiga_member_engagement?project_id=${projectId}`;
+        const engagementDataResponse = await axios.get(engagementUrl, {
+          headers: {
+            Authorization: authToken,
+          },
+        });
+        
+        const metricLabels = Object.keys(engagementDataResponse.data);
+
+        setEngagementData(engagementDataResponse.data);
+
+        setEngagementDataLabels(metricLabels);
+        setShowLoader(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
+  }
   
+  useEffect(() => {
+    if (engagementData && selectedOption !== "")
+      populateData(selectedOption, engagementData[selectedOption]);
+
+    if (selectedOption === "")
+      clearData();
+
+  }, [selectedOption]);
+  
+  function populateData(metricLabel, engagementValue)
+  {
+    const updated = {
+      labels: Object.keys(engagementValue),
+      text: "Engagement data",
+      datasets: [
+        {
+          label: formatString(metricLabel),
+          data: engagementValue,
+          backgroundColor: [
+            'rgb(255, 99, 132)'
+          ],
+          hoverOffset: 4
+        }
+      ]
+    }
+    setBarChartData(updated);
+    setShowLoader(false);
+  }
+
+  function formatString(originalString)
+  {
+    const formattedString = originalString.split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+
+    return formattedString
+  }
+
   return (
     <div className='container-full'>
       <div className="route-container flex flex-col min-h-[100%]">
@@ -155,7 +117,6 @@ export default function Engagement() {
               flexDirection: "column",
               justifyContent: "space-between",
               width: "50%",
-              // minHeight: "50%"
             }}
             className="parent"
           >
@@ -182,27 +143,30 @@ export default function Engagement() {
             />
             <button
               className="ml-[0.6rem] h-[2.45rem] w-[33%] border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-none"
-              onClick={() => setProjectDetails()}
+              onClick={() => setEngagementDetails()}
             >
               Submit
             </button>
           </div>
-          {sprintData.length > 0 ? (
+          <div style = {{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          {showLoader && <Loader/>} {}
+          </div>
+          {engagementDataLabels.length > 0 ? (
               <select
                 value={selectedOption}
                 onChange={handleDropdownChange}
                 style={{ paddingBlock: "0.4rem", paddingInline: "0.5rem", marginBottom: "2.5rem", borderRadius: "0.5rem", borderColor: "#f98080" }}
               >
                 <option className="dropdown" value="">Select an option</option>
-                {sprintData.map((item) => (
-                  <option key={item.id} value={item.id} className="dropdown">
-                    {item.name}
+                {engagementDataLabels.map((item) => (
+                  <option value={item} className="dropdown">
+                    {formatString(item)}
                   </option>
                 ))}
               </select>
           ) : null}
-        </div>
-        <BarChartMaker props={engagementData}/>
+        </div> 
+        {barChartData ? <BarChartMaker props={barChartData}/>: null}
       </div>
     </div>
   )
