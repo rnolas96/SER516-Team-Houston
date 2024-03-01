@@ -10,9 +10,23 @@ import { Buffer } from "buffer";
 export default function SbpbCoupling() {
 
   const [pbCouplingData, setPbCouplingData] =
-    useState(null);
+    useState({
+      nodes: [
+        {id: 0, label: "Waiting for data", title:  "Title Not available"},
+      ],
+      edges: [
+          {from: 0, to: 0},
+      ]
+    });
   const [sbCouplingData, setSbCouplingData] =
-    useState(null);
+    useState({
+      nodes: [
+          {id: 0, label: "Waiting for data", title:  "Title Not available"},
+      ],
+      edges: [
+          {from: 0, to: 0},
+      ]
+    });
 
   const [projectSlug, setProjectSlug] = useState(null);
 
@@ -58,31 +72,16 @@ export default function SbpbCoupling() {
       })
       .then((res) => {
         console.log("res", res.data);
-        // const labels = Object.keys(res.data);
-        // const values = Object.values(res.data);
         
-        // labels[0] = "";
-        // const updated = {
-        //   labels: labels,
-        //   text: "Burndown data for " + scenario,
-        //   datasets: [
-        //     {
-        //       label: "Burndown Data",
-        //       data: values,
-        //       borderColor: "black",
-        //       backgroundColor: ["rgb(255, 99, 132)", "rgb(255, 205, 86)"],
-        //       hoverOffset: 4,
-        //     },
-        //   ],
-        // };
-        
-        const updated = res.data;
-        updateCall(updated);
+        if(res.data.nodes && res.data.edges) {
+          updateCall(res.data);
+        }
 
       });
   }
 
   function setProjectDetails() {
+    
     const authToken = localStorage.getItem("authToken");
     let url = "/api/project/milestone_data?project_slug=" + projectSlug;
 
@@ -114,9 +113,9 @@ export default function SbpbCoupling() {
       console.log("sprintId", sprintId);
       console.log("projectId", projectId);
 
-      if (authToken && projectId && sprintId) {
+      if (authToken && projectId) {
         apiCall(
-          `/api/userstory/sb_coupling?sprint_id=${sprintId}`,
+          `/api/userstory/pb_coupling?project_id=${projectId}`,
           setPbCouplingData,
           "Product Backlog information",
           authToken

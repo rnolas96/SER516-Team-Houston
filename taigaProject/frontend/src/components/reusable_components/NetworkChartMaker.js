@@ -2,30 +2,47 @@ import { React, useEffect, useState } from 'react';
 import Loader from './Loader';
 import Graph from 'react-graph-vis';
 import { v4 as uuidv4 } from 'uuid';
+import '../../App.css'
 
 export default function NetworkChartMaker (props) {
+    console.log("propsData", props.data);
+
+    function convertKeys(data, type) {
+        
+        let nodes = [];
+        let edges = [];
+        
+        if(type == "nodes") {
+            data.map(obj => {
+                let currentObj = {id: obj ? obj.id : 0, label:  obj ? ("US #" + obj.label.toString()) : "None (Choose a sprint for data to populate)", title: obj ? obj.title.toString() : "Title Not available"}
+                nodes.push(currentObj)
+            }); 
+
+            return nodes;
+        }
+        if(type == "edges") {
+            data.map(obj => {
+                console.log("obj", obj)
+                let currentObj = {from: obj? obj.from : 0, to: obj ? obj.to : 0}
+                nodes.push(currentObj)
+            }); 
+
+            return nodes;
+        }
+    }
 
     useEffect(() => {
-        if(props.data)
+        if (props.data) {
             props.setShowLoader(false);
+        }
     }, [props.data])
 
-    console.log("propsData", props.data);   
-
     const graph = {
-        nodes: [
-            {id: 1, label: "Node 1", title: "Node 1 tooltip text"},
-            {id: 2, label: "Node 2", title: "Node 2 tooltip text"},
-            {id: 3, label: "Node 3", title: "Node 3 tooltip text"},
-            {id: 4, label: "Node 4", title: "Node 4 tooltip text"}
-        ],
-        edges: [
-            {from: 1, to: 1, smooth: {type: "curvedCW"}, arrows: {from: {enabled: true, type: "circle"}, to: {enabled: true, type: "circle"}}},
-            {from: 1, to: 4},
-            {from: 3, to: 1},
-            {from: 3, to: 4}
-        ]
+        nodes: props.data && props.data.nodes? convertKeys(props.data.nodes, "nodes") : [{id: 0, label: "Choose an option from the dropdown", title: "no title"}],
+        edges: props.data && props.data.edges? convertKeys(props.data.edges, "edges") : [{from: 0, to: 0}]
     }
+
+    console.log("graph", graph);
 
     const option = {
         height: "450px",
@@ -39,23 +56,20 @@ export default function NetworkChartMaker (props) {
                 border: "#000000",
             }
         },
-        shadow: true,
-        smooth: true
     }
 
     return (
         <div className='graph-container'>
-            {props.data?
-                <div className='h-auto border-solid border-red-400 border-2 w-full rounded-xl'>
-                    <Graph 
+            {props && props.showLoader? 
+                <Loader /> 
+                : <div className='h-auto border-solid border-red-400 border-2 w-full rounded-xl'>
+                    <Graph
                         graph={graph}
                         options={option}
                         key={uuidv4()}
                     />
                 </div>
-                : props.showLoader? <Loader/>
-                    : <div>{props.scenario? props.scenario : "Enter data to see chart"}</div>
-            }   
+            }
         </div>
     );
 }
