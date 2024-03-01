@@ -6,6 +6,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+class CustomeAttributeFetchingError(Exception):
+    def __init__(self, status_code, reason):
+        self.status_code = status_code
+        self.reason = reason
+
 #Function to get custom attribute data from issue_id
 def get_custom_attribute_value_by_issue_id(issue_id, attribute_id, auth_token):
     # Get Taiga API URL from environment variables
@@ -27,13 +32,20 @@ def get_custom_attribute_value_by_issue_id(issue_id, attribute_id, auth_token):
 
         # Extract and return the issue response list from the response
         custom_attribute_info = response.json()
-        print("asdnaksjdnaksjdnaksjdnaksjdnakjsdnaksjdnaksjdnaksjdnaksjdaksd",attribute_id)
         return custom_attribute_info['attributes_values'][attribute_id]
 
-    except requests.exceptions.RequestException as e:
-        # Handle errors during the API request and print an error message
-        print(f"Error fetching issues by project id: {e}")
-        return None
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error fetching Custom Attributes of Issues By projectId: {e}")
+        raise CustomeAttributeFetchingError(e.response.status_code, e.response.reason)
+
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error fetching Custom Attributes of Issues By projectId : {e}")
+        raise CustomeAttributeFetchingError("CONNECTION_ERROR", str(e))
+
+    except Exception as e:
+        print(f"Unexpected error fetching Custom Attributes of Issues By projectId:{e}")
+        raise 
+
     
 def get_custom_attribute_type_id_for_issue(project_id, auth_token, attribute_name):
 
@@ -55,7 +67,14 @@ def get_custom_attribute_type_id_for_issue(project_id, auth_token, attribute_nam
             if res["name"] == attribute_name:
                 return str(res["id"])
 
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error fetching Custom Attributes of Issues By projectId: {e}")
+        raise CustomeAttributeFetchingError(e.response.status_code, e.response.reason)
 
-        print(f"Error fetching project by slug: {e}")
-        return None
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error fetching Custom Attributes of Issues By projectId : {e}")
+        raise CustomeAttributeFetchingError("CONNECTION_ERROR", str(e))
+
+    except Exception as e:
+        print(f"Unexpected error fetching Custom Attributes of Issues By projectId:{e}")
+        raise 
