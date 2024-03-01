@@ -22,7 +22,7 @@ def get_milestone_by_id(milestone_id, auth_token):
         response.raise_for_status()
         print("response status code---------------",response.status_code)
         if response.status_code == 401:
-            raise MilestoneFetchingError("UNAUTHORIZED_TOKEN", "401 Client Error: Unauthorized")
+            raise MilestoneFetchingError(401, "Client Error: Unauthorized")
 
         milestone_info = response.json()
 
