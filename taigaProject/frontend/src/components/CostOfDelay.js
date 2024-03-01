@@ -180,7 +180,7 @@ export default function CostOfDelay() {
               className={"tabElements"}
               selectedClassName="selectedTabElements"
             >
-              <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
+              <p className="px-[0.8rem] text-center border-none ">
                 Cost of Delay
               </p>
             </Tab>
@@ -188,7 +188,7 @@ export default function CostOfDelay() {
           <div style={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
+            justifyContent: "start",
             marginTop: "0.3rem",
             marginBottom: "0.6rem",
           }}>
@@ -197,7 +197,7 @@ export default function CostOfDelay() {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
-                width: "50%",
+                width: "30%",
                 // minHeight: "50%"
               }}
               className="parent"
@@ -216,7 +216,7 @@ export default function CostOfDelay() {
                 }}
               >
               <input
-                className="bg-white border-2 rounded-xl hover:rounded-none duration-300 border-[#ffd053] h-[2.3rem] px-3 w-[67%] text-[1rem] font-sans"
+                className="bg-white border-2 rounded-xl hover:rounded-none duration-300 border-[#ffd053] h-[2.3rem] px-3 w-[80%] text-[1rem] font-sans"
                 type="username"
                 value={projectSlug}
                 onChange={onChangeProjectSlug}
@@ -247,13 +247,15 @@ export default function CostOfDelay() {
             <div style={{
                 display: "flex",
                 flexDirection: "column",
-                width: "100%",
-                alignItems: "flex-end"
+                justifyContent: "space-between",
+                width: "30%",
                 // minHeight: "50%"
               }}
+              className="parent ml-[2rem]"
             >
+              <div className="flex flex-col">
               <span className="text-[1rem] font-bold font-sans">
-                Business Value Cost Factor
+                BV Cost Factor:
               </span>
               <div 
                 style={{
@@ -265,7 +267,7 @@ export default function CostOfDelay() {
                 }}
               >
                 <input
-                  className="bg-white border-2 rounded-xl hover:rounded-none duration-300 border-[#ffd053] h-[2.3rem] px-3 w-[67%] text-[1rem] font-sans"
+                  className="bg-white border-2 rounded-xl hover:rounded-none duration-300 border-[#ffd053] h-[2.3rem] px-3 w-[80%] text-[1rem] font-sans"
                   type="number"
                   value={businessValueCostFactorInput}
                   onChange={onChangeBusinessValueCostFactor}
@@ -277,6 +279,7 @@ export default function CostOfDelay() {
                 >
                   Submit
                 </button>
+              </div>
               </div>
             </div>
           </div>

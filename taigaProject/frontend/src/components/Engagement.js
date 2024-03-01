@@ -110,7 +110,7 @@ export default function Engagement() {
 
   return (
     <div className='container-full'>
-      <div className="route-container flex flex-col min-h-[100%]">
+      <div className="flex flex-col min-h-[100%] justify-between w-full py-[1rem] px-[2rem]">
         <div
             style={{
               display: "flex",
@@ -120,6 +120,9 @@ export default function Engagement() {
             }}
             className="parent"
           >
+            <div className="text-[2rem] w-auto rounded-none border-solid border-b-[4px] border-b-[#ffd053] font-bold bg-white hover:border-b-red-400 duration-300 font-sans text-start mt-0 pb-[0.2rem] mb-[1rem]">
+              <span>Engagement</span>
+            </div>
             <div>
             <span className="text-[1rem] font-bold font-sans">
               Project Slug:
@@ -153,6 +156,7 @@ export default function Engagement() {
           </div>
           {engagementDataLabels.length > 0 ? (
               <select
+                className='font-sans font-medium text-[1rem]'
                 value={selectedOption}
                 onChange={handleDropdownChange}
                 style={{ paddingBlock: "0.4rem", paddingInline: "0.5rem", marginBottom: "2.5rem", borderRadius: "0.5rem", borderColor: "#f98080" }}
