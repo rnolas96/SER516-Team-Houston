@@ -3,7 +3,7 @@ import logging
 import threading
 import re
 from datetime import datetime, timedelta
-from taigaApi.milestone.getMilestoneById import get_milestone_by_id
+from taigaApi.milestone.getMilestoneById import get_milestone_by_id, MilestoneFetchingError
 from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint
 import redis
 import json
@@ -58,19 +58,29 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
     r_userstory.flushdb()
 
     response = {}
-    
-    serialized_cached_data = r_userstory.get(f'userstory_full_storypoint_data:{sprint_id}')
-    if serialized_cached_data:
+    try:
+        serialized_cached_data = r_userstory.get(f'userstory_full_storypoint_data:{sprint_id}')
+        if serialized_cached_data:
 
-        background_thread = threading.Thread(target=storypoint_burndown_for_sprint_process, args=(sprint_id, auth_token))
-        background_thread.start()
-                
-        response = json.loads(serialized_cached_data)
+            background_thread = threading.Thread(target=storypoint_burndown_for_sprint_process, args=(sprint_id, auth_token))
+            background_thread.start()
+                    
+            response = json.loads(serialized_cached_data)
 
+            return response
+        
+        response = storypoint_burndown_for_sprint_process(sprint_id, auth_token)
         return response
-    
-    response = storypoint_burndown_for_sprint_process(sprint_id, auth_token)
-    return response
+    except UserStoryFetchingError as e:
+        print(f"Error fetching UserStories: {e}")
+        return None
+         
+    except MilestoneFetchingError as e:
+        print(f"Error fetching Milestones: {e}")
+        return None
+    except Exception as e :
+        print(f"Unexpected error :{e}")
+        return None
 
 def storypoint_burndown_for_sprint_process(sprint_id, auth_token):
     #get sprint info 
