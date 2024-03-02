@@ -106,8 +106,8 @@ To interact with the Taiga API using the provided Python script, you will need t
    ```
 
 ### Unit Test ###
-*** pytest library is required to run the unit test ***
-***to install pytest: *** 
+***note: pytest library is required to run the unit test***
+***to install pytest:*** 
    ```
    pip install pytest
    ```
@@ -120,7 +120,8 @@ To interact with the Taiga API using the provided Python script, you will need t
 3. ```
    python -m pytest -vv
    ```
-   
 
-
-
+**note: to run individual test files , then**
+1. ```
+   python -m pytest -vv filename.py
+   ```
