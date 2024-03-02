@@ -26,6 +26,7 @@ export default function CycleTime() {
 
       console.log("data", res.data);
 
+
       let data = res.data;
 
       // let sprintData = [
@@ -34,6 +35,7 @@ export default function CycleTime() {
       //   { x: 'Sprint3', y : [1, 7, 10, 17, 22]}
       // ]
       
+
       const cycleTimeValuesByKey = {};
 
       for (const key in data) {

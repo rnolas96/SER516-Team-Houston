@@ -46,7 +46,7 @@ export default function BarChartMaker({props}) {
     };
 
     return (
-      <div className='graph-container'>
+      <div className='w-[70%]'>
         <Bar 
           data = {data} 
           options = {options}

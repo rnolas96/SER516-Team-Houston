@@ -10,7 +10,6 @@ class TaskFetchingError(Exception):
         self.status_code = status_code
         self.reason = reason
 
-
 # Function to retrieve tasks for a specific project from the Taiga API
 def get_tasks(project_id, auth_token):
 
@@ -24,6 +23,7 @@ def get_tasks(project_id, auth_token):
     headers = {
         'Authorization': f'Bearer {auth_token}',
         'Content-Type': 'application/json',
+        'x-disable-pagination': 'True'
     }
 
     try:
@@ -68,9 +68,11 @@ def get_closed_tasks(project_id, auth_token):
                     "created_date": task["created_date"],
                     "finished_date": task["finished_date"],
                     "milestone_id": task["milestone"],
-                    "milestone_slug": task["milestone_slug"]
+                    "milestone_slug": task["milestone_slug"],
+                    "assigned_to": task["assigned_to_extra_info"]['full_name_display'],
+                    "user_story": task["user_story"]
                 }
-                for task in tasks if task.get("is_closed")
+                for task in tasks if task.get("is_closed") and task['assigned_to_extra_info'] is not None
             ]
 
             return closed_tasks

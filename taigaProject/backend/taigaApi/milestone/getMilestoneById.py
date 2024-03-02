@@ -29,8 +29,16 @@ def get_milestone_by_id(milestone_id, auth_token):
         return milestone_info
     
     except requests.exceptions.HTTPError as e:
-        print(f"HTTP error fetching UserStory: {e}")
+        print(f"HTTP error fetching milestone: {e}")
         raise MilestoneFetchingError(e.response.status_code, e.response.reason)
+
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error fetching milestone: {e}")
+        raise MilestoneFetchingError("CONNECTION_ERROR", str(e))
+
+    except Exception as e:
+        print("Unexpected error fetching milestone:")
+        raise 
 
     except requests.exceptions.ConnectionError as e:
         print(f"Connection error fetching UserStory: {e}")
