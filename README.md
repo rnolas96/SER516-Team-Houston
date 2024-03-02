@@ -133,7 +133,7 @@ To interact with the Taiga API using the provided Python script, you will need t
 
 
 ### FrontEnd Setup ###
-***please make sure latest stable version of Node is installed in your system***
+### please make sure latest stable version of Node is installed in your system ###
 ***note: goto SER516-Team-Houston directory and then type the following command***
 1. ```
    cd taigaproject/frontend
