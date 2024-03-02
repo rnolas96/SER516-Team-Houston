@@ -30,6 +30,9 @@ def get_custom_attribute_value_by_issue_id(issue_id, attribute_id, auth_token):
         response = requests.get(custom_attribute_data_api_url, headers=headers)
         response.raise_for_status()
 
+        if response.status_code == 401:
+            raise CustomeAttributeFetchingError(401,"Client Error: Unauthorized")
+
         # Extract and return the issue response list from the response
         custom_attribute_info = response.json()
         return custom_attribute_info['attributes_values'][attribute_id]
@@ -62,6 +65,10 @@ def get_custom_attribute_type_id_for_issue(project_id, auth_token, attribute_nam
 
         response = requests.get(custom_attribute_api_url, headers=headers)
         response.raise_for_status() 
+
+        if response.status_code == 401:
+            raise CustomeAttributeFetchingError(401,"Client Error: Unauthorized")
+
 
         for res in response.json():
             if res["name"] == attribute_name:
