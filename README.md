@@ -55,7 +55,7 @@ your default redis server port = 6379
 
    git clone https://github.com/ser516asu/SER516-Team-Miami.git
 
-   git checkout period-one
+   git checkout period-two
 
    ```
 
