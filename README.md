@@ -93,9 +93,9 @@ To interact with the Taiga API using the provided Python script, you will need t
 3. **Project URL**: Look at the URL in your browser's address bar while you are inside the project. The project slug is the part of the URL that comes after the last slash ("/"). For example:
 
 
-### FrontEnd Setup
+### FrontEnd Setup ###
 ***please make sure latest stable version of Node is installed in your system***
-**note: goto SER516-Team-Houston directory and then type the following command**
+***note: goto SER516-Team-Houston directory and then type the following command***
 1. ```
    cd taigaproject/frontend
    ```
