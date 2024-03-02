@@ -102,6 +102,26 @@ To interact with the Taiga API using the provided Python script, you will need t
    npm install
    npm start
    ```
+### Unit Test ###
+***note: pytest library is required to run the unit test***
+***to install pytest:*** 
+   ```
+   pip install pytest
+   ```
+***goto taigaproject/backend/test***
+1. ```
+   cd taigaproject/backend/test
+   ```
+2. ***run the unit test***
+3. ```
+   python -m pytest -vv
+   ```
+
+**note: to run individual test files , then**
+1. ```
+   python -m pytest -vv filename.py
+   ```
+
 
 
 
