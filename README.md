@@ -112,7 +112,7 @@ To interact with the Taiga API using the provided Python script, you will need t
    pip install pytest
    ```
 
-*** goto taigaproject/backend/test***
+***goto taigaproject/backend/test***
 1. ```
    cd taigaproject/backend/test
    ```
