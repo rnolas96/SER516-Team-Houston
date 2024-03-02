@@ -29,7 +29,9 @@ Before running the script, make sure you have the following installed:
    - Open the Microsoft Store and search for "Ubuntu".
    - Install Ubuntu from the store.
 
+
 ### 3. Install Redis in Ubuntu 
+
    - Open the Ubuntu terminal and update the package list by typing:
      ```
      sudo apt-get update
@@ -124,6 +126,23 @@ To interact with the Taiga API using the provided Python script, you will need t
    ```
 
 
+### Unit Test ###
+***note: pytest library is required to run the unit test***
+***to install pytest:*** 
+   ```
+   pip install pytest
+   ```
 
+***goto taigaproject/backend/test***
+1. ```
+   cd taigaproject/backend/test
+   ```
+2. ***run the unit test***
+3. ```
+   python -m pytest -vv
+   ```
 
-
+**note: to run individual test files , then**
+1. ```
+   python -m pytest -vv filename.py
+   ```
