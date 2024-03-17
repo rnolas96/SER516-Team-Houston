@@ -4,7 +4,7 @@ import threading
 import re
 from datetime import datetime, timedelta
 from taigaApi.milestone.getMilestoneById import get_milestone_by_id, MilestoneFetchingError
-from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint
+from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint, get_userstory_total_points
 import redis
 import json
 from taigaApi.task.getTasks import get_tasks_by_milestone
@@ -427,3 +427,6 @@ def get_pb_coupling(project_id, auth_token):
         print(f"Unexpected error :{e}")
         return None
     
+
+def get_partial_sp(project_id, auth_token):
+    return get_userstory_total_points(project_id, auth_token)

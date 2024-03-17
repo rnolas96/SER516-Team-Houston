@@ -137,9 +137,7 @@ def get_custom_attribute_type_id(project_id, auth_token, attribute_name):
             raise UserStoryFetchingError(401, "Client Error: Unauthorized")
 
         for res in response.json():
-            print("response----------------------------->", res)
             if res["name"] == attribute_name:
-                print("id---------------------------->",res["id"])
                 return str(res["id"])
 
     except requests.exceptions.HTTPError as e:
@@ -155,8 +153,6 @@ def get_custom_attribute_type_id(project_id, auth_token, attribute_name):
         raise 
 
     # return "40205"
-
-
 
 def get_userstories_by_sprint(sprint_id, auth_token):
     taiga_url = os.getenv('TAIGA_URL')
@@ -191,3 +187,35 @@ def get_userstories_by_sprint(sprint_id, auth_token):
     except Exception as e:
         print("Unexpected error fetching UserStory:")
         raise 
+
+def get_userstory_total_points(project_id, auth_token):
+    """
+    Retrieves total story points for a User Story.
+
+    Args:
+        project_id (str): ID of the project.
+        auth_token (str): User authorization token.
+
+    Returns:
+        dict: Userstory ID with total story point
+
+    Raises:
+        UserStoryFetchingError: If the user story data cannot be retrieved.
+    """
+    try:
+        userstories_data = get_user_story(project_id, auth_token)
+
+        userstory_total_points = [
+            {
+                "id": userstory_data["id"],
+                "total_points": userstory_data.get("total_points", 0)
+            }
+            for userstory_data in userstories_data
+        ]
+
+        userstory_total_points = {story["id"]: story.get("total_points", 0) for story in userstories_data}
+
+        return userstory_total_points
+    except Exception as e:
+        raise UserStoryFetchingError(401, f"CONNECTION_ERROR: {e}")
+
