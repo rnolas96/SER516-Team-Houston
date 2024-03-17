@@ -1,8 +1,10 @@
 import datetime
+import heapq
 import logging
 import threading
 import re
 from datetime import datetime, timedelta
+from taigaApi.milestone.getMilestoneByProjectId import get_milestone_by_project_id
 from taigaApi.milestone.getMilestoneById import get_milestone_by_id, MilestoneFetchingError
 from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint
 import redis
@@ -427,3 +429,54 @@ def get_pb_coupling(project_id, auth_token):
         print(f"Unexpected error :{e}")
         return None
     
+def get_burndown_all_sprints(project_id, auth_token):
+
+
+    min_heap = []
+    end_dates = []
+
+
+    total_story_points = 0
+
+
+    date_storypoint_map = {}
+    result = {}
+    milestones_response = get_milestone_by_project_id(project_id, auth_token)
+
+    for milestone_item in milestones_response:
+
+        end_date_obj = datetime.strptime(milestone_item['estimated_finish'], "%Y-%m-%d")
+
+        heapq.heappush(min_heap, datetime.strptime(milestone_item['estimated_start'], "%Y-%m-%d"))
+
+        end_dates.append(end_date_obj)
+        
+        for userstory in milestone_item['user_stories']:
+            total_story_points += userstory['total_points']
+
+            if(userstory['is_closed']):
+                if userstory['finish_date']  :
+                    
+                    finish_date = datetime.strptime(userstory['finish_date'],"%Y-%m-%dT%H:%M:%S.%fZ")
+                    finish_date = finish_date.strftime("%Y-%m-%d")
+
+                    if(finish_date in date_storypoint_map):
+                        date_storypoint_map[finish_date] += userstory['total_points']
+                    else:
+                        date_storypoint_map[finish_date] = userstory['total_points']
+                
+        
+    start_date = heapq.heappop(min_heap)
+
+    end_date = max(end_dates)
+
+    current_date = start_date
+
+    while current_date < end_date:
+        current_date += timedelta(days=1)    
+        if current_date.strftime('%Y-%m-%d') in date_storypoint_map:
+            total_story_points -= date_storypoint_map[current_date.strftime('%Y-%m-%d')]
+        result[current_date.strftime("%Y-%m-%d")] = total_story_points
+               
+
+    return result
