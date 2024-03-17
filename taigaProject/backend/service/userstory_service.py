@@ -1,5 +1,4 @@
 import datetime
-import heapq
 import logging
 import threading
 import re
@@ -428,16 +427,23 @@ def get_pb_coupling(project_id, auth_token):
     except Exception as e :
         print(f"Unexpected error :{e}")
         return None
-    
+
+"""
+    Description
+    -----------
+    Gets the full user story point burndown for multiple sprints
+    ---------
+    project_id auth_token
+    Returns
+    -------
+    A map of date and  storypoints value completed.
+    """    
 def get_burndown_all_sprints(project_id, auth_token):
 
-
-    min_heap = []
     end_dates = []
-
+    start_dates = []
 
     total_story_points = 0
-
 
     date_storypoint_map = {}
     result = {}
@@ -446,10 +452,10 @@ def get_burndown_all_sprints(project_id, auth_token):
     for milestone_item in milestones_response:
 
         end_date_obj = datetime.strptime(milestone_item['estimated_finish'], "%Y-%m-%d")
-
-        heapq.heappush(min_heap, datetime.strptime(milestone_item['estimated_start'], "%Y-%m-%d"))
+        start_date_obj = datetime.strptime(milestone_item['estimated_start'], "%Y-%m-%d")
 
         end_dates.append(end_date_obj)
+        start_dates.append(start_date_obj)
         
         for userstory in milestone_item['user_stories']:
             total_story_points += userstory['total_points']
@@ -466,7 +472,7 @@ def get_burndown_all_sprints(project_id, auth_token):
                         date_storypoint_map[finish_date] = userstory['total_points']
                 
         
-    start_date = heapq.heappop(min_heap)
+    start_date = min(start_dates)
 
     end_date = max(end_dates)
 
