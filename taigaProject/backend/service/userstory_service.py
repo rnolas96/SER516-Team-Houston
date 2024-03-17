@@ -5,7 +5,7 @@ import re
 from datetime import datetime, timedelta
 from taigaApi.milestone.getMilestoneByProjectId import get_milestone_by_project_id
 from taigaApi.milestone.getMilestoneById import get_milestone_by_id, MilestoneFetchingError
-from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint
+from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint, get_userstory_total_points, get_closed_tasks_per_user_story
 import redis
 import json
 from taigaApi.task.getTasks import get_tasks_by_milestone
@@ -426,7 +426,6 @@ def get_pb_coupling(project_id, auth_token):
          
     except Exception as e :
         print(f"Unexpected error :{e}")
-        return None
  
 def get_burndown_all_sprints(project_id, auth_token):
     """
@@ -548,3 +547,8 @@ def get_business_value_burndown_all_sprints(project_id, custom_attribute_name, a
                
 
     return result
+    
+
+def get_partial_sp(project_id, auth_token):
+    # return get_userstory_total_points(project_id, auth_token)
+    return get_closed_tasks_per_user_story(project_id, auth_token)
