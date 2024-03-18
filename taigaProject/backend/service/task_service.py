@@ -21,7 +21,6 @@ def get_sprintwise_task_cycle_time(project_id, auth_token):
 
     if closed_tasks is not None:
         for closed_task in closed_tasks:
-            print("closedtask--------------------", closed_task)
             sprint_id = closed_task.get("milestone_id")
             sprint_name = milestones_name.get(sprint_id)
 
@@ -253,9 +252,6 @@ def get_cost_of_delay_for_sprint(project_id, sprint_id, business_value_cost_fact
             issue_start_date = datetime.strptime(issue_start_date,"%Y-%m-%dT%H:%M:%S.%fZ")
             if issue_end_date != None :
                 issue_end_date = datetime.strptime(issue_end_date,"%Y-%m-%dT%H:%M:%S.%fZ")
-
-            print("isd------", issue_start_date)
-            print("ied--------",issue_end_date)
 
             if 'total_points' in userstory and userstory['total_points'] != None:
                 response_userstory[issue_start_date.strftime("%Y-%m-%d")] += int(userstory['total_points'])

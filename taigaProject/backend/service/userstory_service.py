@@ -2,13 +2,13 @@ import datetime
 import logging
 import threading
 import re
+import redis
+from fastapi import HTTPException
 from datetime import datetime, timedelta
 from taigaApi.milestone.getMilestoneById import get_milestone_by_id, MilestoneFetchingError
-from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint, get_userstory_total_points
-import redis
+from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint, get_userstory_total_points, get_number_of_closed_tasks_per_user_story
 import json
 from taigaApi.task.getTasks import get_tasks_by_milestone
-from fastapi import HTTPException
 
 r_userstory = redis.StrictRedis(host='localhost', port=6379, db=0)
 
@@ -429,4 +429,12 @@ def get_pb_coupling(project_id, auth_token):
     
 
 def get_partial_sp(project_id, auth_token):
-    return get_userstory_total_points(project_id, auth_token)
+    story_points = get_userstory_total_points(project_id, auth_token)
+    closed_task_per_user_story = get_number_of_closed_tasks_per_user_story(project_id, auth_token)
+    a = {}
+    for user_story in story_points:
+        closed_task = closed_task_per_user_story.get(user_story)
+        if closed_task:
+            a[user_story] = [story_points.get(user_story), closed_task]
+
+    return a

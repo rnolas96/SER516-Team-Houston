@@ -1,6 +1,7 @@
 import os
 import requests
 from dotenv import load_dotenv
+from taigaApi.task.getTasks import get_closed_tasks
 
 # Load environment variables from .env file
 load_dotenv()
@@ -219,3 +220,31 @@ def get_userstory_total_points(project_id, auth_token):
     except Exception as e:
         raise UserStoryFetchingError(401, f"CONNECTION_ERROR: {e}")
 
+def get_number_of_closed_tasks_per_user_story(project_id, auth_token):
+    """
+    Get number of closed task for each User Story.
+
+    Args:
+        project_id (str): ID of the Taiga Project.
+        auth_token (str): Authorization token of the user.
+
+    Returns:
+        dict: Number of closed task for each user story.
+        
+    Raises:
+        UserStoryFetchingError: If the user story data cannot be retrieved.
+    """
+    try:
+        closed_tasks = get_closed_tasks(project_id, auth_token)
+        
+        closed_tasks_number = {}
+
+        for closed_task in closed_tasks:
+            user_story = closed_task.get("user_story")
+            if user_story:
+                closed_tasks_number[user_story] = closed_tasks_number.get(user_story, 0) + 1
+
+        return closed_tasks_number
+    
+    except Exception as e:
+        raise UserStoryFetchingError(401, f"CONNECTION_ERROR: {e}")
