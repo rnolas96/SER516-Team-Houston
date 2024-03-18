@@ -1,7 +1,7 @@
 import os
 import requests
-from dotenv import load_dotenv
 from datetime import datetime
+from dotenv import load_dotenv
 from taigaApi.task.getTasks import get_closed_tasks
 
 # Load environment variables from .env file
