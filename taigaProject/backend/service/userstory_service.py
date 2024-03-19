@@ -7,7 +7,11 @@ from fastapi import HTTPException
 from datetime import datetime, timedelta
 from taigaApi.milestone.getMilestoneByProjectId import get_milestone_by_project_id
 from taigaApi.milestone.getMilestoneById import get_milestone_by_id, MilestoneFetchingError
+<<<<<<< HEAD
 from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint, get_userstory_total_points, get_closed_tasks_per_user_story, get_number_of_closed_tasks_per_user_story
+=======
+from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint, get_userstory_total_points, get_closed_tasks_per_user_story
+>>>>>>> e04d24c (API call for task 144)
 import json
 from taigaApi.task.getTasks import get_tasks_by_milestone
 
@@ -551,11 +555,15 @@ def get_business_value_burndown_all_sprints(project_id, custom_attribute_name, a
 
 def get_partial_sp(project_id, auth_token):
     story_points = get_userstory_total_points(project_id, auth_token)
-    closed_task_per_user_story = get_number_of_closed_tasks_per_user_story(project_id, auth_token)
-    a = {}
-    for user_story in story_points:
-        closed_task = closed_task_per_user_story.get(user_story)
-        if closed_task:
-            a[user_story] = [story_points.get(user_story), closed_task]
+    closed_task_per_user_story = get_closed_tasks_per_user_story(project_id, auth_token)
 
-    return a
+    print(len(story_points), len(closed_task_per_user_story))
+    for i in story_points:
+        a = story_points.get(i, None)
+
+        if a:
+            print("a: ", a)
+        else:
+            print("i: ", i)
+
+    return closed_task_per_user_story
