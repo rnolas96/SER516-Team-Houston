@@ -7,11 +7,8 @@ from fastapi import HTTPException
 from datetime import datetime, timedelta
 from taigaApi.milestone.getMilestoneByProjectId import get_milestone_by_project_id
 from taigaApi.milestone.getMilestoneById import get_milestone_by_id, MilestoneFetchingError
-<<<<<<< HEAD
-from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint, get_userstory_total_points, get_closed_tasks_per_user_story, get_number_of_closed_tasks_per_user_story
-=======
-from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint, get_userstory_total_points, get_closed_tasks_per_user_story
->>>>>>> e04d24c (API call for task 144)
+from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint, get_closed_tasks_per_user_story, get_userstory_total_points
+import redis
 import json
 from taigaApi.task.getTasks import get_tasks_by_milestone
 
@@ -430,6 +427,7 @@ def get_pb_coupling(project_id, auth_token):
          
     except Exception as e :
         print(f"Unexpected error :{e}")
+        return None
  
 def get_burndown_all_sprints(project_id, auth_token):
     """
