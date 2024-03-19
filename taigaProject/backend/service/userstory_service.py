@@ -5,6 +5,7 @@ import re
 import redis
 from fastapi import HTTPException
 from datetime import datetime, timedelta
+from taigaApi.milestone.getMilestoneByProjectId import get_milestone_by_project_id
 from taigaApi.milestone.getMilestoneById import get_milestone_by_id, MilestoneFetchingError
 from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint, get_userstory_total_points, get_closed_tasks_per_user_story
 import json
