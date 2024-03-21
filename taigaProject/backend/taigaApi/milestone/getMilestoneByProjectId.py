@@ -1,7 +1,7 @@
 import requests
 import os
 
-class MilestoneFetchingError(Exception):
+class MilestoneByProjectFetchingError(Exception):
     def __init__(self, status_code, reason):
         self.status_code = status_code
         self.reason = reason
@@ -27,11 +27,11 @@ def get_milestone_by_project_id(project_id, auth_token):
     
     except requests.exceptions.HTTPError as e:
         print(f"HTTP error fetching milestone: {e}")
-        raise MilestoneFetchingError(e.response.status_code, e.response.reason)
+        raise MilestoneByProjectFetchingError(e.response.status_code, e.response.reason)
 
     except requests.exceptions.ConnectionError as e:
         print(f"Connection error fetching milestone: {e}")
-        raise MilestoneFetchingError("CONNECTION_ERROR", str(e))
+        raise MilestoneByProjectFetchingError("CONNECTION_ERROR", str(e))
 
     except Exception as e:
         print("Unexpected error fetching milestone:")
