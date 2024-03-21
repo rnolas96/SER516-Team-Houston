@@ -100,7 +100,7 @@ export default function Burndown() {
 
         let p_id = Object.keys(result.data)[0];
         let s_Data = result.data[p_id];
-        console.log(s_Data);
+        console.log("Sprint Data: ", s_Data);
         setProjectId(p_id);
         setSprintData(s_Data);
         setShowLoader(true);
@@ -122,7 +122,7 @@ export default function Burndown() {
           authToken
         );
       }
-      if (authToken && projectId && sprintId) {
+      if (authToken && projectId) {
         apiCall(
           `/api/userstory/business_value_burndown_for_all_sprints?project_id=${projectId}`,
           setBusinessValueAllSprintData,
@@ -146,7 +146,7 @@ export default function Burndown() {
           authToken
         );
       }
-      if (authToken && sprintId) {
+      if (authToken && projectId) {
         apiCall(
           `/api/userstory/userstory_burndown_for_all_sprints?project_id=${projectId}`,
           setFullStoryPointAllSprintData,
@@ -198,7 +198,23 @@ export default function Burndown() {
               className={"tabElements"}
               selectedClassName="selectedTabElements"
             >
-              <p className="px-[0.8rem] text-center">Business Value</p>
+              <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
+                Full Story Points for all sprints
+              </p>
+            </Tab>
+            <Tab
+              className={"tabElements"}
+              selectedClassName="selectedTabElements"
+            >
+              <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
+                Business Value
+              </p>
+            </Tab>
+            <Tab
+              className={"tabElements"}
+              selectedClassName="selectedTabElements"
+            >
+              <p className="px-[0.8rem] text-center">Business Value for all sprints</p>
             </Tab>
           </TabList>
           <div
@@ -258,6 +274,9 @@ export default function Burndown() {
                 {/* <option className="dropdown" key={item.id} value={item.id}>
                   All Sprints
                 </option> */}
+                {/* <option className="dropdown" key={item.id} value={item.id}>
+                  All Sprints
+                </option> */}
                 {sprintData.map((item) => (
                   <option key={item.id} value={item.id} className="dropdown">
                     {item.name}
@@ -277,7 +296,9 @@ export default function Burndown() {
               data={fullStoryPointBurnDownData}
               showLoader={showLoader}
             />
-            <LineChartMaker
+          </TabPanel>
+          <TabPanel>
+          <LineChartMaker
               data={fullStoryPointAllSprintData}
               showLoader={showLoader}
             />
@@ -287,6 +308,8 @@ export default function Burndown() {
               data={businessValueBurnDownData}
               showLoader={showLoader}
             />
+          </TabPanel>
+          <TabPanel>
             <LineChartMaker
               data={businessValueAllSprintData}
               showLoader={showLoader}
