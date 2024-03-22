@@ -70,6 +70,7 @@ export default function SidebarMenu() {
         <MenuItem className='mI' icon={<SvgIcon name="boxplot" className="w-4 white" />} component={<Link to={"/leadtime"} />}>Lead Time</MenuItem>
         <MenuItem className='mI' icon={<ShowChartIcon />} component={<Link to={"/costofdelay"} />}>Cost of Delay</MenuItem>
         <MenuItem className='mI' icon={<HubIcon />} component={<Link to={"/sbpbcoupling"} />}>SB/PB Coupling</MenuItem>
+        <MenuItem className='mI' icon={<HubIcon />} component={<Link to={"/taskcoupling"} />}>Task Coupling</MenuItem>
         <MenuItem className='mI' icon={<BarChartIcon />} component={<Link to={"/engagement"} />}>Engagement</MenuItem>
       </Menu>
     </Sidebar>
