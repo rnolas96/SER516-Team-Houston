@@ -14,7 +14,7 @@ export default function NetworkChartMaker (props) {
         
         if(type == "nodes") {
             data.map(obj => {
-                let currentObj = {id: obj ? obj.id : 0, label:  obj ? ("US #" + obj.label.toString()) : "None (Choose a sprint for data to populate)", title: obj ? obj.title.toString() : "Title Not available"}
+                let currentObj = {id: obj ? obj.id : 0, label:  obj ? (props.setNodeType + "#" + obj.label.toString()) : "None (Choose a sprint for data to populate)", title: obj ? obj.title.toString() : "Title Not available"}
                 nodes.push(currentObj)
             }); 
 

@@ -10,6 +10,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ProSidebarProvider } from 'react-pro-sidebar';
 import CostOfDelay from './components/CostOfDelay.js';
 import Engagement from './components/Engagement.js';
+import TaskCoupling from './components/TaskCoupling.js';
 function App() {
 
   const authToken = localStorage.getItem('authToken');
@@ -29,6 +30,7 @@ function App() {
             <Route exact path="/costofdelay" element={<CostOfDelay/>} />
             <Route exact path="/sbpbcoupling" element={<SbpbCoupling/>} />
             <Route exact path="/engagement" element={<Engagement/>} />
+            <Route exact path="/taskcoupling" element={<TaskCoupling/>} />
           </Routes>
       </Router>
     </div>

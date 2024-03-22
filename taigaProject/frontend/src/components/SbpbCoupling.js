@@ -241,6 +241,7 @@ export default function SbpbCoupling() {
               data={pbCouplingData}
               showLoader={showLoader}
               setShowLoader={setShowLoader}
+              setNodeType={"US"}
               scenario={"Enter Project Id to see the network chart"}
               
             />
@@ -251,6 +252,7 @@ export default function SbpbCoupling() {
               data={sbCouplingData}
               showLoader={showLoader}
               setShowLoader={setShowLoader}
+              setNodeType={"US"}
               scenario={"Enter Project Id and Sprint Id to see the network chart"}
             />
           </TabPanel>          
