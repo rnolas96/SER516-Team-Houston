@@ -225,7 +225,6 @@ def get_cost_of_delay_for_sprint(project_id, sprint_id, business_value_cost_fact
         for userstory_label in dependency_value :
             if userstory_label in userstory_ref_map:
                 userstory = userstory_ref_map[userstory_label]
-                # print(userstory)
                 userstory_id = userstory['id']
                 
                 if userstory_id in userstory_blocker_map :

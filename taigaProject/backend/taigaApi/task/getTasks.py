@@ -127,7 +127,8 @@ def get_all_tasks(project_id, auth_token):
                     "milestone": task["milestone"],
                     "milestone_slug": task["milestone_slug"],
                     "created_date": task["created_date"],
-                    "finished_date": task["finished_date"]
+                    "finished_date": task["finished_date"],
+                    "user_story": task["user_story"]
                 }
                 for task in tasks
             ]
