@@ -1,15 +1,15 @@
-import datetime
-import logging
-import threading
 import re
+import json
+import redis
+import logging
+import datetime
+import threading
+from fastapi import HTTPException
 from datetime import datetime, timedelta
+from taigaApi.task.getTasks import get_tasks_by_milestone
 from taigaApi.milestone.getMilestoneByProjectId import get_milestone_by_project_id
 from taigaApi.milestone.getMilestoneById import get_milestone_by_id, MilestoneFetchingError
-from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint
-import redis
-import json
-from taigaApi.task.getTasks import get_tasks_by_milestone
-from fastapi import HTTPException
+from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint, get_closed_tasks_per_user_story, get_userstory_total_points, get_task_per_user_story
 
 r_userstory = redis.StrictRedis(host='localhost', port=6379, db=0)
 
@@ -23,7 +23,6 @@ def get_userstory_burndown_by_project_id(project_id,auth_token):
     user_stories_map = {}
     for user_story in user_stories: 
         if(user_story['milestone_name']):
-            print(user_story)
             sprint = user_story['milestone_name']
             if(user_story['total_points']):
                 user_stories_map[str(sprint)] = user_story['total_points']
@@ -548,3 +547,50 @@ def get_business_value_burndown_all_sprints(project_id, custom_attribute_name, a
                
 
     return result
+    
+
+def get_partial_sp(project_id, auth_token):
+    """
+    Get the partial story for a for each day
+
+    Args:
+        project_id (str): ID of the Taiga Project
+        auth_token (str): Authorization Token of the Taiga User
+    Return
+        dict: Partial story points for each day
+    """
+    story_points = get_userstory_total_points(project_id, auth_token)
+    closed_task_per_user_story = get_closed_tasks_per_user_story(project_id, auth_token)
+    tasks_per_user_story = get_task_per_user_story(project_id, auth_token)
+
+    total_points = 0
+
+    for user_story in story_points:
+        total_points += story_points.get(user_story)
+
+    points_per_task = {}
+
+    for user_story in story_points:
+        tasks = tasks_per_user_story.get(user_story)
+        if tasks:
+            points_per_task[user_story] = round(story_points[user_story] / len(tasks), 3)
+
+    points_per_date = {}
+
+    for user_story in closed_task_per_user_story:
+        closed_tasks = closed_task_per_user_story.get(user_story)
+        for closed_task in closed_tasks:
+            finished_date = closed_task.get('finished_date')
+            if points_per_task.get(user_story):
+                points_per_date[finished_date] = points_per_date.get(finished_date, 0.0) + points_per_task.get(user_story)
+
+    dates = sorted(points_per_date)[:-1]
+    partial_story_points = {}
+    partial_story_points['Total'] = total_points
+    partial_story_points[dates[0]] = total_points - points_per_date[dates[0]]
+
+    for i, date in enumerate(dates[1:]):
+        partial_story_points[date] = round((partial_story_points[dates[i]] - points_per_date[date]))
+
+
+    return partial_story_points
