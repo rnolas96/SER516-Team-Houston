@@ -137,7 +137,6 @@ def get_custom_attribute_type_id(project_id, auth_token, attribute_name):
             raise UserStoryFetchingError(401, "Client Error: Unauthorized")
 
         for res in response.json():
-            print("response----------------------------->", res)
             if res["name"] == attribute_name:
                 print("id---------------------------->",res["id"])
                 return str(res["id"])
