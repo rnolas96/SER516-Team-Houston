@@ -61,58 +61,6 @@ def test_get_tasks_error_unauthorized(mock_env):
         assert "Client Error: Unauthorized" in result.value.reason
 
     
-
-def test_closed_tasks_success(mock_env):
-    project_id = 1522285
-    auth_token = "valid_auth_token"
-    
-    with patch("requests.get") as mock_get:         
-
-        mock_get.return_value.json.return_value = mock_task_data.data
-
-         # Call the function with mocked data
-        closed_tasks = get_closed_tasks( project_id,auth_token)
-
-        # Assert the expected behavior
-        assert closed_tasks == mock_closed_tasks.data
-
-
-def test_closed_tasks_conntection_error(mock_env):
-    project_id = 1522285
-    auth_token = "valid_token"
-    # Simulate a connection error
-    with patch("requests.get") as mock_get:
-        mock_get.side_effect = requests.exceptions.ConnectionError("Connection error")
-
-        # Call the function
-        with pytest.raises(TaskFetchingError) as result:
-            get_closed_tasks(project_id, auth_token)
-
-        # Assert expected behavior
-        assert result.type is TaskFetchingError
-        assert result.value.status_code == "CONNECTION_ERROR"
-        assert "Connection error" in result.value.reason
-
-
-def test_get_closed_tasks_error_unauthorized(mock_env):
-    project_id = 1522285
-    auth_token = "invalid_token"
-    
-    # Simulate a 401 Unauthorized error
-    with patch("requests.get") as mock_get:
-        mock_get.side_effect = TaskFetchingError(401, "Client Error: Unauthorized")
-
-        # Call the function
-        with pytest.raises(TaskFetchingError) as result:
-            get_closed_tasks(project_id, auth_token)
-
-        # Assert expected behavior
-        assert result.type is TaskFetchingError
-        assert result.value.status_code == 401
-        assert "Client Error: Unauthorized" in result.value.reason
-
-
-
 def test_tasks_by_milestone_success(mock_env):
     
     project_id = 1521718

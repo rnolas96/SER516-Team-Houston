@@ -10,9 +10,13 @@ import { Buffer } from "buffer";
 export default function Burndown() {
   const [businessValueBurnDownData, setBusinessValueBurnDownData] =
     useState(null);
+  const [businessValueAllSprintData, setBusinessValueAllSprintData] =
+    useState(null);
   const [partialStoryPointBurnDownData, setPartialStoryPointBurnDownData] =
     useState(null);
   const [fullStoryPointBurnDownData, setFullStoryPointBurnDownData] =
+    useState(null);
+  const [fullStoryPointAllSprintData, setFullStoryPointAllSprintData] =
     useState(null);
 
   const [projectSlug, setProjectSlug] = useState(null);
@@ -29,8 +33,10 @@ export default function Burndown() {
     setSprintData([]);
     setSprintId(null);
     setBusinessValueBurnDownData(null);
+    setBusinessValueAllSprintData(null);
     setPartialStoryPointBurnDownData(null);
     setFullStoryPointBurnDownData(null);
+    setFullStoryPointAllSprintData(null);
     setSelectedOption("");
     setShowLoader(false);
   };
@@ -94,7 +100,7 @@ export default function Burndown() {
 
         let p_id = Object.keys(result.data)[0];
         let s_Data = result.data[p_id];
-        console.log(s_Data);
+        console.log("Sprint Data: ", s_Data);
         setProjectId(p_id);
         setSprintData(s_Data);
         setShowLoader(true);
@@ -116,6 +122,14 @@ export default function Burndown() {
           authToken
         );
       }
+      if (authToken && projectId) {
+        apiCall(
+          `/api/userstory/business_value_burndown_for_all_sprints?project_id=${projectId}`,
+          setBusinessValueAllSprintData,
+          "business value for all sprints",
+          authToken
+        );
+      }
       if (authToken && sprintId) {
         apiCall(
           `/api/userstory/partial_userstory_burndown?sprint_id=${sprintId}`,
@@ -129,6 +143,14 @@ export default function Burndown() {
           `/api/userstory/userstory_burndown?sprint_id=${sprintId}`,
           setFullStoryPointBurnDownData,
           "full storypoints",
+          authToken
+        );
+      }
+      if (authToken && projectId) {
+        apiCall(
+          `/api/userstory/userstory_burndown_for_all_sprints?project_id=${projectId}`,
+          setFullStoryPointAllSprintData,
+          "full storypoints for all sprints",
           authToken
         );
       }
@@ -176,7 +198,23 @@ export default function Burndown() {
               className={"tabElements"}
               selectedClassName="selectedTabElements"
             >
-              <p className="px-[0.8rem] text-center">Business Value</p>
+              <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
+                Full Story Points for all sprints
+              </p>
+            </Tab>
+            <Tab
+              className={"tabElements"}
+              selectedClassName="selectedTabElements"
+            >
+              <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
+                Business Value
+              </p>
+            </Tab>
+            <Tab
+              className={"tabElements"}
+              selectedClassName="selectedTabElements"
+            >
+              <p className="px-[0.8rem] text-center">Business Value for all sprints</p>
             </Tab>
           </TabList>
           <div
@@ -190,41 +228,55 @@ export default function Burndown() {
             className="parent"
           >
             <div>
-            <span className="text-[1rem] font-bold font-sans">
-              Project Slug:
-            </span>
+              <span className="text-[1rem] font-bold font-sans">
+                Project Slug:
+              </span>
             </div>
-            <div 
+            <div
               style={{
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-between",
                 marginTop: "0.3rem",
-                marginBottom: "0.6rem"
+                marginBottom: "0.6rem",
               }}
             >
-            <input
-              className="bg-white border-2 rounded-xl hover:rounded-none duration-300 border-[#ffd053] h-[2.3rem] px-3 w-[67%] text-[1rem] font-sans"
-              type="username"
-              value={projectSlug}
-              onChange={onChangeProjectSlug}
-              aria-label="username"
-            />
-            <button
-              className="ml-[0.6rem] h-[2.45rem] w-[33%] border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-none"
-              onClick={() => setProjectDetails()}
-            >
-              Submit
-            </button>
+              <input
+                className="bg-white border-2 rounded-xl hover:rounded-none duration-300 border-[#ffd053] h-[2.3rem] px-3 w-[67%] text-[1rem] font-sans"
+                type="username"
+                value={projectSlug}
+                onChange={onChangeProjectSlug}
+                aria-label="username"
+              />
+              <button
+                className="ml-[0.6rem] h-[2.45rem] w-[33%] border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-none"
+                onClick={() => setProjectDetails()}
+              >
+                Submit
+              </button>
             </div>
             {sprintData.length > 0 ? (
               <select
                 value={selectedOption}
                 onChange={handleDropdownChange}
                 className="burndown"
-                style={{ paddingBlock: "0.4rem", paddingInline: "0.5rem", marginBottom: "2.5rem", borderRadius: "0.5rem", borderColor: "#f98080" }}
+                style={{
+                  paddingBlock: "0.4rem",
+                  paddingInline: "0.5rem",
+                  marginBottom: "2.5rem",
+                  borderRadius: "0.5rem",
+                  borderColor: "#f98080",
+                }}
               >
-                <option className="dropdown" value="">Select an option</option>
+                <option className="dropdown" value="">
+                  Select an option
+                </option>
+                {/* <option className="dropdown" key={item.id} value={item.id}>
+                  All Sprints
+                </option> */}
+                {/* <option className="dropdown" key={item.id} value={item.id}>
+                  All Sprints
+                </option> */}
                 {sprintData.map((item) => (
                   <option key={item.id} value={item.id} className="dropdown">
                     {item.name}
@@ -246,8 +298,20 @@ export default function Burndown() {
             />
           </TabPanel>
           <TabPanel>
+          <LineChartMaker
+              data={fullStoryPointAllSprintData}
+              showLoader={showLoader}
+            />
+          </TabPanel>
+          <TabPanel>
             <LineChartMaker
               data={businessValueBurnDownData}
+              showLoader={showLoader}
+            />
+          </TabPanel>
+          <TabPanel>
+            <LineChartMaker
+              data={businessValueAllSprintData}
               showLoader={showLoader}
             />
           </TabPanel>
