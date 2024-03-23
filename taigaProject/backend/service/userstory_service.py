@@ -2,7 +2,7 @@ import re
 import json
 import redis
 import logging
-import datetime
+from datetime import datetime, date, timedelta
 import threading
 from fastapi import HTTPException
 from datetime import datetime, timedelta
@@ -562,6 +562,21 @@ def get_partial_sp(project_id, auth_token):
     story_points = get_userstory_total_points(project_id, auth_token)
     closed_task_per_user_story = get_closed_tasks_per_user_story(project_id, auth_token)
     tasks_per_user_story = get_task_per_user_story(project_id, auth_token)
+    milestones_response = get_milestone_by_project_id(project_id, auth_token)
+
+    start_dates = []
+    end_dates = []
+
+    for milestone_item in milestones_response:
+        end_date_obj = datetime.strptime(milestone_item['estimated_finish'], "%Y-%m-%d")
+        start_date_obj = datetime.strptime(milestone_item['estimated_start'], "%Y-%m-%d")
+
+        end_dates.append(end_date_obj)
+        start_dates.append(start_date_obj)
+    
+    start_date = min(start_dates)
+    end_date = max(end_dates)
+
 
     total_points = 0
 
@@ -584,13 +599,24 @@ def get_partial_sp(project_id, auth_token):
             if points_per_task.get(user_story):
                 points_per_date[finished_date] = points_per_date.get(finished_date, 0.0) + points_per_task.get(user_story)
 
-    dates = sorted(points_per_date)[:-1]
+    complete_dates = []
+
+    while start_date <= end_date:
+        complete_dates.append(str(start_date.date()))
+        start_date += timedelta(days = 1)
+
+
     partial_story_points = {}
-    partial_story_points['Total'] = total_points
-    partial_story_points[dates[0]] = total_points - points_per_date[dates[0]]
+    partial_story_points["Total"] = total_points
 
-    for i, date in enumerate(dates[1:]):
-        partial_story_points[date] = round((partial_story_points[dates[i]] - points_per_date[date]))
+    for date in complete_dates:
+        points_on_date = points_per_date.get(date)
+        points_on_previous_date = partial_story_points.get(list(partial_story_points.keys())[-1], total_points)
 
+        if points_on_date:
+            partial_story_points[date] = round(points_on_previous_date - points_on_date, 2)
+        else:
+            partial_story_points[date] = points_on_previous_date
+    
 
     return partial_story_points

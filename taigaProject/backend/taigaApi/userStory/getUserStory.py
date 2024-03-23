@@ -25,7 +25,7 @@ def get_user_story(project_id, auth_token):
     # Define headers including the authorization token and content type
     headers = {
         'Authorization': f'Bearer {auth_token}',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
     }
 
     try:
