@@ -19,7 +19,10 @@ export default function Burndown() {
     useState(null);
   const [fullStoryPointAllSprintData, setFullStoryPointAllSprintData] =
     useState(null);
-  const [partialStoryPointAllSprintData, setPartialStoryPointAllSprintData] = useState(null);
+  const [partialStoryPointAllSprintData, setPartialStoryPointAllSprintData] = 
+    useState(null);
+  const [multiChartAllSprintData, setMultiChartAllSprintData] = 
+    useState(null);
 
   const [projectSlug, setProjectSlug] = useState(null);
   const [sprintData, setSprintData] = useState([]);
@@ -29,6 +32,8 @@ export default function Burndown() {
   const [projectId, setProjectId] = useState(null);
   const [sprintId, setSprintId] = useState(null);
 
+  const [tab, setTab] = useState(0);
+  const [isSprintDisabled, setIsSprintDisabled] = useState(true);
   const [showLoader, setShowLoader] = useState(false);
 
   const clearData = () => {
@@ -41,12 +46,12 @@ export default function Burndown() {
     setFullStoryPointAllSprintData(null);
     setPartialStoryPointAllSprintData(null);
     setSelectedOption("");
+    setIsSprintDisabled(true);
     setShowLoader(false);
   };
 
   const handleDropdownChange = (e) => {
     setSelectedOption(e.target.value);
-    console.log(e.target.value);
     setSprintId(e.target.value);
     setShowLoader(true);
   };
@@ -64,9 +69,10 @@ export default function Burndown() {
         },
       })
       .then((res) => {
-        console.log("res", res.data);
         const labels = Object.keys(res.data);
         const values = Object.values(res.data);
+        // let multiChartUpdatedAllSprintData = multiChartAllSprintData;
+
         setShowLoader(false);
 
         labels[0] = "";
@@ -77,8 +83,8 @@ export default function Burndown() {
             {
               label: "Burndown Data",
               data: values,
-              borderColor: "black",
-              backgroundColor: ["rgb(255, 99, 132)", "rgb(255, 205, 86)"],
+              borderColor: scenario == "business value for all sprints"? "blue" : scenario == "Partial Storypoints for all sprints"? "green" : "black",
+              // backgroundColor: ["rgb(255, 99, 132)", "rgb(255, 205, 86)"],
               hoverOffset: 4,
             },
           ],
@@ -98,25 +104,20 @@ export default function Burndown() {
         },
       })
       .then((result) => {
-        console.log("result", result.data);
-        console.log("p_id", Object.keys(result.data)[0]);
 
         let p_id = Object.keys(result.data)[0];
         let s_Data = result.data[p_id];
-        console.log("Sprint Data: ", s_Data);
         setProjectId(p_id);
         setSprintData(s_Data);
         setShowLoader(true);
+        if(tab == 1)
+          setIsSprintDisabled(false);
       });
   }
 
   useEffect(() => {
     const callApis = () => {
       const authToken = localStorage.getItem("authToken");
-      console.log("authToken", authToken);
-      console.log("sprintId", sprintId);
-      console.log("projectId", projectId);
-
       if (authToken && projectId && sprintId) {
         apiCall(
           `/api/userstory/business_value_burndown?project_id=${projectId}&sprint_id=${sprintId}`,
@@ -141,6 +142,15 @@ export default function Burndown() {
           authToken
         );
       }
+      if (authToken && projectId)
+      {
+        apiCall(
+          `/api/userstory/partial_story_points?project_id=${projectId}`,
+          setPartialStoryPointAllSprintData,
+          "Partial Storypoints for all sprints",
+          authToken
+        );
+      }
       if (authToken && sprintId) {
         apiCall(
           `/api/userstory/userstory_burndown?sprint_id=${sprintId}`,
@@ -157,21 +167,28 @@ export default function Burndown() {
           authToken
         );
       }
-      if (authToken && projectId)
-      {
-        apiCall(
-          `/api/userstory/partial_story_points?project_id=${projectId}`,
-          setPartialStoryPointAllSprintData,
-          "Partial Storypoints for all sprints",
-          authToken
-        );
-      }
     };
 
     callApis();
-    const intervalId = setInterval(callApis, 30000);
+    const intervalId = setInterval(callApis, 60000);
     return () => clearInterval(intervalId);
   }, [sprintId, projectId]);
+
+  useEffect(() => {
+    let updatedmultiChartAllSprintData = {};
+    if(businessValueAllSprintData && partialStoryPointAllSprintData && fullStoryPointAllSprintData) {
+      updatedmultiChartAllSprintData = {
+        labels: fullStoryPointAllSprintData.labels,
+        text: "Burndown data for Combined Data for all Sprints",
+        datasets: []
+      };
+      updatedmultiChartAllSprintData.datasets.push(fullStoryPointAllSprintData.datasets[0])
+      updatedmultiChartAllSprintData.datasets.push(partialStoryPointAllSprintData.datasets[0])
+      updatedmultiChartAllSprintData.datasets.push(businessValueAllSprintData.datasets[0]);
+      setMultiChartAllSprintData(updatedmultiChartAllSprintData);
+    }
+
+  }, [businessValueAllSprintData, partialStoryPointAllSprintData, fullStoryPointAllSprintData])
 
   return (
     <div className="container-full bg-white">
@@ -186,18 +203,20 @@ export default function Burndown() {
             display: "flex",
             flexDirection: "column",
           }}
+          onSelect={(index)  => {
+            if(index % 2 == 1 || index == 6) {
+              setIsSprintDisabled(true)
+              setTab(1);
+            }
+            else if(index % 2 == 0) {
+              setIsSprintDisabled(false);
+              setTab(0);
+            }
+          }}
         >
           <TabList
             style={{ display: "flex", justifyContent: "left", border: "none" }}
           >
-            <Tab
-              className={"tabElements"}
-              selectedClassName="selectedTabElements"
-            >
-              <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
-                Partial Story Points
-              </p>
-            </Tab>
             <Tab
               className={"tabElements"}
               selectedClassName="selectedTabElements"
@@ -226,6 +245,22 @@ export default function Burndown() {
               className={"tabElements"}
               selectedClassName="selectedTabElements"
             >
+              <p className="px-[0.8rem] text-center">
+                Business Value for all sprints
+              </p>
+            </Tab>
+            <Tab
+              className={"tabElements"}
+              selectedClassName="selectedTabElements"
+            >
+              <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
+                Partial Story Points
+              </p>
+            </Tab>
+            <Tab
+              className={"tabElements"}
+              selectedClassName="selectedTabElements"
+            >
               <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
                 Partial Story Points for all Sprints
               </p>
@@ -234,7 +269,9 @@ export default function Burndown() {
               className={"tabElements"}
               selectedClassName="selectedTabElements"
             >
-              <p className="px-[0.8rem] text-center">Business Value for all sprints</p>
+              <p className="px-[0.8rem] text-center">
+                Combination of data for all sprints
+              </p>
             </Tab>
           </TabList>
           <div
@@ -275,7 +312,7 @@ export default function Burndown() {
                 Submit
               </button>
             </div>
-            {sprintData.length > 0 ? (
+            {!isSprintDisabled && sprintData.length > 0 ? (
               <select
                 value={selectedOption}
                 onChange={handleDropdownChange}
@@ -291,12 +328,6 @@ export default function Burndown() {
                 <option className="dropdown" value="">
                   Select an option
                 </option>
-                {/* <option className="dropdown" key={item.id} value={item.id}>
-                  All Sprints
-                </option> */}
-                {/* <option className="dropdown" key={item.id} value={item.id}>
-                  All Sprints
-                </option> */}
                 {sprintData.map((item) => (
                   <option key={item.id} value={item.id} className="dropdown">
                     {item.name}
@@ -305,12 +336,6 @@ export default function Burndown() {
               </select>
             ) : null}
           </div>
-          <TabPanel>
-            <LineChartMaker
-              data={partialStoryPointBurnDownData}
-              showLoader={showLoader}
-            />
-          </TabPanel>
           <TabPanel>
             <LineChartMaker
               data={fullStoryPointBurnDownData}
@@ -337,7 +362,19 @@ export default function Burndown() {
           </TabPanel>
           <TabPanel>
             <LineChartMaker
+              data={partialStoryPointBurnDownData}
+              showLoader={showLoader}
+            />
+          </TabPanel>
+          <TabPanel>
+            <LineChartMaker
               data = {partialStoryPointAllSprintData}
+              showLoader = {showLoader}
+              />
+          </TabPanel>
+          <TabPanel>
+            <LineChartMaker
+              data = {multiChartAllSprintData}
               showLoader = {showLoader}
               />
           </TabPanel>
