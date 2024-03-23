@@ -6,6 +6,7 @@ import LineChartMaker from "./reusable_components/LineChartMaker";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import { Buffer } from "buffer";
+import { Line } from "react-chartjs-2";
 
 export default function Burndown() {
   const [businessValueBurnDownData, setBusinessValueBurnDownData] =
@@ -18,6 +19,7 @@ export default function Burndown() {
     useState(null);
   const [fullStoryPointAllSprintData, setFullStoryPointAllSprintData] =
     useState(null);
+  const [partialStoryPointAllSprintData, setPartialStoryPointAllSprintData] = useState(null);
 
   const [projectSlug, setProjectSlug] = useState(null);
   const [sprintData, setSprintData] = useState([]);
@@ -37,6 +39,7 @@ export default function Burndown() {
     setPartialStoryPointBurnDownData(null);
     setFullStoryPointBurnDownData(null);
     setFullStoryPointAllSprintData(null);
+    setPartialStoryPointAllSprintData(null);
     setSelectedOption("");
     setShowLoader(false);
   };
@@ -154,6 +157,15 @@ export default function Burndown() {
           authToken
         );
       }
+      if (authToken && projectId)
+      {
+        apiCall(
+          `/api/userstory/partial_story_points?project_id=${projectId}`,
+          setPartialStoryPointAllSprintData,
+          "Partial Storypoints for all sprints",
+          authToken
+        );
+      }
     };
 
     callApis();
@@ -208,6 +220,14 @@ export default function Burndown() {
             >
               <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
                 Business Value
+              </p>
+            </Tab>
+            <Tab
+              className={"tabElements"}
+              selectedClassName="selectedTabElements"
+            >
+              <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
+                Partial Story Points for all Sprints
               </p>
             </Tab>
             <Tab
@@ -314,6 +334,12 @@ export default function Burndown() {
               data={businessValueAllSprintData}
               showLoader={showLoader}
             />
+          </TabPanel>
+          <TabPanel>
+            <LineChartMaker
+              data = {partialStoryPointAllSprintData}
+              showLoader = {showLoader}
+              />
           </TabPanel>
         </Tabs>
       </div>
