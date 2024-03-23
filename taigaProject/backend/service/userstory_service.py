@@ -606,26 +606,17 @@ def get_partial_sp(project_id, auth_token):
         start_date += timedelta(days = 1)
 
 
-    partial_story_points = []
-    partial_story_points.append({"Total": total_points})
+    partial_story_points = {}
+    partial_story_points["Total"] = total_points
 
-    for i, date in enumerate(complete_dates):
+    for date in complete_dates:
         points_on_date = points_per_date.get(date)
-        
-        points_on_previous_date = list(partial_story_points[-1].values())[0]
-    
+        points_on_previous_date = partial_story_points.get(list(partial_story_points.keys())[-1], total_points)
 
         if points_on_date:
-            partial_story_points.append({date: round(points_on_previous_date - points_on_date, 2)})
+            partial_story_points[date] = round(points_on_previous_date - points_on_date, 2)
         else:
-            partial_story_points.append({date: points_on_previous_date})
-
-    final_partial_story_points = {}
-
-    for partial_story_point in partial_story_points:
-        key = list(partial_story_point.keys())[0]
-        value = list(partial_story_point.values())[0]
-        final_partial_story_points[key] = value
+            partial_story_points[date] = points_on_previous_date
     
 
-    return final_partial_story_points
+    return partial_story_points
