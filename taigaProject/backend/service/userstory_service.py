@@ -10,7 +10,9 @@ import json
 from taigaApi.task.getTasks import get_tasks_by_milestone
 from fastapi import HTTPException
 
-r_userstory = redis.StrictRedis(host='localhost', port=6379, db=0)
+r_userstory = redis.StrictRedis(host='redis-container-dev', port=6379, db=0)
+
+print("redis cache connected", r_userstory)
 
 # funtion to get sprintwise burndown chart details for a project. 
 def get_userstory_burndown_by_project_id(project_id,auth_token):
@@ -59,6 +61,8 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
 
     response = {}
     try:
+        print("stored redis key",  r_userstory.get(f'userstory_full_storypoint_data:{sprint_id}'))    
+
         serialized_cached_data = r_userstory.get(f'userstory_full_storypoint_data:{sprint_id}')
         if serialized_cached_data:
 
@@ -118,7 +122,8 @@ def storypoint_burndown_for_sprint_process(sprint_id, auth_token):
 
 
     if serialized_cached_data != serialized_response:
-            r_userstory.set(f'userstory_full_storypoint_data:{sprint_id}', serialized_response)     
+            r_userstory.set(f'userstory_full_storypoint_data:{sprint_id}', serialized_response) 
+            print("stored redis key",  r_userstory.get(f'userstory_full_storypoint_data:{sprint_id}'))    
 
     return result
 
@@ -214,6 +219,8 @@ def userstory_custom_attribute_burndown_for_sprint_process(project_id, sprint_id
 
     if serialized_cached_data != serialized_response:
             r_userstory.set(f'userstory_business_value_data:{sprint_id}', serialized_response)
+            print("stored redis key",  r_userstory.get(f'userstory_business_value_data:{sprint_id}'))    
+
 
     return response
 
@@ -313,6 +320,7 @@ def partial_storypoint_burndown_for_sprint_process(sprint_id, auth_token):
 
     if serialized_cached_data != serialized_response:
             r_userstory.set(f'userstory_partial_storypoint_data:{sprint_id}', serialized_response)
+            
 
     return result
     
