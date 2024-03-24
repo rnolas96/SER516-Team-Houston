@@ -15,14 +15,6 @@ export default function LeadTime() {
     setProjectSlug(event.target.value)
   }
 
-  const [leadTimeData, setLeadTimeData] = useState([]);
-  const [projectSlug, setProjectSlug] = useState(null);
-  const [projectId, setProjectId] = useState(null)
-
-  function onChangeProjectSlug(event) {
-    setProjectSlug(event.target.value)
-  }
-
   function apiCall(url, updateCall, authToken) {
     axios.get(url, {
       headers: {
@@ -86,36 +78,13 @@ export default function LeadTime() {
 
     })
   }
-
-  function setProjectDetails() {
-    
-    const authToken = localStorage.getItem('authToken');
-    let url = '/api/project/milestone_data?project_slug=' + projectSlug
-    
-    axios.get(url, {
-      headers: {
-          'Authorization': authToken
-      }
-    }).then(result => {
-      console.log("result", result.data)
-      console.log("p_id", Object.keys(result.data)[0])
-      
-      let p_id = Object.keys(result.data)[0]
-      // let p_id = 1521718
-      setProjectId(p_id)
-
-    })
-  }
   
   useEffect (() => {
     const authToken = localStorage.getItem('authToken');
     console.log("authToken", authToken);
     if(!leadTimeData.length && authToken && projectId) {
       apiCall(`/api/task/lead_time?project_id=${projectId}`, setLeadTimeData, authToken);
-    if(!leadTimeData.length && authToken && projectId) {
-      apiCall(`/api/task/lead_time?project_id=${projectId}`, setLeadTimeData, authToken);
     }    
-  }, [projectId]);
   }, [projectId]);
   
   return (

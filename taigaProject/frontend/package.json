@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@ant-design/plots": "^2.1.13",
+    "@sgratzl/chartjs-chart-boxplot": "^4.2.8",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.10",
