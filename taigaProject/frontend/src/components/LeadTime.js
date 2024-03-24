@@ -13,6 +13,10 @@ export default function LeadTime() {
   const [projectId, setProjectId] = useState(null);
   const [showLoader, setShowLoader] = useState(false);
 
+  const [rangedLeadTimeData, setRangedLeadTimeData] = useState({});
+  const [startDate, setStartDate] = useState(new Date(2024, 1, 24)); // dummy values for testing @rkhatta
+  const [endDate, setEndDate] = useState(new Date(2024, 2, 24)); // dummy values for testing @rkhatta
+
   function onChangeProjectSlug(event) {
     setProjectSlug(event.target.value)
   }
@@ -88,10 +92,12 @@ export default function LeadTime() {
   
   useEffect (() => {
     const authToken = localStorage.getItem('authToken');
-    console.log("authToken", authToken);
-    if(!leadTimeData.length && authToken && projectId) {
-      apiCall(`/api/task/lead_time?project_id=${projectId}`, setLeadTimeData, authToken);
-    }    
+    if(projectId && startDate && endDate && authToken) {
+      let formattedStartDate = startDate.toISOString().slice(0, 10);
+      console.log("startdate", startDate, "    formattedStartDate", formattedStartDate);
+      let formattedEndDate = endDate.toISOString().slice(0, 10);
+      apiCall(`/api/task/lead_time_time_range?project_id=${projectId}&start_date=${formattedStartDate}&end_date=${formattedEndDate}`, setRangedLeadTimeData, authToken);
+    }   
   }, [projectId]);
   
   return (
@@ -135,8 +141,8 @@ export default function LeadTime() {
           </div>
         </div>{" "}
         <div>
-          {leadTimeData &&
-            <BoxPlotChartMaker {...leadTimeData} />}
+          {rangedLeadTimeData &&
+            <BoxPlotChartMaker {...rangedLeadTimeData} />}
         </div>
       </div>
     </div>
