@@ -77,7 +77,6 @@ def get_task_cycle_time_time_range(project_id, start_date, end_date, auth_token)
                         "cycle_time": get_cycle_time(closed_task, auth_token)
                     }]
 
-        print("length of final list", len(closed_tasks_response["range_cycle_time"]))
         return closed_tasks_response
 
     return {}
