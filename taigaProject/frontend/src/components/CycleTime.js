@@ -15,19 +15,19 @@ export default function CycleTime() {
   const [cycleTimeData, setCycleTimeData] = useState({});
   const [range, setRange] = useState([
     {
-      startDate: new Date(),
-      endDate: addDays(new Date(), 7),
+      startDate: addDays(new Date(), -7),
+      endDate: new Date(),
       key: "selection",
     },
   ]);
   const [open, setOpen] = useState(false);
   const refOne = useRef(null);
 
-  // const maxDate = new Date();
+  const maxDate = new Date();
   // console.log(maxDate);
   const [rangedCycleTimeData, setRangedCycleTimeData] = useState({});
-  const [startDate, setStartDate] = useState(new Date(2024, 1, 24)); // dummy values for testing @rkhatta
-  const [endDate, setEndDate] = useState(new Date(2024, 2, 24)); // dummy values for testing @rkhatta
+  const [startDate, setStartDate] = useState(null); // dummy values for testing @rkhatta
+  const [endDate, setEndDate] = useState(null); // dummy values for testing @rkhatta
 
 
   function onChangeProjectSlug(event) {
@@ -90,19 +90,10 @@ export default function CycleTime() {
         // let p_id = 1521718
         setProjectId(p_id);
       });
-  }
 
-  useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
-    console.log("authToken", authToken);
-    if (!cycleTimeData.length && authToken && projectId) {
-      apiCall(
-        `/api/task/cycle_time?project_id=${projectId}`,
-        setCycleTimeData,
-        authToken
-      );
-    }
-  }, [projectId]);
+      setStartDate(range[0].startDate);
+      setEndDate(range[0].endDate);
+  }
 
   useEffect(() => {
     document.addEventListener("keydown", hideOnEscape, true);
@@ -129,12 +120,12 @@ export default function CycleTime() {
 
     if(projectId && startDate && endDate && authToken) {
       let formattedStartDate = startDate.toISOString().slice(0, 10);
-      console.log("startdate", startDate, "    formattedStartDate", formattedStartDate);
+      console.log("startdate", startDate, "    formattedStartDate", formattedStartDate, "       range start date", range[0].startDate, "       range end date", range[0].endDate);
       let formattedEndDate = endDate.toISOString().slice(0, 10);
       apiCall(`/api/task/cycle_time_time_range?project_id=${projectId}&start_date=${formattedStartDate}&end_date=${formattedEndDate}`, setRangedCycleTimeData, authToken);
     }
 
-  }, [projectId, startDate, endDate]);
+  }, [projectId, range]);
   
   return (
     <div className="container-full">
@@ -197,6 +188,7 @@ export default function CycleTime() {
                       months={2}
                       direction="horizontal"
                       className="calendarElement font-sans"
+                      maxDate={maxDate}
                     />
                   )}
                 </div>
