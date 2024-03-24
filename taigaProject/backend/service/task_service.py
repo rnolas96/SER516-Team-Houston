@@ -111,31 +111,6 @@ def get_sprintwise_task_lead_time(project_id, auth_token):
         return closed_tasks_response
     return {}
 
-def get_task_lead_time_time_range(project_id, start_date, end_date, auth_token):
-    closed_tasks = get_closed_tasks(project_id, auth_token)
-    closed_tasks_response = {}
-
-    if closed_tasks is not None:
-        for closed_task in closed_tasks:
-            if closed_task['finished_date'] >= start_date and closed_task['finished_date'] <= end_date:
-                if closed_tasks_response.get("range_lead_time") is not None:
-
-                    task_response = closed_tasks_response.get("range_lead_time")
-                    task_response.append({
-                        "task_id": closed_task.get("id"),
-                        "lead_time": get_lead_time(closed_task, auth_token)
-                    })
-
-                    closed_tasks_response["range_lead_time"] = task_response 
-                else:
-                    closed_tasks_response["range_lead_time"] = [{
-                        "task_id": closed_task.get("id"),
-                        "lead_time": get_lead_time(closed_task, auth_token)
-                    }]
-
-        return closed_tasks_response
-    return {}
-
 def get_cost_of_delay_for_tasks(sprint_id, auth_token):
     user_stories = []
     story_point_map = {}
