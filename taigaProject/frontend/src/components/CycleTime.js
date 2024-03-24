@@ -25,6 +25,10 @@ export default function CycleTime() {
 
   // const maxDate = new Date();
   // console.log(maxDate);
+  const [rangedCycleTimeData, setRangedCycleTimeData] = useState({});
+  const [startDate, setStartDate] = useState(new Date(2024, 1, 24)); // dummy values for testing @rkhatta
+  const [endDate, setEndDate] = useState(new Date(2024, 2, 24)); // dummy values for testing @rkhatta
+
 
   function onChangeProjectSlug(event) {
     setProjectSlug(event.target.value);
@@ -119,7 +123,19 @@ export default function CycleTime() {
       setOpen(false);
     }
   };
+  
+  useEffect(() => {
+    const authToken = localStorage.getItem("authToken"); 
 
+    if(projectId && startDate && endDate && authToken) {
+      let formattedStartDate = startDate.toISOString().slice(0, 10);
+      console.log("startdate", startDate, "    formattedStartDate", formattedStartDate);
+      let formattedEndDate = endDate.toISOString().slice(0, 10);
+      apiCall(`/api/task/cycle_time_time_range?project_id=${projectId}&start_date=${formattedStartDate}&end_date=${formattedEndDate}`, setRangedCycleTimeData, authToken);
+    }
+
+  }, [projectId, startDate, endDate]);
+  
   return (
     <div className="container-full">
       <div
@@ -194,7 +210,10 @@ export default function CycleTime() {
             </div>
           </div>
         </div>{" "}
-        <div>{cycleTimeData && <BoxPlotChartMaker {...cycleTimeData} />}</div>
+        <div>
+          {rangedCycleTimeData &&
+            <BoxPlotChartMaker {...rangedCycleTimeData} />}
+        </div>
       </div>
     </div>
   );
