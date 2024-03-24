@@ -4,12 +4,14 @@ import SidebarMenu from './SidebarMenu'
 import axios from 'axios'
 import BarChartMaker from './reusable_components/BarChartMaker';
 import BoxPlotChartMaker from './reusable_components/BoxPlotChartMaker';
+import Loader from './reusable_components/Loader';
 
 export default function LeadTime() {
   
   const [leadTimeData, setLeadTimeData] = useState([]);
   const [projectSlug, setProjectSlug] = useState(null);
-  const [projectId, setProjectId] = useState(null)
+  const [projectId, setProjectId] = useState(null);
+  const [showLoader, setShowLoader] = useState(false);
 
   function onChangeProjectSlug(event) {
     setProjectSlug(event.target.value)
@@ -75,6 +77,11 @@ export default function LeadTime() {
       let p_id = Object.keys(result.data)[0]
       // let p_id = 1521718
       setProjectId(p_id)
+      if (p_id != null) {
+        setShowLoader(false)
+      } else {
+        setShowLoader(true)
+      }
 
     })
   }
