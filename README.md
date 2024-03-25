@@ -55,7 +55,7 @@ your default redis server port = 6379
 
    git clone https://github.com/ser516asu/SER516-Team-Miami.git
 
-   git checkout period-one
+   git checkout period-two
 
    ```
 
@@ -95,8 +95,9 @@ To interact with the Taiga API using the provided Python script, you will need t
 3. **Project URL**: Look at the URL in your browser's address bar while you are inside the project. The project slug is the part of the URL that comes after the last slash ("/"). For example:
 
 
-### FrontEnd Setup
-**note: goto SER516-Team-Houston directory and then type the following command**
+### FrontEnd Setup ###
+### please make sure latest stable version of Node is installed in your system ###
+***note: goto SER516-Team-Houston directory and then type the following command***
 1. ```
    cd taigaproject/frontend
    ```
@@ -104,6 +105,26 @@ To interact with the Taiga API using the provided Python script, you will need t
    npm install
    npm start
    ```
+### Unit Test ###
+***note: pytest library is required to run the unit test***
+***to install pytest:*** 
+   ```
+   pip install pytest
+   ```
+***goto taigaproject/backend/test***
+1. ```
+   cd taigaproject/backend/test
+   ```
+2. ***run the unit test***
+3. ```
+   python -m pytest -vv
+   ```
+
+**note: to run individual test files , then**
+1. ```
+   python -m pytest -vv filename.py
+   ```
+
 
 ### Unit Test ###
 ***note: pytest library is required to run the unit test***
