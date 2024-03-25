@@ -1,3 +1,4 @@
+from taigaApi.milestone.getMilestoneByProjectId import MilestoneByProjectFetchingError, get_milestone_by_project_id
 import pytest
 from unittest.mock import Mock, patch
 
@@ -52,5 +53,51 @@ def test_get_milestone_by_id_error_unauthorized(mock_env):
 
         # Assert expected behavior
         assert result.type is MilestoneFetchingError
+        assert result.value.status_code == 401
+        assert "Client Error: Unauthorized" in result.value.reason
+
+
+def test_get_milestone_by_project_id_success(mock_env):
+    project_id = 1521718
+
+    with patch("requests.get") as mock_get:    
+        
+        mock_get.return_value.json.return_value = mock_milestone_data.data
+         # Call the function with mocked data
+        milestones = get_milestone_by_project_id(project_id , "valid_auth_token")
+
+        # Assert the expected behavior
+        assert milestones == mock_milestone_data.data
+
+
+def test_get_milestone_by_project_id_error_connection(mock_env):
+    project_id = 1521718
+
+    # Simulate a connection error
+    with patch("requests.get") as mock_get:
+        mock_get.side_effect = requests.exceptions.ConnectionError("Connection error")
+
+        # Call the function
+        with pytest.raises(MilestoneByProjectFetchingError) as result:
+            get_milestone_by_project_id(project_id, "valid_token")
+
+        # Assert expected behavior
+        assert result.type is MilestoneByProjectFetchingError
+        assert result.value.status_code == "CONNECTION_ERROR"
+        assert "Connection error" in result.value.reason
+
+
+
+def test_get_milestone_by_projectid_error_unauthorized(mock_env):
+    project_id = 1521718
+    # Simulate a connection error
+    with patch("requests.get") as mock_get:
+        mock_get.side_effect = MilestoneByProjectFetchingError(401, "Client Error: Unauthorized")
+
+        # Call the function
+        with pytest.raises(MilestoneByProjectFetchingError) as result:
+            get_milestone_by_project_id(project_id, "valid_token")
+        # Assert expected behavior
+        assert result.type is MilestoneByProjectFetchingError
         assert result.value.status_code == 401
         assert "Client Error: Unauthorized" in result.value.reason
