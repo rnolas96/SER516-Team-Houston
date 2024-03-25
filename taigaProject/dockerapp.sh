@@ -2,12 +2,12 @@
 #!/bin/bash
 
 # Pull frontend image
-echo "Pulling akashvj98/taigafrontend:dev..."
-docker pull akashvj98/taigafrontend:dev
+echo "Pulling avijay48/dev-taigaproject-backend:dev..."
+docker pull avijay48/dev-taigaproject-backend:dev
 
 # Pull backend image
-echo "Pulling akashvj98/taigabackend:dev..."
-docker pull akashvj98/taigabackend:dev
+echo "Pulling avijay48/dev-taigaproject-backend:dev..."
+docker pull avijay48/dev-taigaproject-backend:dev
 
 # Ensure docker-compose.yml exists
 if [ ! -f "docker-compose.yml" ]; then
