@@ -9,8 +9,11 @@ from taigaApi.userStory.getUserStory import get_userstories_by_sprint, get_custo
 from taigaApi.issue.getIssuesByProjectId import get_issues_by_project_id
 from taigaApi.issue.getCustomAttributeValueByIssueId import get_custom_attribute_value_by_issue_id, get_custom_attribute_type_id_for_issue
 from taigaApi.userStory.getUserStory import get_userstories_by_sprint, get_custom_attribute_from_userstory, get_custom_attribute_type_id
+import threading
+import redis
+import json
 
-
+r_task = redis.StrictRedis(host='localhost', port=6379, db=1)
 
 # Function to calculate  cycle time for tasks which belong to a specific sprint
 def get_sprintwise_task_cycle_time(project_id, auth_token):
@@ -42,6 +45,49 @@ def get_sprintwise_task_cycle_time(project_id, auth_token):
         return closed_tasks_response
 
     return {}
+
+def get_cycle_time_for_date_range(project_id, start_date, end_date, auth_token):
+    """
+    Description
+    -----------
+    Gets the user_story storypoint burndown based on the sprint_id.
+
+    Arguments
+    ---------
+    sprint_id, auth_token
+
+    Returns
+    -------
+    A map of date and remaining story points value for every day until end of the sprint.
+    """
+
+    response = {}
+    try:
+        cycle_time_redis_id = str(project_id) + '_' + start_date + '_' + end_date
+        serialized_cached_data = r_task.get(f'cycle_time_data_for_date_range:{cycle_time_redis_id}')
+        if serialized_cached_data:
+
+            background_thread = threading.Thread(target=get_task_cycle_time_time_range, args=(project_id, start_date, end_date, auth_token))
+            background_thread.start()
+                    
+            response = json.loads(serialized_cached_data)
+
+            return response
+        
+        response = get_task_cycle_time_time_range(project_id, start_date, end_date, auth_token)
+        return response
+    
+    except TaskFetchingError as e:
+        print(f"Error fetching Tasks: {e}")
+        return None
+         
+    except MilestoneFetchingError as e:
+        print(f"Error fetching Milestones: {e}")
+        return None
+    
+    except Exception as e :
+        print(f"Unexpected error :{e}")
+        return None
 
 def get_task_cycle_time_time_range(project_id, start_date, end_date, auth_token):
     closed_tasks = get_closed_tasks(project_id, auth_token)
@@ -76,6 +122,13 @@ def get_task_cycle_time_time_range(project_id, start_date, end_date, auth_token)
                         "task_id": closed_task.get("id"),
                         "cycle_time": get_cycle_time(closed_task, auth_token)
                     }]
+
+        serialized_response = json.dumps(closed_tasks_response)
+        serialized_cached_data = r_task.get(f'cycle_time_data_for_date_range:{project_id}:{start_date}:{end_date}')
+
+        if serialized_cached_data != serialized_response:
+            cycle_time_redis_id = str(project_id) + '_' + start_date + '_' + end_date
+            r_task.set(f'cycle_time_data_for_date_range:{cycle_time_redis_id}', serialized_response)
 
         return closed_tasks_response
 

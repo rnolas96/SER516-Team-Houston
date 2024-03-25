@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Header, Request, HTTPException
-from service.task_service import get_sprintwise_task_cycle_time, get_task_cycle_time_time_range, get_sprintwise_task_lead_time, get_cost_of_delay_for_sprint
+from service.task_service import get_sprintwise_task_cycle_time, get_cycle_time_for_date_range, get_sprintwise_task_lead_time, get_cost_of_delay_for_sprint
 
 task_router = APIRouter()
 
@@ -34,7 +34,7 @@ def get_task_cycle_time_in_time_range(request: Request, start_date, end_date, pr
     auth_token = request.headers.get('Authorization')
 
     if (auth_token):
-        return get_task_cycle_time_time_range(project_id, start_date, end_date, auth_token)
+        return get_cycle_time_for_date_range(project_id, start_date, end_date, auth_token)
     else:
         raise HTTPException(status_code = 401, detail = "Missing or invalid access token")    
 
