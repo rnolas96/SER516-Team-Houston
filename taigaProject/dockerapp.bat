@@ -2,8 +2,8 @@
 
 REM Pull Docker images
 echo Pulling Docker images...
-docker pull akashvj98/taigabackend:dev
-docker pull akashvj98/taigafrontend:dev
+docker pull avijay48/dev-taigaproject-backend:dev
+docker pull avijay48/dev-taigaproject-frontend:dev
 docker pull redis:latest
 
 REM Check if the pull was successful
