@@ -17,7 +17,10 @@ Before running the script, make sure you have the following installed:
 
 
 ## Ubuntu / Mac users:
+  ### step 1 ###
   ``` chmod +x dockerapp.sh ```
+  ### step 2 ###
+  ``` ./script.sh ```
 
 
  The script will pull the images of backend, frontend and redis from the public repository.
