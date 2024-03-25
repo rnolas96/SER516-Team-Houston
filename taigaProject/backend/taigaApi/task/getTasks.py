@@ -127,7 +127,8 @@ def get_all_tasks(project_id, auth_token):
                     "milestone": task["milestone"],
                     "milestone_slug": task["milestone_slug"],
                     "created_date": task["created_date"],
-                    "finished_date": task["finished_date"]
+                    "finished_date": task["finished_date"],
+                    "user_story": task["user_story"]
                 }
                 for task in tasks
             ]
@@ -214,3 +215,4 @@ def get_milestone_name(project_id, auth_token):
         # Handle errors during the API request and print an error message
         print(f"Error fetching tasks: {e}")
         return None
+    

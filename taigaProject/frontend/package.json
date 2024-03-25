@@ -19,11 +19,13 @@
     "chart.js": "^4.4.1",
     "chartjs-adapter-moment": "^1.0.1",
     "chartjs-chart-box-and-violin-plot": "^2.2.0",
+    "date-fns": "^3.6.0",
     "flowbite-react": "^0.7.2",
     "package.json": "^0.0.0",
     "postcss": "^8.4.33",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
+    "react-date-range": "^2.0.0-alpha.4",
     "react-dom": "^18.2.0",
     "react-graph-vis": "^1.0.7",
     "react-icons": "^5.0.1",
@@ -62,5 +64,6 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:8000"
+  
+  "proxy": "http://api-container-dev:8000"
 }

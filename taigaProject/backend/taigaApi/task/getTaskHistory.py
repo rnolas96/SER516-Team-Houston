@@ -158,7 +158,7 @@ def get_cycle_time(task, auth_token):
         response.raise_for_status()
         history_data = response.json()
 
-        print("historydata----------------", history_data)
+        # print("historydata----------------", history_data)
 
         in_progress_date = extract_new_to_in_progress_date(history_data)
 
