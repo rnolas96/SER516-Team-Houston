@@ -110,7 +110,7 @@ export default function Burndown() {
         setProjectId(p_id);
         setSprintData(s_Data);
         setShowLoader(true);
-        if(tab == 1)
+        if(tab == 0)
           setIsSprintDisabled(false);
       });
   }
