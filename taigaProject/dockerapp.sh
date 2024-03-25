@@ -1,13 +1,12 @@
-
 #!/bin/bash
 
 # Pull frontend image
-echo "Pulling akashvj98/taigafrontend:dev..."
-docker pull akashvj98/taigafrontend:dev
+echo "Pulling avijay48/prod-taigaproject-backend:prod..."
+docker pull avijay48/prod-taigaproject-backend:prod
 
 # Pull backend image
-echo "Pulling akashvj98/taigabackend:dev..."
-docker pull akashvj98/taigabackend:dev
+echo "Pulling avijay48/prod-taigaproject-backend:prod..."
+docker pull avijay48/prod-taigaproject-backend:prod
 
 # Ensure docker-compose.yml exists
 if [ ! -f "docker-compose.yml" ]; then
@@ -17,6 +16,6 @@ fi
 
 # Start services in detached mode
 echo "Starting services with docker-compose up -d..."
-docker-compose up -d
+docker-compose -p taigaprojectprod up -d
 
 echo "Done!"
