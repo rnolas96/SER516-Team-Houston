@@ -20,4 +20,4 @@ Before running the script, make sure you have the following installed:
    chmod +x dockerapp.sh
 
 
-** note : Once the containers start up,  click on the port-no of the frontend-container here (localhost:3000).
+### note : Once the containers start up,  click on the port-no of the frontend-container here (localhost:3000).
