@@ -10,7 +10,7 @@ Before running the script, make sure you have the following installed:
 -Docker Desktop / Hub
 
 ## windows users:
- click on the dockerapp.bat file in the taigaproject directory.
+ Open the **dockerapp.bat** file which is present in the taigaproject directory  in file explorer and then double click on the dockerapp.bat file.
 
  The .bat file(batch) will pull the images of backend, frontend and redis from the public repository.
  Then it will execute the docker-compose up to create and start the containers according to the configurations in docker-compose.yml.
