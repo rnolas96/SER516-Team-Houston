@@ -1,6 +1,6 @@
 # SER516-Team-Houston
 
-# Docker Instruction
+#  Instruction to run the app
 
 
 ## Prerequisites
