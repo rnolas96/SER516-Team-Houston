@@ -1,6 +1,9 @@
 import os
 import requests
+from datetime import datetime
+from datetime import datetime
 from dotenv import load_dotenv
+from taigaApi.task.getTasks import get_closed_tasks, get_all_tasks
 
 # Load environment variables from .env file
 load_dotenv()
@@ -22,7 +25,7 @@ def get_user_story(project_id, auth_token):
     # Define headers including the authorization token and content type
     headers = {
         'Authorization': f'Bearer {auth_token}',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
     }
 
     try:
@@ -138,7 +141,6 @@ def get_custom_attribute_type_id(project_id, auth_token, attribute_name):
 
         for res in response.json():
             if res["name"] == attribute_name:
-                print("id---------------------------->",res["id"])
                 return str(res["id"])
 
     except requests.exceptions.HTTPError as e:
@@ -154,8 +156,6 @@ def get_custom_attribute_type_id(project_id, auth_token, attribute_name):
         raise 
 
     # return "40205"
-
-
 
 def get_userstories_by_sprint(sprint_id, auth_token):
     taiga_url = os.getenv('TAIGA_URL')
@@ -190,3 +190,104 @@ def get_userstories_by_sprint(sprint_id, auth_token):
     except Exception as e:
         print("Unexpected error fetching UserStory:")
         raise 
+
+def get_userstory_total_points(project_id, auth_token):
+    """
+    Retrieves total story points for a User Story.
+
+    Args:
+        project_id (str): ID of the project.
+        auth_token (str): User authorization token.
+
+    Returns:
+        dict: Userstory ID with total story point
+
+    Raises:
+        UserStoryFetchingError: If the user story data cannot be retrieved.
+    """
+    try:
+        userstories_data = get_user_story(project_id, auth_token)
+
+        userstory_total_points = [
+            {
+                "id": userstory_data["id"],
+                "total_points": userstory_data.get("total_points", 0)
+            }
+            for userstory_data in userstories_data
+        ]
+
+        userstory_total_points = {story["id"]: story.get("total_points", 0) for story in userstories_data}
+
+        return userstory_total_points
+    except Exception as e:
+        raise UserStoryFetchingError(401, f"CONNECTION_ERROR: {e}")
+
+def get_closed_tasks_per_user_story(project_id, auth_token):
+    """
+    Retrieves the closed task for each User Story.
+
+    Args:
+        project_id (str): ID of the Taiga Project.
+        auth_token (str): Authorization token of the user.
+
+    Returns:
+        dict: Number of closed task for each user story.
+
+    Raises:
+        UserStoryFetchingError: If the user story data cannot be retrieved.
+    """
+    try:
+        closed_tasks = get_closed_tasks(project_id, auth_token)
+
+        closed_tasks_details = {}
+
+        for closed_task in closed_tasks:
+            user_story = closed_task.get("user_story")
+            task_id = closed_task.get("id")
+            finished_date = closed_task.get("finished_date")
+            datetime_obj = datetime.strptime(finished_date, "%Y-%m-%dT%H:%M:%S.%fZ")
+            normal_date = datetime_obj.strftime("%Y-%m-%d")
+
+            if user_story:
+                closed_task_info = closed_tasks_details.get(user_story, [])
+                closed_task_info.append({"task_id": task_id, "finished_date": normal_date})
+                closed_tasks_details[user_story] = closed_task_info
+
+        return closed_tasks_details
+
+    except Exception as e:
+        raise UserStoryFetchingError(401, f"CONNECTION_ERROR: {e}")
+    
+def get_task_per_user_story(project_id, auth_token):
+    """
+    Retrives all the task for a user story.
+    
+    Args:
+        project_id (str): ID of the Taiga Project.
+        auth_token (str): Bearer token for Taiga.
+    
+    Return:
+        dict: Number of task for a user story
+    `
+    Raises:
+        UserStoryFectchingError: If the User Story details cannot be retrieved.
+    """
+    try:
+        tasks = get_all_tasks(project_id, auth_token)
+
+        tasks_details = {}
+
+        for task in tasks:
+            user_story = task.get("user_story")
+
+            if user_story:
+                task_id = task.get("id")
+                task_info = tasks_details.get(user_story, [])
+                task_info.append({"task_id": task_id})
+                tasks_details[user_story] = task_info
+
+        return tasks_details
+
+    except Exception as e:
+        raise UserStoryFetchingError(401, f"CONNECTION_ERROR: {e}")
+    

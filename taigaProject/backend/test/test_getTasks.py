@@ -54,15 +54,10 @@ def test_get_tasks_error_unauthorized(mock_env):
         with pytest.raises(TaskFetchingError) as result:
             get_tasks(project_id, auth_token)
 
-        print("result------------",result.type)
         # Assert expected behavior
         assert result.type is TaskFetchingError
         assert result.value.status_code == 401
         assert "Client Error: Unauthorized" in result.value.reason
-
-    
-
-
 
 def test_tasks_by_milestone_success(mock_env):
     
