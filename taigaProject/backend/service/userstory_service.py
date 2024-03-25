@@ -55,7 +55,7 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
     -------
     A map of date and remaining story points value for every day until end of the sprint.
     """
-    r_userstory.flushdb()
+    # r_userstory.flushdb()
 
     response = {}
     try:
@@ -485,6 +485,47 @@ def get_burndown_all_sprints(project_id, auth_token):
 
     return result
 
+def get_business_value_burndown_for_all_sprints(project_id, custom_attribute_name, auth_token):
+    """
+    Description
+    -----------
+    Gets the user_story storypoint burndown based on the sprint_id.
+
+    Arguments
+    ---------
+    sprint_id, auth_token
+
+    Returns
+    -------
+    A map of date and remaining story points value for every day until end of the sprint.
+    """
+    # r_userstory.flushdb()
+
+    response = {}
+    try:
+        serialized_cached_data = r_userstory.get(f'userstory_business_value_data_all_sprints:{project_id}')
+        if serialized_cached_data:
+            print("exists in cache")
+            background_thread = threading.Thread(target=get_business_value_burndown_all_sprints, args=(project_id, custom_attribute_name, auth_token))
+            background_thread.start()
+                    
+            response = json.loads(serialized_cached_data)
+
+            return response
+        print("does not exist in cache")
+        response = get_business_value_burndown_all_sprints(project_id, custom_attribute_name, auth_token)
+        return response
+    except UserStoryFetchingError as e:
+        print(f"Error fetching UserStories: {e}")
+        return None
+         
+    except MilestoneFetchingError as e:
+        print(f"Error fetching Milestones: {e}")
+        return None
+    except Exception as e :
+        print(f"Unexpected error :{e}")
+        return None
+
 def get_business_value_burndown_all_sprints(project_id, custom_attribute_name, auth_token):
     """
     Description
@@ -496,7 +537,6 @@ def get_business_value_burndown_all_sprints(project_id, custom_attribute_name, a
     -------
     A map of date and business value completed.
     """   
-
     end_dates = []
     start_dates = []
 
@@ -545,6 +585,13 @@ def get_business_value_burndown_all_sprints(project_id, custom_attribute_name, a
             total_custom_attribute_value -= date_storypoint_map[current_date.strftime('%Y-%m-%d')]
         result[current_date.strftime("%Y-%m-%d")] = total_custom_attribute_value
                
+    serialized_response = json.dumps(result)
+    serialized_cached_data = r_userstory.get(f'userstory_business_value_data_all_sprints:{project_id}')
+
+    print("processing...")
+
+    if serialized_cached_data != serialized_response:
+            r_userstory.set(f'userstory_business_value_data_all_sprints:{project_id}', serialized_response)
 
     return result
     
