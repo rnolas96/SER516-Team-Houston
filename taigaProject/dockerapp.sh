@@ -8,6 +8,8 @@ docker pull avijay48/prod-taigaproject-backend:prod
 echo "Pulling avijay48/prod-taigaproject-backend:prod..."
 docker pull avijay48/prod-taigaproject-backend:prod
 
+docker pull redis:latest
+
 # Ensure docker-compose.yml exists
 if [ ! -f "docker-compose.yml" ]; then
   echo "Error: docker-compose.yml not found!"
