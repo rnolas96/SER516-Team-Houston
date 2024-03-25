@@ -10,7 +10,7 @@ import json
 from taigaApi.task.getTasks import get_tasks_by_milestone
 from fastapi import HTTPException
 
-r_userstory = redis.StrictRedis(host='localhost', port=6379, db=0)
+r_userstory = redis.StrictRedis(host='redis-container-prod', port=6379, db=0)
 
 # funtion to get sprintwise burndown chart details for a project. 
 def get_userstory_burndown_by_project_id(project_id,auth_token):
