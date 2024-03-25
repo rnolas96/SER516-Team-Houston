@@ -14,4 +14,4 @@ if %errorlevel% neq 0 (
 
 REM Run Docker Compose to create containers
 echo Creating containers...
-docker-compose -f docker-compose.yml up -d
+docker-compose -p taigaprojectdev up -d

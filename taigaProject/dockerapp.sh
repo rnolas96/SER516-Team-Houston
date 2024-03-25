@@ -17,6 +17,6 @@ fi
 
 # Start services in detached mode
 echo "Starting services with docker-compose up -d..."
-docker-compose up -d
+docker-compose -p taigaprojectdev up -d
 
 echo "Done!"
