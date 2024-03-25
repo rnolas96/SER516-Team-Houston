@@ -12,7 +12,6 @@ import { addDays } from 'date-fns'
 export default function CycleTime() {
   const [projectSlug, setProjectSlug] = useState(null);
   const [projectId, setProjectId] = useState(null);
-  const [cycleTimeData, setCycleTimeData] = useState({});
   const [range, setRange] = useState([
     {
       startDate: addDays(new Date(), -7),
@@ -100,6 +99,11 @@ export default function CycleTime() {
     document.addEventListener("click", hideOnClickOutside, true);
   }, []);
 
+  useEffect(() => {
+    if(open)
+      setRangedCycleTimeData(null);
+  }, [open])
+
   const hideOnEscape = (e) => {
     console.log(e.key);
     if (e.key === "Escape") {
@@ -116,16 +120,22 @@ export default function CycleTime() {
   };
   
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken"); 
+    const callApis = () => {
+      const authToken = localStorage.getItem("authToken"); 
 
-    if(projectId && startDate && endDate && authToken) {
-      let formattedStartDate = startDate.toISOString().slice(0, 10);
-      console.log("startdate", startDate, "    formattedStartDate", formattedStartDate, "       range start date", range[0].startDate, "       range end date", range[0].endDate);
-      let formattedEndDate = endDate.toISOString().slice(0, 10);
-      apiCall(`/api/task/cycle_time_time_range?project_id=${projectId}&start_date=${formattedStartDate}&end_date=${formattedEndDate}`, setRangedCycleTimeData, authToken);
+      if(projectId && startDate && endDate && authToken) {
+        let formattedStartDate = startDate.toISOString().slice(0, 10);
+        console.log("startdate", startDate, "    formattedStartDate", formattedStartDate, "       range start date", range[0].startDate, "       range end date", range[0].endDate);
+        let formattedEndDate = endDate.toISOString().slice(0, 10);
+        apiCall(`/api/task/cycle_time_time_range?project_id=${projectId}&start_date=${formattedStartDate}&end_date=${formattedEndDate}`, setRangedCycleTimeData, authToken);
+      }
+      
     }
-
-  }, [projectId, range]);
+    
+    callApis();
+    const intervalId = setInterval(callApis, 30000);
+    return () => clearInterval(intervalId);
+  }, [projectId, startDate, endDate]);
   
   return (
     <div className="container-full">
