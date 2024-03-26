@@ -8,7 +8,7 @@ name: Create Release and upload Assets
 
 jobs:
   build:
-    name: Create Release
+    name: Deploy and Create Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
