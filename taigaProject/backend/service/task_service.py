@@ -15,7 +15,7 @@ import threading
 import redis
 import json
 
-r_task = redis.StrictRedis(host='localhost', port=6379, db=1)
+r_task = redis.StrictRedis(host='redis-container-prod', port=6379, db=1)
 
 # Function to calculate  cycle time for tasks which belong to a specific sprint
 def get_sprintwise_task_cycle_time(project_id, auth_token):
