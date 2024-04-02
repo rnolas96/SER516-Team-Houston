@@ -1,14 +1,15 @@
-import datetime
-import logging
-import threading
 import re
-from datetime import datetime, timedelta
-from taigaApi.milestone.getMilestoneById import get_milestone_by_id, MilestoneFetchingError
-from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint
-import redis
 import json
-from taigaApi.task.getTasks import get_tasks_by_milestone
+import redis
+import logging
+from datetime import datetime, date, timedelta
+import threading
 from fastapi import HTTPException
+from datetime import datetime, timedelta
+from taigaApi.task.getTasks import get_tasks_by_milestone
+from taigaApi.milestone.getMilestoneByProjectId import get_milestone_by_project_id
+from taigaApi.milestone.getMilestoneById import get_milestone_by_id, MilestoneFetchingError
+from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint, get_closed_tasks_per_user_story, get_userstory_total_points, get_task_per_user_story
 
 r_userstory = redis.StrictRedis(host='redis-container-dev', port=6379, db=0)
 
@@ -24,7 +25,6 @@ def get_userstory_burndown_by_project_id(project_id,auth_token):
     user_stories_map = {}
     for user_story in user_stories: 
         if(user_story['milestone_name']):
-            print(user_story)
             sprint = user_story['milestone_name']
             if(user_story['total_points']):
                 user_stories_map[str(sprint)] = user_story['total_points']
@@ -57,7 +57,7 @@ def get_storypoint_burndown_for_sprint(sprint_id, auth_token):
     -------
     A map of date and remaining story points value for every day until end of the sprint.
     """
-    r_userstory.flushdb()
+    # r_userstory.flushdb()
 
     response = {}
     try:
@@ -434,4 +434,244 @@ def get_pb_coupling(project_id, auth_token):
     except Exception as e :
         print(f"Unexpected error :{e}")
         return None
+ 
+def get_burndown_all_sprints(project_id, auth_token):
+    """
+    Description
+    -----------
+    Gets the full user story point burndown for multiple sprints
+    ---------
+    project_id auth_token
+    Returns
+    -------
+    A map of date and  storypoints value completed.
+    """   
+    end_dates = []
+    start_dates = []
+
+    total_story_points = 0
+
+    date_storypoint_map = {}
+    result = {}
+    milestones_response = get_milestone_by_project_id(project_id, auth_token)
+
+    for milestone_item in milestones_response:
+
+        end_date_obj = datetime.strptime(milestone_item['estimated_finish'], "%Y-%m-%d")
+        start_date_obj = datetime.strptime(milestone_item['estimated_start'], "%Y-%m-%d")
+
+        end_dates.append(end_date_obj)
+        start_dates.append(start_date_obj)
+        
+        for userstory in milestone_item['user_stories']:
+            total_story_points += userstory['total_points']
+
+            if(userstory['is_closed']):
+                if userstory['finish_date']  :
+                    
+                    finish_date = datetime.strptime(userstory['finish_date'],"%Y-%m-%dT%H:%M:%S.%fZ")
+                    finish_date = finish_date.strftime("%Y-%m-%d")
+
+                    if(finish_date in date_storypoint_map):
+                        date_storypoint_map[finish_date] += userstory['total_points']
+                    else:
+                        date_storypoint_map[finish_date] = userstory['total_points']
+                
+        
+    start_date = min(start_dates)
+
+    end_date = max(end_dates)
+
+    current_date = start_date
+
+    while current_date < end_date:
+        current_date += timedelta(days=1)    
+        if current_date.strftime('%Y-%m-%d') in date_storypoint_map:
+            total_story_points -= date_storypoint_map[current_date.strftime('%Y-%m-%d')]
+        result[current_date.strftime("%Y-%m-%d")] = total_story_points
+               
+
+    return result
+
+def get_business_value_burndown_for_all_sprints(project_id, custom_attribute_name, auth_token):
+    """
+    Description
+    -----------
+    Gets the user_story storypoint burndown based on the sprint_id.
+
+    Arguments
+    ---------
+    sprint_id, auth_token
+
+    Returns
+    -------
+    A map of date and remaining story points value for every day until end of the sprint.
+    """
+    # r_userstory.flushdb()
+
+    response = {}
+    try:
+        serialized_cached_data = r_userstory.get(f'userstory_business_value_data_all_sprints:{project_id}')
+        if serialized_cached_data:
+            print("exists in cache")
+            background_thread = threading.Thread(target=get_business_value_burndown_all_sprints, args=(project_id, custom_attribute_name, auth_token))
+            background_thread.start()
+                    
+            response = json.loads(serialized_cached_data)
+
+            return response
+        print("does not exist in cache")
+        response = get_business_value_burndown_all_sprints(project_id, custom_attribute_name, auth_token)
+        return response
+    except UserStoryFetchingError as e:
+        print(f"Error fetching UserStories: {e}")
+        return None
+         
+    except MilestoneFetchingError as e:
+        print(f"Error fetching Milestones: {e}")
+        return None
+    except Exception as e :
+        print(f"Unexpected error :{e}")
+        return None
+
+def get_business_value_burndown_all_sprints(project_id, custom_attribute_name, auth_token):
+    """
+    Description
+    -----------
+    Gets the full business value burndown for multiple sprints
+    ---------
+    project_id auth_token
+    Returns
+    -------
+    A map of date and business value completed.
+    """   
+    end_dates = []
+    start_dates = []
+
+    total_custom_attribute_value = 0
+
+    date_storypoint_map = {}
+    result = {}
+    milestones_response = get_milestone_by_project_id(project_id, auth_token)
+
+    for milestone_item in milestones_response:
+
+        end_date_obj = datetime.strptime(milestone_item['estimated_finish'], "%Y-%m-%d")
+        start_date_obj = datetime.strptime(milestone_item['estimated_start'], "%Y-%m-%d")
+
+        end_dates.append(end_date_obj)
+        start_dates.append(start_date_obj)
+        
+        for userstory in milestone_item['user_stories']:
+
+            user_story_id = userstory['id']
+            custom_attribute_data = get_custom_attribute_from_userstory(user_story_id, auth_token)
+            custom_attribute_type_id = get_custom_attribute_type_id(project_id, auth_token, custom_attribute_name)
+            total_custom_attribute_value += int(custom_attribute_data[custom_attribute_type_id])
+
+            if(userstory['is_closed']):
+                if userstory['finish_date']  :
+                    
+                    finish_date = datetime.strptime(userstory['finish_date'],"%Y-%m-%dT%H:%M:%S.%fZ")
+                    finish_date = finish_date.strftime("%Y-%m-%d")
+
+                    if(finish_date in date_storypoint_map):
+                        date_storypoint_map[finish_date] += int(custom_attribute_data[custom_attribute_type_id])
+                    else:
+                        date_storypoint_map[finish_date] = int(custom_attribute_data[custom_attribute_type_id])
+                
+        
+    start_date = min(start_dates)
+
+    end_date = max(end_dates)
+
+    current_date = start_date
+
+    while current_date < end_date:
+        current_date += timedelta(days=1)    
+        if current_date.strftime('%Y-%m-%d') in date_storypoint_map:
+            total_custom_attribute_value -= date_storypoint_map[current_date.strftime('%Y-%m-%d')]
+        result[current_date.strftime("%Y-%m-%d")] = total_custom_attribute_value
+               
+    serialized_response = json.dumps(result)
+    serialized_cached_data = r_userstory.get(f'userstory_business_value_data_all_sprints:{project_id}')
+
+    print("processing...")
+
+    if serialized_cached_data != serialized_response:
+            r_userstory.set(f'userstory_business_value_data_all_sprints:{project_id}', serialized_response)
+
+    return result
     
+
+def get_partial_sp(project_id, auth_token):
+    """
+    Get the partial story for a for each day
+
+    Args:
+        project_id (str): ID of the Taiga Project
+        auth_token (str): Authorization Token of the Taiga User
+    Return
+        dict: Partial story points for each day
+    """
+    story_points = get_userstory_total_points(project_id, auth_token)
+    closed_task_per_user_story = get_closed_tasks_per_user_story(project_id, auth_token)
+    tasks_per_user_story = get_task_per_user_story(project_id, auth_token)
+    milestones_response = get_milestone_by_project_id(project_id, auth_token)
+
+    start_dates = []
+    end_dates = []
+
+    for milestone_item in milestones_response:
+        end_date_obj = datetime.strptime(milestone_item['estimated_finish'], "%Y-%m-%d")
+        start_date_obj = datetime.strptime(milestone_item['estimated_start'], "%Y-%m-%d")
+
+        end_dates.append(end_date_obj)
+        start_dates.append(start_date_obj)
+    
+    start_date = min(start_dates)
+    end_date = max(end_dates)
+
+
+    total_points = 0
+
+    for user_story in story_points:
+        total_points += story_points.get(user_story)
+
+    points_per_task = {}
+
+    for user_story in story_points:
+        tasks = tasks_per_user_story.get(user_story)
+        if tasks:
+            points_per_task[user_story] = round(story_points[user_story] / len(tasks), 3)
+
+    points_per_date = {}
+
+    for user_story in closed_task_per_user_story:
+        closed_tasks = closed_task_per_user_story.get(user_story)
+        for closed_task in closed_tasks:
+            finished_date = closed_task.get('finished_date')
+            if points_per_task.get(user_story):
+                points_per_date[finished_date] = points_per_date.get(finished_date, 0.0) + points_per_task.get(user_story)
+
+    complete_dates = []
+
+    while start_date <= end_date:
+        complete_dates.append(str(start_date.date()))
+        start_date += timedelta(days = 1)
+
+
+    partial_story_points = {}
+    partial_story_points["Total"] = total_points
+
+    for date in complete_dates:
+        points_on_date = points_per_date.get(date)
+        points_on_previous_date = partial_story_points.get(list(partial_story_points.keys())[-1], total_points)
+
+        if points_on_date:
+            partial_story_points[date] = round(points_on_previous_date - points_on_date, 2)
+        else:
+            partial_story_points[date] = points_on_previous_date
+    
+
+    return partial_story_points

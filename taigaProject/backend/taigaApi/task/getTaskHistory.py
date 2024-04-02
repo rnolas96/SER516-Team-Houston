@@ -130,6 +130,17 @@ def get_task_history(tasks, auth_token):
     # Return a list containing cycle_time and closed_tasks count
     return [cycle_time, closed_tasks]
 
+def get_lead_time(task, auth_token):
+    finished_date = task['finished_date']
+    creation_date = task['created_date']
+    
+    finished_date = datetime.fromisoformat(finished_date[: -1])
+    creation_date = datetime.fromisoformat(creation_date[: -1])
+
+    lead_time = (finished_date - creation_date).days
+
+    return lead_time
+
 def get_cycle_time(task, auth_token):
     cycle_time = 0
     taiga_url = os.getenv('TAIGA_URL')
@@ -147,7 +158,7 @@ def get_cycle_time(task, auth_token):
         response.raise_for_status()
         history_data = response.json()
 
-        print("historydata----------------", history_data)
+        # print("historydata----------------", history_data)
 
         in_progress_date = extract_new_to_in_progress_date(history_data)
 
