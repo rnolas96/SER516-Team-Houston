@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import json
 import threading
 import redis
@@ -8,8 +8,7 @@ from taigaApi.task.getTaskHistory import get_cycle_time
 from taigaApi.task.getTasks import TaskFetchingError, get_closed_tasks
 
 
-#r_task = redis.StrictRedis(host='redis-container-prod', port=6379, db=1)
-r_task = None
+r_task = redis.StrictRedis(host='redis-container', port=6379, db=1)
 
 # Function to calculate  cycle time for tasks which belong to a specific sprint
 def get_sprintwise_task_cycle_time(project_id, auth_token):

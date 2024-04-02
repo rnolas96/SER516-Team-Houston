@@ -2,7 +2,7 @@
 from taigaApi.task.getTaskHistory import get_lead_time
 from taigaApi.task.getTasks import get_closed_tasks, get_milestone_name
 
-import datetime
+from datetime import datetime
 
 def get_sprintwise_task_lead_time(project_id, auth_token):
     closed_tasks = get_closed_tasks(project_id, auth_token)
