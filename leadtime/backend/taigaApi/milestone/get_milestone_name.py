@@ -1,12 +1,6 @@
 import requests
 import os
 
-
-class MilestoneFetchingError(Exception):
-    def __init__(self, status_code, reason):
-        self.status_code = status_code
-        self.reason = reason
-
 def get_milestone_name(project_id, auth_token):
 
     # Get Taiga API URL from environment variables
