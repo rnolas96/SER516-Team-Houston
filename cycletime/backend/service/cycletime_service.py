@@ -3,42 +3,13 @@ import json
 import threading
 import redis
 
-from taigaApi.milestone.get_milestone_name import MilestoneFetchingError, get_milestone_name
 from taigaApi.task.getTaskHistory import get_cycle_time
 from taigaApi.task.getTasks import TaskFetchingError, get_closed_tasks
 
 
-r_task = redis.StrictRedis(host='redis-container', port=6379, db=1)
+r_task = redis.StrictRedis(host='prod-sb-pb-coupling-redis-container', port=6379, db=1)
 
-# Function to calculate  cycle time for tasks which belong to a specific sprint
-def get_sprintwise_task_cycle_time(project_id, auth_token):
-    closed_tasks = get_closed_tasks(project_id, auth_token)
-    milestones_name = get_milestone_name(project_id, auth_token)
 
-    closed_tasks_response = {}
-
-    if closed_tasks is not None:
-        for closed_task in closed_tasks:
-            sprint_id = closed_task.get("milestone_id")
-            sprint_name = milestones_name.get(sprint_id)
-
-            if closed_tasks_response.get(sprint_name) is not None:
-                task_response = closed_tasks_response.get(sprint_name)
-                task_response.append({
-                    "task_id": closed_task.get("id"),
-                    "cycle_time": get_cycle_time(closed_task, auth_token)
-                })
-
-                closed_tasks_response[sprint_name] = task_response 
-            else:
-                closed_tasks_response[sprint_name] = [{
-                    "task_id": closed_task.get("id"),
-                    "cycle_time": get_cycle_time(closed_task, auth_token)
-                }]
-
-        return closed_tasks_response
-
-    return {}
 
 def get_cycle_time_for_date_range(project_id, start_date, end_date, auth_token):
     """
@@ -75,9 +46,6 @@ def get_cycle_time_for_date_range(project_id, start_date, end_date, auth_token):
         print(f"Error fetching Tasks: {e}")
         return None
          
-    except MilestoneFetchingError as e:
-        print(f"Error fetching Milestones: {e}")
-        return None
     
     except Exception as e :
         print(f"Unexpected error :{e}")
