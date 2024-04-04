@@ -1,7 +1,6 @@
 from taigaApi.userStory.getUserStory import UserStoryFetchingError, get_custom_attribute_from_userstory,get_userstories_by_sprint,get_custom_attribute_type_id,get_user_story
 import re
 import logging
-
 def get_sb_coupling(sprint_id, auth_token):
     result ={}
     userstory_ref_map={}
