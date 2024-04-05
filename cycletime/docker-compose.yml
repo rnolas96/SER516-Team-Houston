@@ -1,0 +1,30 @@
+version: '3'
+services:
+  backend: 
+  
+    image: avijay48/cycletime-backend-img:prod  
+    container_name: cycletime-api-container
+    environment:
+      - TAIGA_URL=https://api.taiga.io/api/v1
+    ports:
+      - '8085:8000'
+  
+  redis:
+    image: redis   # Using the official Redis image from Docker Hub
+    container_name: cycletime-redis-container
+    ports:
+      - '6385:6379'
+    volumes:
+      - prod-cycletime-redis_data:/data
+  
+  frontend:
+    image: avijay48/cycletime-frontend-img:prod
+    container_name: cycletime-gui-container
+    ports:
+      - '3035:3000'
+    links:
+      - backend 
+    stdin_open: true
+    tty: true
+volumes: 
+  prod-cycletime-redis_data:

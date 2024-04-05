@@ -7,7 +7,7 @@ from taigaApi.task.getTaskHistory import get_cycle_time
 from taigaApi.task.getTasks import TaskFetchingError, get_closed_tasks, get_milestone_name
 
 
-r_task = redis.StrictRedis(host='prod-sb-pb-coupling-redis-container', port=6379, db=1)
+r_task = redis.StrictRedis(host='cycletime-redis-container', port=6379, db=1)
 
 
 

@@ -1,5 +1,4 @@
 import './App.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SbpbCoupling from './components/SbpbCoupling';
 function App() {
 
@@ -8,11 +7,9 @@ function App() {
 
   return (
     <div className="container-full">
-      <Router>
-          <Routes>
-            <Route exact path="/sbpbcoupling" element={<SbpbCoupling />} />
-          </Routes>
-      </Router>
+     
+          <SbpbCoupling/>
+        
     </div>
   );
 }

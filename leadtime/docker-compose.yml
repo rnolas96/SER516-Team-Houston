@@ -1,0 +1,21 @@
+version: '3'
+services:
+  backend: 
+  
+    image: avijay48/leadtime-backend-img:prod  
+    container_name: leadime-api-container
+    environment:
+      - TAIGA_URL=https://api.taiga.io/api/v1
+    ports:
+      - '8086:8000'
+  
+  
+  frontend:
+    image: avijay48/leadtime-frontend-img:prod
+    container_name: leadtime-gui-container
+    ports:
+      - '3036:3000'
+    links:
+      - backend 
+    stdin_open: true
+    tty: true
