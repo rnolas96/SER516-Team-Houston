@@ -8,11 +8,8 @@ function App() {
 
   return (
     <div className="container-full">
-      <Router>
-          <Routes>
-            <Route exact path="/cycletime" element={<CycleTime />} />
-          </Routes>
-      </Router>
+          <CycleTime/>
+         
     </div>
   );
 }
