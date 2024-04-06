@@ -65,5 +65,5 @@
     ]
   },
   
-  "proxy": "http://api-container-costofdelay-prod:8000"
+  "proxy": "http://api-container-costofdelay:8000"
 }
