@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import '../App.css'
-import SidebarMenu from './SidebarMenu'
 import axios from 'axios'
 import BarChartMaker from './reusable_components/BarChartMaker';
 import { selectClasses } from '@mui/material';

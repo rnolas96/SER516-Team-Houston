@@ -19,6 +19,6 @@ fi
 
 # Start services in detached mode
 echo "Starting services with docker-compose up -d..."
-docker-compose -p engagementMetricdev up -d
+docker-compose -p engagementMetricprod up -d
 
 echo "Done!"

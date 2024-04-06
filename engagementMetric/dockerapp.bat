@@ -2,8 +2,8 @@
 
 REM Pull Docker images
 echo Pulling Docker images...
-docker pull avijay48/dev-engagementMetric-backend:dev
-docker pull avijay48/dev-engagementMetric-frontend:dev
+docker pull rnolas96/dev-engagementMetric-backend:prod
+docker pull rnolas96/dev-engagementMetric-frontend:prod
 docker pull redis:latest
 
 REM Check if the pull was successful
@@ -14,4 +14,4 @@ if %errorlevel% neq 0 (
 
 REM Run Docker Compose to create containers
 echo Creating containers...
-docker-compose -p engagementMetricdev up -d
+docker-compose -p engagementMetricprod up -d
