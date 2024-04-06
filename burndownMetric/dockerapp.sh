@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Pull frontend image
-echo "Pulling avijay48/prod-burndownmetric-backend:prod..."
-docker pull avijay48/prod-burndownmetric-backend:prod
+echo "Pulling rnolas96/prod-burndownmetric-backend:prod..."
+docker pull rnolas96/prod-burndownmetric-backend:prod
 
 # Pull backend image
-echo "Pulling avijay48/prod-burndownmetric-backend:prod..."
-docker pull avijay48/prod-burndownmetric-backend:prod
+echo "Pulling rnolas96/prod-burndownmetric-backend:prod..."
+docker pull rnolas96/prod-burndownmetric-backend:prod
 
 docker pull redis:latest
 
