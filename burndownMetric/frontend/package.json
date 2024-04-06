@@ -65,5 +65,5 @@
     ]
   },
   
-  "proxy": "http://api-container-prod:8000"
+  "proxy": "http://api-container-burndown:8000"
 }
