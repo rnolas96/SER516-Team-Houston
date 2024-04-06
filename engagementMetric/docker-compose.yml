@@ -2,16 +2,16 @@ version: '3'
 services:
   backend: 
   
-    image: rnolas96/dev-engagement-backend:dev  
-    container_name: api-container-engagement-dev
+    image: rnolas96/prod-engagementmetric-backend:prod  
+    container_name: api-container-engagement
     environment:
       - TAIGA_URL=https://api.taiga.io/api/v1
     ports:
       - '8005:8000'
   
   frontend:
-    image: rnolas96/dev-engagement-frontend:dev
-    container_name: gui-container-engagement-dev
+    image: rnolas96/prod-engagementmetric-frontend:prod
+    container_name: gui-container-engagement
     ports:
       - '3005:3000'
     links:
