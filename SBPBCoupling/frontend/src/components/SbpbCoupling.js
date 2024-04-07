@@ -159,6 +159,9 @@ export default function SbpbCoupling() {
             }
           }}
         >
+          <div className="text-[2rem] w-auto rounded-none border-solid border-b-[4px] border-b-[#ffd053] font-bold bg-white hover:border-b-red-400 duration-300 font-sans text-start mt-0 pb-[0.2rem] mb-[1rem]">
+            <span>SB/PB Coupling</span>
+          </div>
           <TabList
             style={{ display: "flex", justifyContent: "left", border: "none" }}
           >
