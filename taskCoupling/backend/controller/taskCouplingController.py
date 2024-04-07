@@ -6,7 +6,6 @@ task_coupling_router= APIRouter()
 
 @task_coupling_router.get('/task_coupling')
 def get_task_coupling_response(request:Request, project_id: int):
-    print("takscoupling=========")
     auth_token = request.headers.get('Authorization')
     
     if (auth_token):
