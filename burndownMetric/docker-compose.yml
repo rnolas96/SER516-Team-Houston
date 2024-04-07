@@ -18,10 +18,10 @@ services:
       - prod-redis_data:/data
   
   frontend:
-    image: rnolas96/prod-burndownmetric-frontend:prod
+    image: burndownmetric-frontend
     container_name: gui-container-burndown
     ports:
-      - '3030:3000'
+      - '3000:80'
     links:
       - backend 
     stdin_open: true
