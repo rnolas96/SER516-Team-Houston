@@ -1,4 +1,6 @@
 import logging
+import re
+
 from taigaApi.task.getTasks import TaskFetchingError, get_custom_attribute_values_from_task, get_task_custom_attribute_type_id, get_tasks
 
 
@@ -58,5 +60,3 @@ def get_task_coupling(project_id, auth_token):
     except Exception as e:
         print("Unexpected error calculating cost:")
         return None
-
-
