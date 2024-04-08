@@ -2,29 +2,29 @@ version: '3'
 services:
   backend: 
   
-    image: sbpbcoupling-backend-img 
+    image: avijay48/sbpbcoupling-backend-img:prod  
     container_name: sbpbcoupling-api-container
     environment:
       - TAIGA_URL=https://api.taiga.io/api/v1
     ports:
-      - '8081:8000'
+      - '8082:8000'
   
   redis:
     image: redis   # Using the official Redis image from Docker Hub
-    container_name: sbpbcoupling-redis-container
+    container_name: redis-container-sbpbcoupling
     ports:
-      - '6381:6379'
+      - '6382:6379'
     volumes:
-      - prod-sbpbcoupling-redis_data:/data
+      - prod-redis_data:/data
   
   frontend:
-    image: sbpbcoupling-frontend-img
-    container_name: sbpbcoupling-gui-container
+    image: avijay48/sbpbcoupling-frontend-img:prod
+    container_name: gui-container-sbpbcoupling
     ports:
-      - '3031:3000'
+      - '3002:80'
     links:
       - backend 
     stdin_open: true
     tty: true
 volumes: 
-  prod-sbpbcoupling-redis_data:
+  prod-redis_data:
