@@ -7,11 +7,9 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 
 export default function CostOfDelay() {
-
   const [storyPointData, setStoryPointData] = useState(null);
   const [businessValueData, setBusinessValueData] = useState(null);
-  const [costOfDelayData, setCostOfDelayData] =
-    useState(null);
+  const [costOfDelayData, setCostOfDelayData] = useState(null);
 
   const [projectSlug, setProjectSlug] = useState(null);
   const [sprintData, setSprintData] = useState([]);
@@ -21,7 +19,8 @@ export default function CostOfDelay() {
   const [projectId, setProjectId] = useState(null);
   const [sprintId, setSprintId] = useState(null);
 
-  const [businessValueCostFactorInput, setBusinessValueCostFactorInput] = useState("")
+  const [businessValueCostFactorInput, setBusinessValueCostFactorInput] =
+    useState("");
   const [businessValueCostFactor, setBusinessValueCostFactor] = useState(null);
 
   const [showLoader, setShowLoader] = useState(false);
@@ -51,12 +50,12 @@ export default function CostOfDelay() {
   function onChangeBusinessValueCostFactor(event) {
     setBusinessValueCostFactorInput(event.target.value);
     setCostOfDelayData(null);
-    console.log("cost factor", businessValueCostFactor)
+    console.log("cost factor", businessValueCostFactor);
   }
 
   function createUpdatedData(labels, values, updateCall, scenario) {
     labels[0] = "";
-    const updated= {
+    const updated = {
       labels: labels,
       text: scenario,
       datasets: [
@@ -73,6 +72,49 @@ export default function CostOfDelay() {
     updateCall(updated);
   }
 
+// Handling the Auth:
+const onChangeUserName = (event) => {
+  setUserName(event.target.value);
+};
+
+const onChangePassword = (event) => {
+  setPassword(event.target.value);
+};
+
+const [loginState, setLoginState] = useState(false);
+const [userName, setUserName] = useState("");
+const [password, setPassword] = useState("");
+
+function setAuthToken() {
+  axios
+    .post("/api/login", {
+      type: "normal",
+      username: userName,
+      password: password,
+    })
+    .then((res) => {
+      console.log("res", res.data);
+      if (res.data[0]) {
+        localStorage.setItem("authToken", res.data[2]);
+        setLoginState(true);
+      } else {
+        alert("authentication failed");
+      }
+    });
+}
+
+useEffect(() => {
+  const authToken = localStorage.getItem("authToken");
+
+  if (authToken) {
+    setLoginState(true);
+  } else {
+    setLoginState(false);
+  }
+}, []);
+
+// End -- of Auth
+
   function apiCall(url, authToken) {
     axios
       .get(url, {
@@ -82,25 +124,41 @@ export default function CostOfDelay() {
       })
       .then((res) => {
         console.log("res", res.data);
-    
+
         const data = res.data;
 
-        const labels = Object.keys(data['userstory']);
-        const storyPointValues = Object.values(data['userstory']);
-        const businessValues = Object.values(data['business_value']);
-        const costOfDelayValues = Object.values(data['cost_of_delay']);
+        const labels = Object.keys(data["userstory"]);
+        const storyPointValues = Object.values(data["userstory"]);
+        const businessValues = Object.values(data["business_value"]);
+        const costOfDelayValues = Object.values(data["cost_of_delay"]);
 
         setShowLoader(false);
 
-        createUpdatedData(labels, storyPointValues, setStoryPointData, "storypoints graph");
-        createUpdatedData(labels, businessValues, setBusinessValueData, "business value graph");
-        createUpdatedData(labels, costOfDelayValues, setCostOfDelayData, "cost of delay graph");
-
+        createUpdatedData(
+          labels,
+          storyPointValues,
+          setStoryPointData,
+          "storypoints graph"
+        );
+        createUpdatedData(
+          labels,
+          businessValues,
+          setBusinessValueData,
+          "business value graph"
+        );
+        createUpdatedData(
+          labels,
+          costOfDelayValues,
+          setCostOfDelayData,
+          "cost of delay graph"
+        );
       });
   }
 
   function setProjectDetails() {
-    let authToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzEyMTY1NjkyLCJqdGkiOiI5YmI3MDhlYTc1OTg0NjFmODVmNDVlYjEwMWJjMDcwNSIsInVzZXJfaWQiOjYxNzUyNn0.jqZEtNh09uag7aHUSFe47spFD58oaul96Wgqgc7LFihIGTeoiBQPqqb-q2_auwUuaA4kuwlRoXP_ejgMHhsKO7PmtDPCNKVm3lTFEpWKLPxISTe3HuuSmq8m6jcZfv0XEH1XTpSN_JPsO-5ty9qRrUUDXbZcmNVqHwPO9PMQ4JNxK3fpibD1KHhu0BYqA_ycDTPpcyQ7eJDLpdQ7_PcMcOE1IV0cVKeGaQHcckoE-UPnKJVpq0us1sdy7FR9k6OWYo2tY1CUJYF41TU3bjuWhw72SljnM6L1edGj85vfjFAuc4kXYpLibwyRMj5NwrAacepaEHubD604wl8Ovp5CCg";
+    const authToken = localStorage.getItem("authToken");
+    // let authToken =
+    //   "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzEyMTY1NjkyLCJqdGkiOiI5YmI3MDhlYTc1OTg0NjFmODVmNDVlYjEwMWJjMDcwNSIsInVzZXJfaWQiOjYxNzUyNn0.jqZEtNh09uag7aHUSFe47spFD58oaul96Wgqgc7LFihIGTeoiBQPqqb-q2_auwUuaA4kuwlRoXP_ejgMHhsKO7PmtDPCNKVm3lTFEpWKLPxISTe3HuuSmq8m6jcZfv0XEH1XTpSN_JPsO-5ty9qRrUUDXbZcmNVqHwPO9PMQ4JNxK3fpibD1KHhu0BYqA_ycDTPpcyQ7eJDLpdQ7_PcMcOE1IV0cVKeGaQHcckoE-UPnKJVpq0us1sdy7FR9k6OWYo2tY1CUJYF41TU3bjuWhw72SljnM6L1edGj85vfjFAuc4kXYpLibwyRMj5NwrAacepaEHubD604wl8Ovp5CCg";
     let url = "/api/project/milestone_data?project_slug=" + projectSlug;
 
     axios
@@ -124,8 +182,7 @@ export default function CostOfDelay() {
 
   useEffect(() => {
     const callApis = () => {
-      // const authToken = localStorage.getItem("authToken");
-      let authToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzEyMTY1NjkyLCJqdGkiOiI5YmI3MDhlYTc1OTg0NjFmODVmNDVlYjEwMWJjMDcwNSIsInVzZXJfaWQiOjYxNzUyNn0.jqZEtNh09uag7aHUSFe47spFD58oaul96Wgqgc7LFihIGTeoiBQPqqb-q2_auwUuaA4kuwlRoXP_ejgMHhsKO7PmtDPCNKVm3lTFEpWKLPxISTe3HuuSmq8m6jcZfv0XEH1XTpSN_JPsO-5ty9qRrUUDXbZcmNVqHwPO9PMQ4JNxK3fpibD1KHhu0BYqA_ycDTPpcyQ7eJDLpdQ7_PcMcOE1IV0cVKeGaQHcckoE-UPnKJVpq0us1sdy7FR9k6OWYo2tY1CUJYF41TU3bjuWhw72SljnM6L1edGj85vfjFAuc4kXYpLibwyRMj5NwrAacepaEHubD604wl8Ovp5CCg";
+      const authToken = localStorage.getItem("authToken");
       console.log("authToken", authToken);
       console.log("sprintId", sprintId);
       console.log("projectId", projectId);
@@ -146,162 +203,212 @@ export default function CostOfDelay() {
   return (
     <div className="container-full bg-white">
       <div className="flex flex-col min-h-[100%] justify-between w-full py-[1rem] px-[2rem]">
-        <Tabs
-          style={{
-            fontFamily: "Poppins",
-            fontWeight: "500",
-            fontSize: "0.9rem",
-            border: "none",
-            minHeight: "75%",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <TabList
-            style={{ display: "flex", justifyContent: "left", border: "none" }}
+        {!loginState ? (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
           >
-            <Tab
-              className={"tabElements"}
-              selectedClassName="selectedTabElements"
+            <span className="text-[1.2rem] font-bold font-sans">Username:</span>
+            <input
+              className="bg-white border-2 rounded-xl hover:rounded-lg duration-300 border-[#ffd053] active:border-[#ffd053] h-[2.3rem] px-3 text-[1rem] font-sans"
+              type="username"
+              value={userName}
+              onChange={onChangeUserName}
+              aria-label="username"
+              style={{ marginBottom: "20px" }}
+            />
+            <span className=" text-[1.2rem] font-bold font-sans">
+              Password:
+            </span>
+            <input
+              className="bg-white border-2 rounded-xl hover:rounded-lg duration-300 border-[#ffd053] active:border-[#ffd053] h-[2.3rem] px-3"
+              type="password"
+              value={password}
+              onChange={onChangePassword}
+              style={{ marginBottom: "20px" }}
+            />
+            <button
+              className=" p-4 border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-lg"
+              onClick={() => setAuthToken()}
             >
-              <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
-                Storypoints Affected
-              </p>
-            </Tab>
-            <Tab
-              className={"tabElements"}
-              selectedClassName="selectedTabElements"
+              Submit
+            </button>
+          </div>
+        ) : (
+          <Tabs
+            style={{
+              fontFamily: "Poppins",
+              fontWeight: "500",
+              fontSize: "0.9rem",
+              border: "none",
+              minHeight: "75%",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <TabList
+              style={{
+                display: "flex",
+                justifyContent: "left",
+                border: "none",
+              }}
             >
-              <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
-                Business Value Affected
-              </p>
-            </Tab>
-            <Tab
-              className={"tabElements"}
-              selectedClassName="selectedTabElements"
-            >
-              <p className="px-[0.8rem] text-center border-none ">
-                Cost of Delay
-              </p>
-            </Tab>
-          </TabList>
-          <div style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "start",
-            marginTop: "0.3rem",
-            marginBottom: "0.6rem",
-          }}>
+              <Tab
+                className={"tabElements"}
+                selectedClassName="selectedTabElements"
+              >
+                <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
+                  Storypoints Affected
+                </p>
+              </Tab>
+              <Tab
+                className={"tabElements"}
+                selectedClassName="selectedTabElements"
+              >
+                <p className="px-[0.8rem] text-center border-r-2 border-r-red-400 ">
+                  Business Value Affected
+                </p>
+              </Tab>
+              <Tab
+                className={"tabElements"}
+                selectedClassName="selectedTabElements"
+              >
+                <p className="px-[0.8rem] text-center border-none ">
+                  Cost of Delay
+                </p>
+              </Tab>
+            </TabList>
             <div
               style={{
                 display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                width: "30%",
-                // minHeight: "50%"
+                flexDirection: "row",
+                justifyContent: "start",
+                marginTop: "0.3rem",
+                marginBottom: "0.6rem",
               }}
-              className="parent"
             >
-
-              <span className="text-[1rem] font-bold font-sans">
-                Project Slug:
-              </span>
-              <div 
+              <div
                 style={{
                   display: "flex",
-                  flexDirection: "row",
+                  flexDirection: "column",
                   justifyContent: "space-between",
-                  marginTop: "0.3rem",
-                  marginBottom: "0.6rem"
+                  width: "30%",
+                  // minHeight: "50%"
                 }}
+                className="parent"
               >
-              <input
-                className="bg-white border-2 rounded-xl hover:rounded-none duration-300 border-[#ffd053] h-[2.3rem] px-3 w-[80%] text-[1rem] font-sans"
-                type="username"
-                value={projectSlug}
-                onChange={onChangeProjectSlug}
-                aria-label="username"
-              />
-              <button
-                className="ml-[0.6rem] h-[2.45rem] w-[33%] border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-none"
-                onClick={() => setProjectDetails()}
-              >
-                Submit
-              </button>
-              </div>
-              {sprintData.length > 0 ? (
-                <select
-                  value={selectedOption}
-                  onChange={handleDropdownChange}
-                  style={{ paddingBlock: "0.4rem", paddingInline: "0.5rem", marginBottom: "2.5rem", borderRadius: "0.5rem", borderColor: "#f98080" }}
+                <span className="text-[1rem] font-bold font-sans">
+                  Project Slug:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginTop: "0.3rem",
+                    marginBottom: "0.6rem",
+                  }}
                 >
-                  <option className="dropdown" value="">Select an option</option>
-                  {sprintData.map((item) => (
-                    <option key={item.id} value={item.id} className="dropdown">
-                      {item.name}
+                  <input
+                    className="bg-white border-2 rounded-xl hover:rounded-none duration-300 border-[#ffd053] h-[2.3rem] px-3 w-[80%] text-[1rem] font-sans"
+                    type="username"
+                    value={projectSlug}
+                    onChange={onChangeProjectSlug}
+                    aria-label="username"
+                  />
+                  <button
+                    className="ml-[0.6rem] h-[2.45rem] w-[33%] border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-none"
+                    onClick={() => setProjectDetails()}
+                  >
+                    Submit
+                  </button>
+                </div>
+                {sprintData.length > 0 ? (
+                  <select
+                    value={selectedOption}
+                    onChange={handleDropdownChange}
+                    style={{
+                      paddingBlock: "0.4rem",
+                      paddingInline: "0.5rem",
+                      marginBottom: "2.5rem",
+                      borderRadius: "0.5rem",
+                      borderColor: "#f98080",
+                    }}
+                  >
+                    <option className="dropdown" value="">
+                      Select an option
                     </option>
-                  ))}
-                </select>
-              ) : null}
-            </div>
-            <div style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                width: "30%",
-                // minHeight: "50%"
-              }}
-              className="parent ml-[2rem]"
-            >
-              <div className="flex flex-col">
-              <span className="text-[1rem] font-bold font-sans">
-                BV Cost Factor:
-              </span>
-              <div 
+                    {sprintData.map((item) => (
+                      <option
+                        key={item.id}
+                        value={item.id}
+                        className="dropdown"
+                      >
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                ) : null}
+              </div>
+              <div
                 style={{
                   display: "flex",
-                  flexDirection: "row",
+                  flexDirection: "column",
                   justifyContent: "space-between",
-                  marginTop: "0.3rem",
-                  marginBottom: "0.6rem"
+                  width: "30%",
+                  // minHeight: "50%"
                 }}
+                className="parent ml-[2rem]"
               >
-                <input
-                  className="bg-white border-2 rounded-xl hover:rounded-none duration-300 border-[#ffd053] h-[2.3rem] px-3 w-[80%] text-[1rem] font-sans"
-                  type="number"
-                  value={businessValueCostFactorInput}
-                  onChange={onChangeBusinessValueCostFactor}
-                  aria-label="username"
-                />
-                <button
-                  className="ml-[0.6rem] h-[2.45rem] w-[33%] border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-none"
-                  onClick={() => setBusinessValueCostFactor(businessValueCostFactorInput)}
-                >
-                  Submit
-                </button>
-              </div>
+                <div className="flex flex-col">
+                  <span className="text-[1rem] font-bold font-sans">
+                    BV Cost Factor:
+                  </span>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      marginTop: "0.3rem",
+                      marginBottom: "0.6rem",
+                    }}
+                  >
+                    <input
+                      className="bg-white border-2 rounded-xl hover:rounded-none duration-300 border-[#ffd053] h-[2.3rem] px-3 w-[80%] text-[1rem] font-sans"
+                      type="number"
+                      value={businessValueCostFactorInput}
+                      onChange={onChangeBusinessValueCostFactor}
+                      aria-label="username"
+                    />
+                    <button
+                      className="ml-[0.6rem] h-[2.45rem] w-[33%] border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-none"
+                      onClick={() =>
+                        setBusinessValueCostFactor(businessValueCostFactorInput)
+                      }
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <TabPanel>
-            <LineChartMaker
-              data={storyPointData}
-              showLoader={showLoader}
-            />
-          </TabPanel>
-          <TabPanel>
-            <LineChartMaker
-              data={businessValueData}
-              showLoader={showLoader}
-            />
-          </TabPanel> 
-          <TabPanel>
-            <LineChartMaker
-              data={costOfDelayData}
-              showLoader={showLoader}
-            />
-          </TabPanel> 
-        </Tabs>
+            <TabPanel>
+              <LineChartMaker data={storyPointData} showLoader={showLoader} />
+            </TabPanel>
+            <TabPanel>
+              <LineChartMaker
+                data={businessValueData}
+                showLoader={showLoader}
+              />
+            </TabPanel>
+            <TabPanel>
+              <LineChartMaker data={costOfDelayData} showLoader={showLoader} />
+            </TabPanel>
+          </Tabs>
+        )}
       </div>
     </div>
   );

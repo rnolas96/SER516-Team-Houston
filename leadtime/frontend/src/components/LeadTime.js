@@ -6,8 +6,8 @@ import BoxPlotChartMaker from "./reusable_components/BoxPlotChartMaker";
 import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import format from 'date-fns/format'
-import { addDays } from 'date-fns'
+import format from "date-fns/format";
+import { addDays } from "date-fns";
 
 export default function LeadTime() {
   const [projectSlug, setProjectSlug] = useState(null);
@@ -28,10 +28,52 @@ export default function LeadTime() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
-
   function onChangeProjectSlug(event) {
     setProjectSlug(event.target.value);
   }
+
+  // Handling the Auth:
+  const onChangeUserName = (event) => {
+    setUserName(event.target.value);
+  };
+
+  const onChangePassword = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const [loginState, setLoginState] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+
+  function setAuthToken() {
+    axios
+      .post("/api/login", {
+        type: "normal",
+        username: userName,
+        password: password,
+      })
+      .then((res) => {
+        console.log("res", res.data);
+        if (res.data[0]) {
+          localStorage.setItem("authToken", res.data[2]);
+          setLoginState(true);
+        } else {
+          alert("authentication failed");
+        }
+      });
+  }
+
+  useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
+
+    if (authToken) {
+      setLoginState(true);
+    } else {
+      setLoginState(false);
+    }
+  }, []);
+
+  // End -- of Auth
 
   function apiCall(url, updateCall, authToken) {
     axios
@@ -54,9 +96,7 @@ export default function LeadTime() {
         const leadTimeValuesByKey = {};
 
         for (const key in data) {
-          leadTimeValuesByKey[key] = data[key].map(
-            (item) => item["lead_time"]
-          );
+          leadTimeValuesByKey[key] = data[key].map((item) => item["lead_time"]);
         }
 
         let labels = Object.keys(leadTimeValuesByKey);
@@ -90,8 +130,8 @@ export default function LeadTime() {
         setProjectId(p_id);
       });
 
-      setStartDate(range[0].startDate);
-      setEndDate(range[0].endDate);
+    setStartDate(range[0].startDate);
+    setEndDate(range[0].endDate);
   }
 
   useEffect(() => {
@@ -100,9 +140,8 @@ export default function LeadTime() {
   }, []);
 
   useEffect(() => {
-    if(open)
-      setRangedLeadTimeData(null);
-  }, [open])
+    if (open) setRangedLeadTimeData(null);
+  }, [open]);
 
   const hideOnEscape = (e) => {
     console.log(e.key);
@@ -118,98 +157,147 @@ export default function LeadTime() {
       setOpen(false);
     }
   };
-  
+
   useEffect(() => {
     const callApis = () => {
-      const authToken = localStorage.getItem("authToken"); 
+      const authToken = localStorage.getItem("authToken");
 
-      if(projectId && startDate && endDate && authToken) {
+      if (projectId && startDate && endDate && authToken) {
         let formattedStartDate = startDate.toISOString().slice(0, 10);
-        console.log("startdate", startDate, "    formattedStartDate", formattedStartDate, "       range start date", range[0].startDate, "       range end date", range[0].endDate);
+        console.log(
+          "startdate",
+          startDate,
+          "    formattedStartDate",
+          formattedStartDate,
+          "       range start date",
+          range[0].startDate,
+          "       range end date",
+          range[0].endDate
+        );
         let formattedEndDate = endDate.toISOString().slice(0, 10);
-        apiCall(`/api/task/lead_time_time_range?project_id=${projectId}&start_date=${formattedStartDate}&end_date=${formattedEndDate}`, setRangedLeadTimeData, authToken);
+        apiCall(
+          `/api/leadtime/lead_time_time_range?project_id=${projectId}&start_date=${formattedStartDate}&end_date=${formattedEndDate}`,
+          setRangedLeadTimeData,
+          authToken
+        );
       }
-      
-    }
-    
+    };
+
     callApis();
     const intervalId = setInterval(callApis, 30000);
     return () => clearInterval(intervalId);
   }, [projectId, startDate, endDate]);
-  
+
   return (
     <div className="container-full">
-      <div
-        className="flex flex-col min-h-[100%] justify-evenly space-y-[2.2rem] align-top w-[100%] pt-[1rem] pb-[1rem] px-[2rem]"
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            width: "50%",
-          }}
-          className="parent"
-        >
-          <div className="text-[2rem] w-auto rounded-none border-solid border-b-[4px] border-b-[#ffd053] font-bold bg-white hover:border-b-red-400 duration-300 font-sans text-start mt-0 pb-[0.2rem] mb-[1rem]">
-            <span>Lead Time</span>
+      <div className="flex flex-col min-h-[100%] justify-evenly space-y-[2.2rem] align-top w-[100%] pt-[1rem] pb-[1rem] px-[2rem]">
+        {!loginState ? (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <span className="text-[1.2rem] font-bold font-sans">Username:</span>
+            <input
+              className="bg-white border-2 rounded-xl hover:rounded-lg duration-300 border-[#ffd053] active:border-[#ffd053] h-[2.3rem] px-3 text-[1rem] font-sans"
+              type="username"
+              value={userName}
+              onChange={onChangeUserName}
+              aria-label="username"
+              style={{ marginBottom: "20px" }}
+            />
+            <span className=" text-[1.2rem] font-bold font-sans">
+              Password:
+            </span>
+            <input
+              className="bg-white border-2 rounded-xl hover:rounded-lg duration-300 border-[#ffd053] active:border-[#ffd053] h-[2.3rem] px-3"
+              type="password"
+              value={password}
+              onChange={onChangePassword}
+              style={{ marginBottom: "20px" }}
+            />
+            <button
+              className=" p-4 border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-lg"
+              onClick={() => setAuthToken()}
+            >
+              Submit
+            </button>
           </div>
-          <div className="flex flex-row space-x-[1rem] w-full justify-between">
-            <div className="flex flex-col space-y-[0.2rem] w-[33%]">
-              <span className="text-[1rem] font-bold font-sans">
-                Project Slug:
-              </span>
-              <input
-                className="bg-white border-2 rounded-xl hover:rounded-none duration-300 border-[#ffd053] h-[2.3rem] px-3 w-full text-[1rem] font-sans"
-                type="username"
-                value={projectSlug}
-                onChange={onChangeProjectSlug}
-                aria-label="username"
-              />
-            </div>
-            <div className="flex space-y-[0.2rem] flex-col w-[67%]">
-              <span className="text-[1rem] font-bold font-sans">
-                Date Range:
-              </span>
-              <div className="flex flex-row space-x-[0.5rem] justify-between relative">
-                <input
-                  value={`${format(
-                    range[0].startDate,
-                    "MM/dd/yyyy"
-                  )} to ${format(range[0].endDate, "MM/dd/yyyy")}`}
-                  readOnly
-                  className="border-2 rounded-xl hover:rounded-none duration-300 border-[#ffd053] h-[2.3rem] px-3 w-[67%] text-[1rem] font-sans"
-                  onClick={() => setOpen((open) => !open)}
-                />
-
-                <div ref={refOne}>
-                  {open && (
-                    <DateRangePicker
-                      onChange={(item) => setRange([item.selection])}
-                      editableDateInputs={true}
-                      moveRangeOnFirstSelection={false}
-                      ranges={range}
-                      months={2}
-                      direction="horizontal"
-                      className="calendarElement font-sans"
-                      maxDate={maxDate}
-                    />
-                  )}
-                </div>
-                <button
-                  className="h-[2.3rem] w-[50%] border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-xl hover:rounded-none"
-                  onClick={() => setProjectDetails()}
-                >
-                  Submit
-                </button>
+        ) : (
+          <div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                width: "50%",
+              }}
+              className="parent"
+            >
+              <div className="text-[2rem] w-auto rounded-none border-solid border-b-[4px] border-b-[#ffd053] font-bold bg-white hover:border-b-red-400 duration-300 font-sans text-start mt-0 pb-[0.2rem] mb-[1rem]">
+                <span>Lead Time</span>
               </div>
+              <div className="flex flex-row space-x-[1rem] w-full justify-between">
+                <div className="flex flex-col space-y-[0.2rem] w-[33%]">
+                  <span className="text-[1rem] font-bold font-sans">
+                    Project Slug:
+                  </span>
+                  <input
+                    className="bg-white border-2 rounded-xl hover:rounded-none duration-300 border-[#ffd053] h-[2.3rem] px-3 w-full text-[1rem] font-sans"
+                    type="username"
+                    value={projectSlug}
+                    onChange={onChangeProjectSlug}
+                    aria-label="username"
+                  />
+                </div>
+                <div className="flex space-y-[0.2rem] flex-col w-[67%]">
+                  <span className="text-[1rem] font-bold font-sans">
+                    Date Range:
+                  </span>
+                  <div className="flex flex-row space-x-[0.5rem] justify-between relative">
+                    <input
+                      value={`${format(
+                        range[0].startDate,
+                        "MM/dd/yyyy"
+                      )} to ${format(range[0].endDate, "MM/dd/yyyy")}`}
+                      readOnly
+                      className="border-2 rounded-xl hover:rounded-none duration-300 border-[#ffd053] h-[2.3rem] px-3 w-[67%] text-[1rem] font-sans"
+                      onClick={() => setOpen((open) => !open)}
+                    />
+
+                    <div ref={refOne}>
+                      {open && (
+                        <DateRangePicker
+                          onChange={(item) => setRange([item.selection])}
+                          editableDateInputs={true}
+                          moveRangeOnFirstSelection={false}
+                          ranges={range}
+                          months={2}
+                          direction="horizontal"
+                          className="calendarElement font-sans"
+                          maxDate={maxDate}
+                        />
+                      )}
+                    </div>
+                    <button
+                      className="h-[2.3rem] w-[50%] border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-xl hover:rounded-none"
+                      onClick={() => setProjectDetails()}
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>{" "}
+            <div>
+              {rangedLeadTimeData && (
+                <BoxPlotChartMaker {...rangedLeadTimeData} />
+              )}
             </div>
           </div>
-        </div>{" "}
-        <div>
-          {rangedLeadTimeData &&
-            <BoxPlotChartMaker {...rangedLeadTimeData} />}
-        </div>
+        )}
       </div>
     </div>
   );
