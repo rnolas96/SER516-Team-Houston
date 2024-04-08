@@ -21,7 +21,7 @@ services:
     image: vshar17/burndownmetric-frontend-img:prod
     container_name: gui-container-burndown
     ports:
-      - '3030:3000'
+      - '3000:80'
     links:
       - backend 
     stdin_open: true
