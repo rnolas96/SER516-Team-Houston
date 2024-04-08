@@ -18,11 +18,7 @@ services:
       - prod-redis_data:/data
   
   frontend:
-<<<<<<< Updated upstream
-    image: rnolas96/prod-burndownmetric-frontend:prod
-=======
     image: vshar17/burndownmetric-frontend-img:prod
->>>>>>> Stashed changes
     container_name: gui-container-burndown
     ports:
       - '3030:3000'
