@@ -65,5 +65,5 @@
     ]
   },
   
-  "proxy": "http://api-container-dev:8000"
+  "proxy": "http://taskcoupling-api-container:8000"
 }
