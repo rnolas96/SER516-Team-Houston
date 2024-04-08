@@ -13,7 +13,7 @@ services:
     image: redis   # Using the official Redis image from Docker Hub
     container_name: redis-container-costofdelay
     ports:
-      - '6381:6379'
+      - '6369:6379'
     volumes:
       - prod-redis_data:/data
   
