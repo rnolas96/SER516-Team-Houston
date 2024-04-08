@@ -1,13 +1,13 @@
-
 #!/bin/bash
 
 # Pull frontend image
-echo "Pulling avijay48/dev-taigaproject-backend:dev..."
-docker pull avijay48/dev-taigaproject-backend:dev
+
+echo "Pulling avijay48/prod-taigaproject-frontend:prod..."
+docker pull avijay48/prod-taigaproject-frontend:prod
 
 # Pull backend image
-echo "Pulling avijay48/dev-taigaproject-backend:dev..."
-docker pull avijay48/dev-taigaproject-backend:dev
+echo "Pulling avijay48/prod-taigaproject-backend:prod..."
+docker pull avijay48/prod-taigaproject-backend:prod
 
 docker pull redis:latest
 
@@ -19,6 +19,6 @@ fi
 
 # Start services in detached mode
 echo "Starting services with docker-compose up -d..."
-docker-compose -p taigaprojectdev up -d
+docker-compose -p taigaprojectprod up -d
 
 echo "Done!"

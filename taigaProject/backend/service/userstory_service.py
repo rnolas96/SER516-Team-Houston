@@ -11,7 +11,7 @@ from taigaApi.milestone.getMilestoneByProjectId import get_milestone_by_project_
 from taigaApi.milestone.getMilestoneById import get_milestone_by_id, MilestoneFetchingError
 from taigaApi.userStory.getUserStory import get_custom_attribute_from_userstory, get_custom_attribute_type_id, get_user_story, UserStoryFetchingError, get_userstories_by_sprint, get_closed_tasks_per_user_story, get_userstory_total_points, get_task_per_user_story
 
-r_userstory = redis.StrictRedis(host='redis-container-dev', port=6379, db=0)
+r_userstory = redis.StrictRedis(host='redis-container-prod', port=6379, db=0)
 
 print("redis cache connected", r_userstory)
 
