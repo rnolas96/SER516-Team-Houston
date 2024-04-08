@@ -15,3 +15,4 @@ if %errorlevel% neq 0 (
 REM Run Docker Compose to create containers
 echo Creating containers...
 docker-compose -p taigaprojectprod up -d
+

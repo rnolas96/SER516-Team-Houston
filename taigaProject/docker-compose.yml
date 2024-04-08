@@ -2,6 +2,7 @@ version: '3'
 services:
   backend: 
   
+
     image: avijay48/prod-taigaproject-backend:prod  
     container_name: api-container-prod
     environment:

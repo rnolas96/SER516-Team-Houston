@@ -17,6 +17,7 @@ Before running the script, make sure you have the following installed:
 
 
 ## Ubuntu / Mac users:
+
 ### step 1 ###
   ``` chmod +x dockerapp.sh ```
 ### step 2 ###

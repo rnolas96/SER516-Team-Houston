@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # Pull frontend image
-echo "Pulling avijay48/prod-taigaproject-backend:prod..."
-docker pull avijay48/prod-taigaproject-backend:prod
+
+echo "Pulling avijay48/prod-taigaproject-frontend:prod..."
+docker pull avijay48/prod-taigaproject-frontend:prod
 
 # Pull backend image
 echo "Pulling avijay48/prod-taigaproject-backend:prod..."
