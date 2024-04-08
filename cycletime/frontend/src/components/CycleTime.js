@@ -178,7 +178,7 @@ export default function CycleTime() {
         );
         let formattedEndDate = endDate.toISOString().slice(0, 10);
         apiCall(
-          `/api/task/cycle_time_time_range?project_id=${projectId}&start_date=${formattedStartDate}&end_date=${formattedEndDate}`,
+          `/api/cycletime/cycle_time_time_range?project_id=${projectId}&start_date=${formattedStartDate}&end_date=${formattedEndDate}`,
           setRangedCycleTimeData,
           authToken
         );
