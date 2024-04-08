@@ -1,11 +1,9 @@
-import logo from './logo.svg';
 import './App.css';
-import DynamicMicroserviceComponent from './components/DynamicMicroserviceComponent';
 
 function App() {
   return (
     <div>
-      <DynamicMicroserviceComponent />
+      <iframe src="http://localhost:3000" title="Team Houston Burndown" style={{width: '100%', height: '100vh'}} />
     </div>
   );
 }
