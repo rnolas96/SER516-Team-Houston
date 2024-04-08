@@ -2,7 +2,7 @@ version: '3'
 services:
   backend: 
   
-    image: burndownmetric-backend  
+    image: vshar17/burndown-metric-backend-img:prod  
     container_name: api-container-burndown
     environment:
       - TAIGA_URL=https://api.taiga.io/api/v1
@@ -13,12 +13,12 @@ services:
     image: redis   # Using the official Redis image from Docker Hub
     container_name: redis-container-burndown
     ports:
-      - '6380:6379'
+      - '6370:6379'
     volumes:
       - prod-redis_data:/data
   
   frontend:
-    image: burndownmetric-frontend
+    image: vshar17/burndown-metric-frontend-img:prod  
     container_name: gui-container-burndown
     ports:
       - '3000:80'
