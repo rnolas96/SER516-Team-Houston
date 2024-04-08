@@ -41,6 +41,37 @@ export default function SbpbCoupling() {
 
   const [tab, setTab] = useState(0);
 
+  const [loginState, setLoginState] = useState(false);
+
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+  
+  function setAuthToken() {
+    axios
+      .post("/api/login", {
+        type: "normal",
+        username: userName,
+        password: password,
+      })
+      .then((res) => {
+        console.log("res", res.data);
+        if (res.data[0]) {
+          localStorage.setItem("authToken", res.data[2]);
+          setLoginState(true);
+        } else {
+          alert("authentication failed");
+        }
+      });
+  }
+
+  const onChangeUserName = (event) => {
+    setUserName(event.target.value);
+  };
+
+  const onChangePassword = (event) => {
+    setPassword(event.target.value);
+  };
+
   const clearData = () => {
     setSprintData([]);
     setSprintId(null);
@@ -106,6 +137,16 @@ export default function SbpbCoupling() {
   }
 
   useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
+
+    if (authToken) {
+      setLoginState(true);
+    } else {
+      setLoginState(false);
+    }
+  }, []);
+
+  useEffect(() => {
     const callApis = () => {
       const authToken = localStorage.getItem("authToken");
       console.log("authToken", authToken);
@@ -114,7 +155,7 @@ export default function SbpbCoupling() {
 
       if (authToken && projectId) {
         apiCall(
-          `/api/userstory/pb_coupling?project_id=${projectId}`,
+          `/api/SbPbCoupling/pb_coupling?project_id=${projectId}`,
           setPbCouplingData,
           "Product Backlog information",
           authToken
@@ -122,7 +163,7 @@ export default function SbpbCoupling() {
       }
       if (authToken && projectId && sprintId) {
         apiCall(
-          `/api/userstory/sb_coupling?sprint_id=${sprintId}`,
+          `/api/SbPbCoupling/sb_coupling?sprint_id=${sprintId}`,
           setSbCouplingData,
           "Sprint Backlog information",
           authToken
@@ -138,7 +179,43 @@ export default function SbpbCoupling() {
   return (
     <div className="container-full bg-white">
       <div className="flex flex-col min-h-[100%] justify-between w-full py-[1rem] px-[2rem]">
-        <Tabs
+        
+      {!loginState ? (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <span className="text-[1.2rem] font-bold font-sans">Username:</span>
+            <input
+              className="bg-white border-2 rounded-xl hover:rounded-lg duration-300 border-[#ffd053] active:border-[#ffd053] h-[2.3rem] px-3 text-[1rem] font-sans"
+              type="username"
+              value={userName}
+              onChange={onChangeUserName}
+              aria-label="username"
+              style={{ marginBottom: "20px" }}
+            />
+            <span className=" text-[1.2rem] font-bold font-sans">
+              Password:
+            </span>
+            <input
+              className="bg-white border-2 rounded-xl hover:rounded-lg duration-300 border-[#ffd053] active:border-[#ffd053] h-[2.3rem] px-3"
+              type="password"
+              value={password}
+              onChange={onChangePassword}
+              style={{ marginBottom: "20px" }}
+            />
+            <button
+              className=" p-4 border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-lg"
+              onClick={() => setAuthToken()}
+            >
+              Submit
+            </button>
+          </div>
+        ) : (
+          <Tabs
           style={{
             fontFamily: "Poppins",
             fontWeight: "500",
@@ -259,6 +336,7 @@ export default function SbpbCoupling() {
             />
           </TabPanel>          
         </Tabs>
+        )}
       </div>
     </div>
   );

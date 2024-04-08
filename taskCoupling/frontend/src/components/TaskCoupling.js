@@ -13,7 +13,18 @@ export default function TaskCoupling() {
 
   const [showLoader, setShowLoader] = useState(false);
 
-  const [tab, setTab] = useState(0);
+  const [loginState, setLoginState] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+
+  // Handling the Auth:
+  const onChangeUserName = (event) => {
+    setUserName(event.target.value);
+  };
+
+  const onChangePassword = (event) => {
+    setPassword(event.target.value);
+  };
 
   const clearData = () => {
     setTaskCouplingData(null);
@@ -34,23 +45,6 @@ export default function TaskCoupling() {
       })
       .then((res) => {
         console.log("res", res.data);
-        // const labels = Object.keys(res.data);
-        // const values = Object.values(res.data);
-
-        // labels[0] = "";
-        // const updated = {
-        //   labels: labels,
-        //   text: "Burndown data for " + scenario,
-        //   datasets: [
-        //     {
-        //       label: "Burndown Data",
-        //       data: values,
-        //       borderColor: "black",
-        //       backgroundColor: ["rgb(255, 99, 132)", "rgb(255, 205, 86)"],
-        //       hoverOffset: 4,
-        //     },
-        //   ],
-        // };
 
         const updated = res.data;
         updateCall(updated);
@@ -78,6 +72,34 @@ export default function TaskCoupling() {
       });
   }
 
+  function setAuthToken() {
+    axios
+      .post("/api/login", {
+        type: "normal",
+        username: userName,
+        password: password,
+      })
+      .then((res) => {
+        console.log("res", res.data);
+        if (res.data[0]) {
+          localStorage.setItem("authToken", res.data[2]);
+          setLoginState(true);
+        } else {
+          alert("authentication failed");
+        }
+      });
+  }
+
+  useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
+
+    if (authToken) {
+      setLoginState(true);
+    } else {
+      setLoginState(false);
+    }
+  }, []);
+
   useEffect(() => {
     const callApis = () => {
       const authToken = localStorage.getItem("authToken");
@@ -86,7 +108,7 @@ export default function TaskCoupling() {
 
       if (authToken && projectId) {
         apiCall(
-          `/api/task/task_coupling?project_id=${projectId}`,
+          `/api/taskCoupling/task_coupling?project_id=${projectId}`,
           setTaskCouplingData,
           "Task Coupling",
           authToken
@@ -102,7 +124,42 @@ export default function TaskCoupling() {
   return (
     <div className="container-full bg-white">
       <div className="flex flex-col min-h-[100%] justify-between w-full py-[1rem] px-[2rem]">
-        <div
+      {!loginState ? (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <span className="text-[1.2rem] font-bold font-sans">Username:</span>
+            <input
+              className="bg-white border-2 rounded-xl hover:rounded-lg duration-300 border-[#ffd053] active:border-[#ffd053] h-[2.3rem] px-3 text-[1rem] font-sans"
+              type="username"
+              value={userName}
+              onChange={onChangeUserName}
+              aria-label="username"
+              style={{ marginBottom: "20px" }}
+            />
+            <span className=" text-[1.2rem] font-bold font-sans">
+              Password:
+            </span>
+            <input
+              className="bg-white border-2 rounded-xl hover:rounded-lg duration-300 border-[#ffd053] active:border-[#ffd053] h-[2.3rem] px-3"
+              type="password"
+              value={password}
+              onChange={onChangePassword}
+              style={{ marginBottom: "20px" }}
+            />
+            <button
+              className=" p-4 border-4 border-[#ffd053] hover:bg-[#ffd053] duration-300 hover:text-white font-sans font-bold rounded-2xl hover:rounded-lg"
+              onClick={() => setAuthToken()}
+            >
+              Submit
+            </button>
+          </div>
+        ) : (
+          <div
           style={{
             fontFamily: "Poppins",
             fontWeight: "500",
@@ -163,6 +220,7 @@ export default function TaskCoupling() {
             scenario={"Enter Project Id to see the network chart"}
           />
         </div>
+        )} 
       </div>
     </div>
   );
