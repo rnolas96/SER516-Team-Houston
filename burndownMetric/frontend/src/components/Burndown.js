@@ -93,7 +93,7 @@ export default function Burndown() {
 
   function setProjectDetails() {
     // const authToken = localStorage.getItem("authToken");
-    let authToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzExOTQ1ODI5LCJqdGkiOiIzMDkwZWU0ZWUxZTk0YTU3YjNjMjkyMDkxMWVmZmQ2NCIsInVzZXJfaWQiOjYxNzUyNn0.EWspTnjkx6I_me-jeqMa3MKInrB0EAh9eP6dRsWRwgyOwlmtzzbNvKrlXoE50Oi2dkUupN_0TZ1sny360mwDBaJFoS0m3Fa0aDw0T9vgjiBysyUL6P16as7BkfEzEuY0MlyWcDv9TmDEFTFq0Z44RNGZqFUJswzDhQOWbM8jHdw9K0Xpr-ZFOBdYLHqN0pzC8g-cjrufHGlDAruqBmGnltkPgIOGGAoxBkMhYPBiNZ90RieEvPMuoF3GmTq49a2AOW0JYMYG96QvIolBaQyKnEH-Mqr2Urk5UGv3LMF5lj49ZUtQ-4I8S4Rs0ljEz1EofNBvcQy-p7q8nsXd0Z5G2w"
+    let authToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzEyNTQxNjc4LCJqdGkiOiIyYzkwMzhiN2JkODk0YjUyYTY4ZGM3ZTUyZDQ0MTY5ZCIsInVzZXJfaWQiOjYyMDcxMX0.POP0dSEZNkMYNyk0iD1tvfOQpTAZEcHn96oOKiyOr1HM1o-KMrwCScRBhWRzhUzpljINoz-Nw7CywebpmnAa6EY9rkCff5_C_QEePbHECcawfSCE0MkzW-SvpC2znCfwL93YNBpOjP_M5-6Hk-7s0O6MWuCh8I0X2KNXuVJ0XcyxspeKg5UWscvKco_2Ism97gxwM6z7gNP0InL0sCJojFDtU4bzNayf0Y4LhaxRV2zqdZxibVzX6ivx8ViTV9UMb2lL0SM5kXPErtLQ7gFYi_FE2sZYPWXa0OYQvJAtkp2xVzYEtsbNFuN4oqG_dVjd7Gb77bIyindMGjVnu03_TQ"
     console.log("authToken", authToken);
     let url = "/api/project/milestone_data?project_slug=" + projectSlug;
 
@@ -118,7 +118,7 @@ export default function Burndown() {
   useEffect(() => {
     const callApis = () => {
       // const authToken = localStorage.getItem("authToken");
-      let authToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzExOTQ1ODI5LCJqdGkiOiIzMDkwZWU0ZWUxZTk0YTU3YjNjMjkyMDkxMWVmZmQ2NCIsInVzZXJfaWQiOjYxNzUyNn0.EWspTnjkx6I_me-jeqMa3MKInrB0EAh9eP6dRsWRwgyOwlmtzzbNvKrlXoE50Oi2dkUupN_0TZ1sny360mwDBaJFoS0m3Fa0aDw0T9vgjiBysyUL6P16as7BkfEzEuY0MlyWcDv9TmDEFTFq0Z44RNGZqFUJswzDhQOWbM8jHdw9K0Xpr-ZFOBdYLHqN0pzC8g-cjrufHGlDAruqBmGnltkPgIOGGAoxBkMhYPBiNZ90RieEvPMuoF3GmTq49a2AOW0JYMYG96QvIolBaQyKnEH-Mqr2Urk5UGv3LMF5lj49ZUtQ-4I8S4Rs0ljEz1EofNBvcQy-p7q8nsXd0Z5G2w"
+      let authToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzEyNTQxNjc4LCJqdGkiOiIyYzkwMzhiN2JkODk0YjUyYTY4ZGM3ZTUyZDQ0MTY5ZCIsInVzZXJfaWQiOjYyMDcxMX0.POP0dSEZNkMYNyk0iD1tvfOQpTAZEcHn96oOKiyOr1HM1o-KMrwCScRBhWRzhUzpljINoz-Nw7CywebpmnAa6EY9rkCff5_C_QEePbHECcawfSCE0MkzW-SvpC2znCfwL93YNBpOjP_M5-6Hk-7s0O6MWuCh8I0X2KNXuVJ0XcyxspeKg5UWscvKco_2Ism97gxwM6z7gNP0InL0sCJojFDtU4bzNayf0Y4LhaxRV2zqdZxibVzX6ivx8ViTV9UMb2lL0SM5kXPErtLQ7gFYi_FE2sZYPWXa0OYQvJAtkp2xVzYEtsbNFuN4oqG_dVjd7Gb77bIyindMGjVnu03_TQ"
       console.log(authToken);
       if (authToken && projectId && sprintId) {
         apiCall(
