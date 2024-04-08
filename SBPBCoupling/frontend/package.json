@@ -64,5 +64,5 @@
     ]
   },
   
-  "proxy": "http://sbpbcoupling-api-container:8000"
+  "proxy": "http://taskcoupling-api-container:8000"
 }
