@@ -2,7 +2,7 @@ version: '3'
 services:
   backend: 
   
-    image: avijay48/taskcoupling-backend-img:prod  
+    image: taskcoupling-backend-img  
     container_name: taskcoupling-api-container
     environment:
       - TAIGA_URL=https://api.taiga.io/api/v1
@@ -11,7 +11,7 @@ services:
   
   
   frontend:
-    image: avijay48/taskcoupling-frontend-img:prod
+    image: taskcoupling-frontend-img
     container_name: taskcoupling-gui-container
     ports:
       - '3037:3000'
