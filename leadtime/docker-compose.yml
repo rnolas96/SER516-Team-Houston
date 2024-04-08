@@ -2,7 +2,7 @@ version: '3'
 services:
   backend: 
   
-    image: leadtimemetric-backend
+    image: rnolas96/leadtime-backend-img:prod
     container_name: leadime-api-container
     environment:
       - TAIGA_URL=https://api.taiga.io/api/v1
@@ -11,10 +11,10 @@ services:
   
   
   frontend:
-    image: leadtimemetric-frontend
+    image: rnolas96/leadtime-frontend-img:prod
     container_name: leadtime-gui-container
     ports:
-      - '3036:3000'
+      - '3036:80'
     links:
       - backend 
     stdin_open: true
