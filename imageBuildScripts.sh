@@ -2,9 +2,9 @@
 # Run Docker Compose to create sbpbCoupling containers
 
 echo "Building microservices images..."
-
+docker pull redis
 # Build sbpbCoupling backend
-docker build -t sbpbcouping-metric-backend ./sbpbcoupling/backend
+docker build -t sbpbcouping-metric-backend ./SBPBCoupling/backend
 
 # Build sbpbCoupling frontend
 docker build -t sbpbcouping-metric-frontend ./sbpbcoupling/frontend
@@ -54,17 +54,17 @@ read -p "Press Enter to start containers..."
 
 # Start containers
 docker run -d sbpbcouping-metric-backend
-docker run -d sbpbcouping-metric-frontend
+docker run --name sbpbcoupling-api-container -d sbpbcouping-metric-frontend
 docker run -d engagement-metric-backend
-docker run -d engagement-metric-frontend
+docker run --name api-container-engagement -d engagement-metric-frontend
 docker run -d burndown-metric-backend
-docker run -d burndown-metric-frontend
+docker run --name api-container-burndown -d burndown-metric-frontend
 docker run -d costofdelay-metric-backend
-docker run -d costofdelay-metric-frontend
+docker run --name api-container-costofdelay -d costofdelay-metric-frontend
 docker run -d cycletime-metric-backend
-docker run -d cycletime-metric-frontend
+docker run --name cycletime-api-container -d cycletime-metric-frontend
 docker run -d leadtime-metric-backend
-docker run -d leadtime-metric-frontend
+docker run --name leadime-api-container -d leadtime-metric-frontend
 docker run -d taskcoupling-metric-backend
-docker run -d taskcoupling-metric-frontend
+docker run --name taskcoupling-api-container -d taskcoupling-metric-frontend
 docker run -d demoapp-frontend
